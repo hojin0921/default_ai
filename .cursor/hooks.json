@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/protect-gate.sh",
+        "matcher": "Write|StrReplace|Delete",
+        "failClosed": true,
+        "timeout": 10
+      },
+      {
+        "command": ".cursor/hooks/gate-check.sh",
+        "matcher": "Write|StrReplace|Delete",
+        "failClosed": true,
+        "timeout": 10
+      },
+      {
+        "command": ".cursor/hooks/gate-check.sh",
+        "matcher": "Shell",
+        "failClosed": true,
+        "timeout": 10
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/gate-check.sh",
+        "failClosed": true,
+        "timeout": 10
+      }
+    ]
+  }
+}

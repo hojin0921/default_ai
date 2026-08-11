@@ -1,0 +1,185 @@
+# AI Agent Workflow Guide
+
+**사람용** 운영 가이드. AI 강제 규칙은 `AGENTS.md` / `.cursor/rules/`.
+템플릿 구조는 `TEMPLATE.md`.
+
+목표는 Agent를 많이 쓰는 것이 아니라,
+**AI가 잘하는 일 ↔ 사람이 판단할 일**을 나누는 것이다.
+
+## 6축
+
+| 축 | 목적 |
+|----|------|
+| Rules | AI가 지킬 원칙 |
+| Docs | 프로젝트 지식 |
+| Plans | 전체 Plan + Phase 상세 계획 |
+| Tests | AI 검증 + 사용자 테스트 |
+| Agent Workflow | AI가 일하는 순서 |
+| Human Review | Plan/단계 승인·사용자 검수 |
+
+## 역할 분담
+
+| AI | 사람 |
+|----|------|
+| 탐색·문서 초안·계획·구현·자동 테스트·리뷰 초안 | 제품 방향·필수 기능·단계 승인 |
+| User Test Guide 작성 | Guide대로 직접 테스트·검수 |
+| | “다음 단계 / 다음 Phase” 승인 |
+
+## 두 겹의 계획
+
+| 계획 | 내용 |
+|------|------|
+| 전체 Plan | 필수 기능을 Delivery Phase 1…N으로 분할 (구현 전 Draft) |
+| Phase 상세 Plan | 해당 Phase를 **어떻게** 구현할지 (6단계 중 3번) |
+
+## 표준 흐름
+
+```
+킥오프: 전체 Plan(Phases) → Human Review
+  → Phase N:
+      1 Explore → 2 Document → 3 Plan → (승인)
+      → 4 Implement → 5 Verify(+User Test Guide) → 6 Review
+      → Human Verify
+  → 다음 Phase …
+```
+
+| 크기 | 흐름 |
+|------|------|
+| Small | Implement → Verify |
+| Medium | Explore → 짧은 Plan → Implement → Verify |
+| Large / 킥오프 | 전체 Plan 승인 후, **Phase마다 6단계** |
+
+### Phase 0 vs Delivery Phase
+
+| 이름 | 의미 |
+|------|------|
+| Phase 0 | bootstrap / 초기 문서화 요청 시 |
+| Phase 1…N | 기능 단위 Delivery. 진행 시 6단계 필수 |
+
+## 프로젝트 킥오프
+
+```text
+코드 작성하지 말고, 아래 프로젝트의 전체 개발 Plan만 세워줘.
+.cursor/plans/에 _template.md 형식으로 Draft.
+필수 기능을 Delivery Phase로 나누고, 각 Phase는 6단계
+(Explore→Document→Plan→Implement→Verify→Review)로 진행한다고 명시해.
+지금은 구현하지 마.
+
+## 프로젝트
+<!-- 무엇을 만드는지 -->
+
+## 꼭 들어가야 할 기능
+- 
+- 
+
+## 있으면 좋은 기능 (나중 Phase 가능)
+- 
+
+## 제약
+<!-- 스택, 기한, 플랫폼 등. 없으면 생략 -->
+```
+
+전체 Plan 승인 후 **Phase 1을 6단계로** (한 번에 구현 시키지 말 것):
+
+```text
+전체 Plan 승인. Phase 1부터 6단계로 진행해.
+지금은 1단계만: 코드 작성하지 말고 프로젝트를(이 Phase 범위를) 이해해.
+```
+
+```text
+2단계: 이해한 내용을 문서화해.
+```
+
+```text
+3단계: 이 Phase 기능을 어떻게 구현할지 상세 계획해. 승인 전 구현 금지.
+```
+
+```text
+좋아. 이 계획대로 구현해. (4단계)
+```
+
+```text
+테스트하고 검증해. User Test Guide도 줘. (5단계)
+```
+
+```text
+다시 리뷰해. (6단계)
+```
+
+사용자가 Guide로 직접 테스트한 뒤:
+
+```text
+Phase 1 검수 통과. Phase 2를 6단계로 시작해. 지금은 Explore만.
+```
+
+문제 시:
+
+```text
+Phase N / 단계에서 문제: …
+같은 Phase에서 고치고 Verify·User Test Guide·필요 시 Review를 다시 해줘.
+```
+
+## Phase 6단계 프롬프트
+
+**1. Explore**
+
+```text
+코드 작성하지 말고 프로젝트를 이해해.
+(또는: 이 Phase 관련 코드·요구만 조사해. docs 전체는 읽지 마.)
+```
+
+**2. Document**
+
+```text
+이해한 내용을 문서화해. 관련 docs/README만. 추측으로 TODO 채우지 마.
+```
+
+**3. Plan**
+
+```text
+이 기능을 어떻게 구현할지 계획해.
+변경 파일·순서·AI Verify·User Test Guide 초안. 승인 전 구현 금지.
+```
+
+**4. Implement**
+
+```text
+좋아. 이 계획대로 구현해. 이 Phase 범위 밖·다음 Phase 금지.
+```
+
+**5. Verify**
+
+```text
+테스트하고 검증해. 결과와 내가 따라 할 User Test Guide를 줘.
+```
+
+**6. Review**
+
+```text
+다시 리뷰해. 요구 누락, 버그, 보안, 불필요 변경을 찾아줘.
+```
+
+## Context
+
+- ❌ 프로젝트 전체 / docs 전부 읽기
+- ✅ 현재 Phase·현재 단계 관련만
+- Phase 단위가 끝나면 새 Chat을 고려
+
+## Phase 0 (조건부)
+
+bootstrap 요청, 또는 Docs 비어 있음 + 초기/문서화일 때만.
+일반 Small은 Docs TODO로 막지 않는다. Delivery Phase의 Document(2단계)와 혼동하지 않는다.
+
+```text
+Phase 0부터. 코드 수정 금지.
+docs 초안 + README 개요. 필요 시 전용 rules. 첫 Large면 전체 plan Draft.
+```
+
+## Anti-patterns
+
+- 전체 Plan만 승인받고 Phase 1에서 Explore/Document/Plan 없이 바로 구현
+- Phase 6단계 중 일부를 건너뜀
+- 사용자 검수 전 다음 Phase Explore 시작
+- User Test Guide 없이 “테스트해달라”만 요청
+- 테스트 삭제로 통과
+- `.env` 실제 값을 채팅에 첨부

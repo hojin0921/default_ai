@@ -1,0 +1,26 @@
+# Secrets and local env — never send to model context
+.env
+.env.*
+!.env.example
+
+# Dependencies and build artifacts
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.turbo/
+target/
+vendor/
+__pycache__/
+.venv/
+venv/
+
+# Large / generated
+*.min.js
+*.map
+*.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb

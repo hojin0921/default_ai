@@ -1,0 +1,11 @@
+---
+description: Core principles (keep short)
+alwaysApply: true
+---
+
+# Core
+
+- `AGENTS.md`를 우선한다.
+- 최소 변경, 기존 패턴 재사용, 범위 밖 수정 금지.
+- 테스트·검증 없이 완료로 판단하지 않는다.
+- Docs/Code 내용을 Rule에 복사하지 않는다.

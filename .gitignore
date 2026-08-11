@@ -1,0 +1,10 @@
+# Ignore secrets and local env
+.env
+.env.local
+.env.*.local
+
+# Dependencies / build (fill per project)
+node_modules/
+dist/
+build/
+coverage/

@@ -1,0 +1,24 @@
+---
+description: Coding style and dependency rules
+globs:
+  - "src/**/*"
+  - "apps/**/*"
+  - "packages/**/*"
+  - "lib/**/*"
+  - "app/**/*"
+alwaysApply: false
+---
+
+# Coding
+
+- 인접 파일의 naming·포맷·패턴을 따른다.
+- 프로젝트에 없는 스타일 가이드를 새로 만들지 않는다.
+- `any`·매직 넘버·설명 없는 축약명은 피한다.
+- 공개 API·공유 타입 변경 시 호출부를 함께 확인한다.
+- 스타일만 위한 대규모 포맷 변경은 하지 않는다.
+
+## Dependencies
+
+- 기존 dependency를 우선 사용한다. 동일 기능 라이브러리가 있는지 먼저 확인한다.
+- 새 dependency는 필요성을 확인한 뒤에만 추가하고, 이유를 짧게 설명한다.
+- 패키지 매니저로 추가한다. 불필요한 dependency는 추가하지 않는다.

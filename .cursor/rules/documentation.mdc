@@ -1,0 +1,21 @@
+---
+description: Documentation update rules
+globs:
+  - "docs/**/*"
+  - "README.md"
+  - "**/README.md"
+alwaysApply: false
+---
+
+# Documentation
+
+코드 변경이 다음에 영향을 주면 관련 `docs/`를 업데이트한다.
+
+- public API, architecture, DB schema
+- environment variables, setup, deployment, development workflow
+- 중요한 기술 결정 → `docs/decisions/`
+
+문서에 코드를 불필요하게 복사하지 않는다.
+구현과 문서가 충돌하면 코드를 기준으로 확인하고 문서를 수정한다.
+TODO 템플릿만 있는 Docs를 추측으로 채우지 않는다. 코드·설정을 확인한 뒤 작성한다.
+Phase 0/bootstrap 요청이 아니면, Docs가 비어 있다는 이유만으로 기능 작업을 중단하지 않는다.

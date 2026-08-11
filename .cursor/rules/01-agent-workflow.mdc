@@ -1,0 +1,68 @@
+---
+description: Standard workflow for AI coding agents
+alwaysApply: true
+---
+
+# Agent Workflow
+
+역할: AI = Explore→Document→Plan→Implement→Verify→Review 초안.
+사람 = 목표·중요 결정·Plan/Phase 단계 승인·사용자 테스트·최종 판단. 사람 결정을 대신하지 않는다.
+
+## Phase 0 (조건부 · bootstrap)
+
+bootstrap/docs 요청, 또는 Docs 비어 있음 **그리고** 초기·문서화 작업일 때만.
+그 외 Small/Medium은 Docs TODO로 막지 않는다.
+Phase 0 ≠ Delivery Phase. 제품 개발 Phase는 1부터.
+
+## Task Size
+
+- **Small**: Implement → Verify (긴 Plan 금지)
+- **Medium**: Explore → (짧은 Plan) → Implement → Verify
+- **Large / 프로젝트 킥오프**:
+  1) 전체 Plan(Delivery Phases) Draft → **사람 승인**
+  2) 각 Delivery Phase는 아래 **6단계**를 순서대로 (특히 Phase 1 필수)
+  3) Phase Human Verify 후에만 다음 Phase
+
+Large·킥오프는 승인 없이 구현하지 않는다.
+“어떤 프로젝트/필수 기능” 설명 요청은 Large로 보고 한 번에 전부 구현하지 않는다.
+
+## 프로젝트 킥오프
+
+사용자가 프로젝트·필수 기능을 설명하면:
+
+1. 구현 전에 전체 Plan Draft (`.cursor/plans/`, Phase 1…N 분할)
+2. 전체 Plan 승인 전 구현 금지
+3. 승인 후 **Phase 1부터 6단계**로 진행. 다음 Phase 임의 진행 금지
+
+## Delivery Phase 6단계 (필수)
+
+각 Delivery Phase(Phase 1부터)를 진행할 때 **건너뛰지 말고** 순서대로:
+
+1. **Explore** — 코드 작성 금지. 관련 코드·요구·기존 패턴·영향 범위만 정리
+2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). Phase 1은 기초 docs를 채우고, 이후 Phase는 변경분만 갱신
+3. **Plan** — 이 Phase를 어떻게 구현할지 상세 계획(변경 파일·순서·테스트·User Test Guide 초안). Status 반영 후 **사람 승인 대기**. 승인 전 구현 금지
+4. **Implement** — 승인한 이 Phase 범위만 최소 변경으로 구현
+5. **Verify** — AI: 관련 테스트 → typecheck/lint → 필요 시 build. 실패 무시·테스트 삭제 금지. 이어서 **User Test Guide** 제공 (실행법·확인할 것·기대 결과·실패 시 보고 정보)
+6. **Review** — 요구 누락·버그·보안·불필요 변경 self-review 후 보고 → **Human Verify** 대기
+
+“다음 Phase 진행” 전에는 Phase N+1의 Explore도 시작하지 않는다.
+Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰, 남은 이슈, 다음 Phase 한 줄 예고.
+
+## Explore
+
+코드 수정 금지. 위치·동작·기존 패턴·영향 범위만. 관련 파일·관련 Docs만 본다. `docs/` 전체를 읽지 않는다.
+
+## Plan
+
+- 킥오프 전체 Plan: `_template.md` + Delivery Phases, Status=Draft → 승인 요청
+- Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서/AI Verify/User Test Guide
+
+## Implement / Verify / Review
+
+- 승인된 **현재 Phase** (또는 Small 범위)만 구현
+- Verify에 User Test Guide 포함
+- Review 후 사람 검수까지가 Phase 완료 조건
+
+## Context
+
+필요한 파일·Docs만. `@`는 정확할 때만. `.env` 실제 값 금지. 프로젝트 전체 읽기 금지.

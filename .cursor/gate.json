@@ -1,0 +1,8 @@
+{
+  "enabled": false,
+  "plan_approved": false,
+  "phase": 1,
+  "step": "explore",
+  "allow_commit": false,
+  "note": "사람만 plan_approved/step/allow_commit/enabled를 전진시킨다. Agent는 이 파일을 수정하지 않는다. 사용: ./scripts/gate.sh"
+}
