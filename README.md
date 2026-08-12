@@ -1,6 +1,6 @@
 # Project Name
 
-<!-- Phase 0 이후 AI가 프로젝트 개요로 채운다. 템플릿 사용법은 TEMPLATE.md 참고. -->
+<!-- Phase 0 이후 AI가 프로젝트 개요로 채운다. 템플릿 사용법: 가이드.md / TEMPLATE.md -->
 
 ## Overview
 
@@ -23,14 +23,10 @@
 <!-- TODO: 배포 개요. 상세는 docs/deployment.md -->
 
 <!--
-권장 사용법 (상세: docs/ai/agent-workflow.md)
+템플릿: TEMPLATE.md | 사용법: docs/ai/agent-workflow.md
+클론 후: ./scripts/install-hooks.sh
 
-A. 프로젝트·필수 기능 → 전체 Plan(Phase 분할)만 요청 (구현 금지) → 승인
-B. Phase 1부터 매번:
-   1. 코드 작성하지 말고 이해해
-   2. 이해한 내용을 문서화해
-   3. 이 기능을 어떻게 구현할지 계획해
-   4. 좋아. 이 계획대로 구현해
-   5. 테스트하고 검증해 (+ User Test Guide)
-   6. 다시 리뷰해 → 사용자 검수 → 다음 Phase
+A. 프로젝트·필수 기능 → Plan(Phase) Draft → 승인 (+ ./scripts/gate.sh approve-plan)
+B. Phase마다 6단계 (Skill: delivery-phase) → User Test Guide → 검수 → 다음 Phase
+Skills: .cursor/skills/ | Hooks: .cursor/hooks.json | Gate: .cursor/gate.json
 -->

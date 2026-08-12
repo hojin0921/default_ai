@@ -13,9 +13,9 @@
 | `decisions/` | 왜 그렇게 결정했는지 (ADR) | README만 |
 | `ai/agent-workflow.md` | **사람** — 킥오프·Phase 검수·프롬프트 | 복사 유지 |
 
-6축: Rules · Docs · Plans · Tests · Agent Workflow · **Human Review**.
-Large는 Delivery Phase마다 6단계(Explore→Document→Plan→Implement→Verify→Review) + 사람 검수.
-템플릿 구조는 `TEMPLATE.md`.
+축: Rules · Skills · Hooks · Docs · Plans · Tests · **Human Review**.
+Large는 Delivery Phase마다 6단계 + 사람 검수. 강제 게이트: `./scripts/gate.sh`.
+템플릿 구조는 `TEMPLATE.md`. Skills 목록: `.cursor/skills/README.md`.
 
 ## Rules vs Docs
 

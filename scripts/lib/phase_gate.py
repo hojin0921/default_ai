@@ -98,9 +98,11 @@ def normalize_rel(path: str, root: Path | None = None) -> str:
         try:
             rel = p.resolve().relative_to(root.resolve())
         except ValueError:
-            return path.replace("\\", "/").lstrip("./")
+            text = path.replace("\\", "/")
+            return text[2:] if text.startswith("./") else text
         return str(rel).replace("\\", "/")
-    return path.replace("\\", "/").lstrip("./")
+    text = path.replace("\\", "/")
+    return text[2:] if text.startswith("./") else text
 
 
 def is_gate_file(path: str, root: Path | None = None) -> bool:
@@ -143,26 +145,22 @@ def shell_mutates_gate(command: str) -> bool:
     c = command.strip()
     if not c:
         return False
-    # Human helper mutations
-    if re.search(r"(?:^|[;&|]\s*|/\s*)(?:\.?/)?(?:scripts/)?gate\.sh\s+", c):
-        # allow status only
-        if re.search(r"gate\.sh\s+status\b", c):
-            return False
+    # Human helper mutations (status allowed)
+    if re.search(r"gate\.sh\s+status\b", c):
+        return False
+    if re.search(
+        r"gate\.sh\s+(on|off|approve-plan|advance|allow-commit|deny-commit|next-phase)\b",
+        c,
+    ):
+        return True
+    # Direct writes to gate.json (avoid flagging mere mentions / tests)
+    if re.search(r"gate\.json", c):
         if re.search(
-            r"gate\.sh\s+(on|off|approve-plan|advance|allow-commit|deny-commit|next-phase)\b",
-            c,
-        ):
-            return True
-    if ".cursor/gate.json" in c or ".cursor/gate.json" in c.replace("\\", "/"):
-        # redirects / editors targeting gate
-        if re.search(
-            r"(>|>>|tee|sed|perl|ruby|python|node|printf|echo|cat\s*>|cp\s+|mv\s+|rm\s+).*gate\.json|"
-            r"gate\.json.*(>|>>)",
+            r"(>|>>)\s*\S*gate\.json|tee\s+\S*gate\.json|"
+            r"\b(cp|mv|rm|sed|perl)\b.*gate\.json",
             c,
             re.I,
         ):
-            return True
-        if re.search(r"\b(nano|vim|vi|emacs|code|cursor)\b.*gate\.json", c, re.I):
             return True
     return False
 

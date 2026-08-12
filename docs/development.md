@@ -6,6 +6,17 @@
 
 <!-- TODO: 런타임, 패키지 매니저, 필수 도구 버전 -->
 
+## AI template setup (once per clone)
+
+```bash
+./scripts/install-hooks.sh
+./scripts/gate.sh status
+```
+
+- Skills: `.cursor/skills/`
+- Hooks: `.cursor/hooks.json` (Phase Gate)
+- Large 시: `./scripts/gate.sh on` → Plan 승인 후 `approve-plan` → 단계마다 `advance` → 커밋 전 `allow-commit`
+
 ## Setup
 
 <!-- TODO: 설치·환경변수·로컬 실행 절차 -->

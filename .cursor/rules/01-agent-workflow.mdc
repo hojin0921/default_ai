@@ -63,6 +63,18 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰
 - Verify에 User Test Guide 포함
 - Review 후 사람 검수까지가 Phase 완료 조건
 
+## Phase Gate (강제)
+
+- Large일 때 진실 원천은 `.cursor/gate.json` (plan Status 마크다운이 아님).
+- Agent는 `gate.json`을 수정하거나 `./scripts/gate.sh`의 변경 명령(on/off/approve-plan/advance/allow-commit/deny-commit/next-phase)을 실행하지 않는다. `status`만 허용.
+- 사람은 `./scripts/gate.sh`로 승인·단계 전진. 커밋은 `allow_commit` 필요 (`./scripts/install-hooks.sh` 후 pre-commit).
+
+## Skills (템플릿)
+
+- `.cursor/skills/project-kickoff` — 전체 Plan
+- `.cursor/skills/delivery-phase` — Phase 6단계
+- `.cursor/skills/phase-gate` — 게이트 운영
+
 ## Context
 
 필요한 파일·Docs만. `@`는 정확할 때만. `.env` 실제 값 금지. 프로젝트 전체 읽기 금지.

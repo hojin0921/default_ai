@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Block commits when Large phase gate is on and allow_commit is false.
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${ROOT}" ]]; then
+  ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
+exec "${ROOT}/scripts/phase-gate-check.sh"

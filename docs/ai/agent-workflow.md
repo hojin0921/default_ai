@@ -10,11 +10,12 @@
 
 | 축 | 목적 |
 |----|------|
-| Rules | AI가 지킬 원칙 |
+| Rules | AI가 지킬 원칙 (`.cursor/rules/`) |
+| Skills | 킥오프·Phase·gate 절차 (`.cursor/skills/`) |
+| Hooks | 구현/커밋 차단 (`.cursor/hooks.json` + gate) |
 | Docs | 프로젝트 지식 |
 | Plans | 전체 Plan + Phase 상세 계획 |
 | Tests | AI 검증 + 사용자 테스트 |
-| Agent Workflow | AI가 일하는 순서 |
 | Human Review | Plan/단계 승인·사용자 검수 |
 
 ## 역할 분담
@@ -56,7 +57,28 @@
 | Phase 0 | bootstrap / 초기 문서화 요청 시 |
 | Phase 1…N | 기능 단위 Delivery. 진행 시 6단계 필수 |
 
+## Phase Gate (사람 전용)
+
+클론 후 한 번:
+
+```bash
+./scripts/install-hooks.sh
+```
+
+| 상황 | 명령 |
+|------|------|
+| Large 시작 | `./scripts/gate.sh on` |
+| 전체 Plan 승인 | `./scripts/gate.sh approve-plan` |
+| 단계 전진 | `./scripts/gate.sh advance implement` (등) |
+| 커밋 허용 | `./scripts/gate.sh allow-commit` |
+| 다음 Phase | `./scripts/gate.sh next-phase` |
+| Small로 해제 | `./scripts/gate.sh off` |
+
+강제 검사 원천은 Plan Status가 아니라 `.cursor/gate.json`.
+
 ## 프로젝트 킥오프
+
+Agent Skill: `project-kickoff` (자동 또는 명시).
 
 ```text
 코드 작성하지 말고, 아래 프로젝트의 전체 개발 Plan만 세워줘.
