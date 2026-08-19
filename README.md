@@ -26,7 +26,7 @@
 템플릿: TEMPLATE.md | 사용법: docs/ai/agent-workflow.md
 클론 후: ./scripts/install-hooks.sh
 
-A. 프로젝트·필수 기능 → Plan(Phase) Draft → 승인 (+ ./scripts/gate.sh approve-plan)
+A. 프로젝트·필수 기능 → Plan(Phase) Draft → 채팅에서 승인 (+ gate approve-plan)
 B. Phase마다 6단계 (Skill: delivery-phase) → User Test Guide → 검수 → 다음 Phase
-Skills: .cursor/skills/ | Hooks: .cursor/hooks.json | Gate: .cursor/gate.json
+Skills: .cursor/skills/ | Hooks: .cursor/hooks.json | Gate: .cursor/gate.json (채팅 선택→gate.sh)
 -->

@@ -15,7 +15,7 @@
 
 - Skills: `.cursor/skills/`
 - Hooks: `.cursor/hooks.json` (Phase Gate)
-- Large 시: `./scripts/gate.sh on` → Plan 승인 후 `approve-plan` → 단계마다 `advance` → 커밋 전 `allow-commit`
+- Large 시: 채팅에서 승인 선택(또는 `./scripts/gate.sh on` → `approve-plan` → `advance` → `allow-commit`)
 
 ## Setup
 

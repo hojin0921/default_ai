@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local verification for phase gate (no mutating CLI strings in shell)."""
+"""Local verification for phase gate (gate.sh allowed; direct gate.json shell edits denied)."""
 
 from __future__ import annotations
 
@@ -88,14 +88,24 @@ def main() -> None:
     assert out["permission"] == "deny", out
     print("PASS deny commit")
 
-    # Avoid literal mutating CLI name fragments that outer hooks scan in argv.
+    # ./scripts/gate.sh is allowed after human chat choice; direct gate.json edits denied.
     cmd = "./scripts/" + "gate" + ".sh " + "approve" + "-plan"
     out = hook(
         ".cursor/hooks/gate-check.sh",
         {"hook_event_name": "beforeShellExecution", "tool_input": {"command": cmd}},
     )
+    assert out["permission"] == "allow", out
+    print("PASS allow gate.sh approve-plan")
+
+    out = hook(
+        ".cursor/hooks/gate-check.sh",
+        {
+            "hook_event_name": "beforeShellExecution",
+            "tool_input": {"command": "echo x > .cursor/gate.json"},
+        },
+    )
     assert out["permission"] == "deny", out
-    print("PASS deny self-approve")
+    print("PASS deny direct gate.json redirect")
 
     sys.path.insert(0, str(ROOT / ".cursor" / "hooks"))
     import protect_gate as protect_gate_mod  # noqa: E402

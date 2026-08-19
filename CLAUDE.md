@@ -7,7 +7,7 @@
 
 - Small → Implement→Verify / Medium → Explore 후 구현 / Large·킥오프 → 전체 Plan 후 **승인 전 구현 금지**.
 - Delivery Phase는 6단계: Explore→Document→Plan→Implement→Verify(+User Test Guide)→Review. **단계·Phase 검수 전 다음 금지**.
-- Cursor 템플릿: `.cursor/skills/`, `.cursor/hooks.json`, `.cursor/gate.json` + `./scripts/gate.sh` (Agent는 gate 전진 금지).
+- Cursor 템플릿: `.cursor/skills/`, `.cursor/hooks.json`, `.cursor/gate.json` + `./scripts/gate.sh` (Agent는 사람 채팅 선택 후에만 gate.sh 대행; `gate.json` 직접 수정 금지).
 - Phase 0은 bootstrap 또는 Docs 비어 있음+초기/문서화일 때만.
 - 관련 파일·관련 docs만. docs 전체 읽기 금지. secret 출력 금지.
 - 구현 후 관련 테스트. 실패 무시 금지.

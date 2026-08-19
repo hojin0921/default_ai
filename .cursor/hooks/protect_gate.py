@@ -36,8 +36,9 @@ def main() -> None:
     if path and is_gate_file(path, root):
         emit(
             deny(
-                "phase-gate: Agent cannot modify .cursor/gate.json. "
-                "Human must run ./scripts/gate.sh (approve-plan|advance|allow-commit|…)."
+                "phase-gate: Agent cannot modify .cursor/gate.json directly. "
+                "After an explicit human chat choice, run ./scripts/gate.sh "
+                "(approve-plan|advance|allow-commit|…), or ask the human to."
             )
         )
         return

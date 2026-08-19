@@ -66,8 +66,10 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰
 ## Phase Gate (강제)
 
 - Large일 때 진실 원천은 `.cursor/gate.json` (plan Status 마크다운이 아님).
-- Agent는 `gate.json`을 수정하거나 `./scripts/gate.sh`의 변경 명령(on/off/approve-plan/advance/allow-commit/deny-commit/next-phase)을 실행하지 않는다. `status`만 허용.
-- 사람은 `./scripts/gate.sh`로 승인·단계 전진. 커밋은 `allow_commit` 필요 (`./scripts/install-hooks.sh` 후 pre-commit).
+- Agent는 `gate.json`을 **직접** 수정하지 않는다 (Write/StrReplace/Delete·리다이렉트 금지).
+- mutating `./scripts/gate.sh`(on/off/approve-plan/advance/allow-commit/deny-commit/next-phase)는 **이번 사용자 메시지의 명시적 채팅 선택/승인**이 있을 때만 실행한다. 선택→명령은 1:1(또는 메뉴에 명시된 한 세트). 애매하면 재질문하고 실행하지 않는다.
+- 결정 지점마다 **쉬운 한글 번호 메뉴**를 제시하고, 선택 전에는 게이트를 전진·구현하지 않는다. 메뉴 문구는 `guide.md` §4 채팅 메뉴 예시를 따른다. 사람은 동일 명령을 터미널에서 직접 실행해도 된다.
+- 커밋은 `allow_commit` 필요 (`./scripts/install-hooks.sh` 후 pre-commit).
 
 ## Skills (템플릿)
 

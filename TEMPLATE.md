@@ -5,9 +5,9 @@ Cursor의 **Rules · Skills · Hooks**(+ 선택 MCP)를 레포에 묶어,
 사람·AI가 같은 Phase 워크플로로 일하게 한다.
 
 ```
-Human(목표·단계 승인·사용자 테스트)
-  → AI(Skills: kickoff / delivery-phase)
-  → Hooks(gate) + Plans + Docs + Tests
+Human(목표·채팅 승인·사용자 테스트)
+  → AI(Skills: kickoff / delivery-phase; 선택 후 gate.sh 대행)
+    → Hooks(gate) + Plans + Docs + Tests
 ```
 
 ## 6축 + 확장
@@ -16,7 +16,7 @@ Human(목표·단계 승인·사용자 테스트)
 |----|------|------|
 | Rules | `AGENTS.md`, `.cursor/rules/` | AI 행동 |
 | Skills | `.cursor/skills/` | 킥오프·Phase·gate 절차 |
-| Hooks | `.cursor/hooks.json` | 구현/커밋/자가승인 차단 |
+| Hooks | `.cursor/hooks.json` | 구현/커밋 차단 · `gate.json` 직접 수정 차단 |
 | Docs | `docs/` | 프로젝트 지식 |
 | Plans | `.cursor/plans/` | 전체 Plan + Phase 상세 |
 | Tests | AI Verify + User Test Guide | 검증 |
@@ -28,8 +28,8 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 핵심 흐름 (Large / 킥오프):
 
 ```
-전체 Plan(Phase 1…N) → Human Review (+ gate approve-plan)
-  → Phase N: Explore → Document → Plan → (승인)
+전체 Plan(Phase 1…N) → Human Review (채팅 선택 → gate approve-plan)
+  → Phase N: Explore → Document → Plan → (채팅 승인)
              → Implement → Verify(+User Test Guide) → Review
              → Human Verify
   → 다음 Phase …
@@ -64,7 +64,7 @@ Phase 0 = bootstrap. Delivery Phase는 1부터, 진행 시 6단계 필수.
 ./scripts/gate.sh status   # 기본 enabled:false (Small 마찰 없음)
 ```
 
-Large 시작 시: `./scripts/gate.sh on` → Plan 검토 → `./scripts/gate.sh approve-plan`
+Large: 채팅에서 Plan 승인(또는 동등하게 `./scripts/gate.sh on` → `approve-plan`)
 
 ## Phase 0 조건
 
@@ -75,5 +75,5 @@ Large 시작 시: `./scripts/gate.sh on` → Plan 검토 → `./scripts/gate.sh 
 
 ## 사람 가이드
 
-- 사용법 요약: [`가이드.md`](가이드.md)
+- 사용법 요약: [`guide.md`](guide.md)
 - 프롬프트·게이트 상세: `docs/ai/agent-workflow.md`

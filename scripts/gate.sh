@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Human-only phase gate controls. Agent must not run mutating commands.
+# Phase gate controls. Prefer human chat choice → Agent runs this; terminal is equivalent.
+# Do not edit .cursor/gate.json directly.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

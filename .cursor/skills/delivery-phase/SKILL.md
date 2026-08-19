@@ -28,10 +28,11 @@ Work **only the current Phase** and **only the current step**. Do not start the 
 
 ### After each step
 
-Report: what changed, gate hint if Large (`./scripts/gate.sh advance <step>`), and what the human should do next. Do not self-approve the gate.
+Report: what changed, and a **numbered Korean chat menu** for the next human decision when the gate is enabled (or when approval is required). Use the phrasing in `guide.md` §4. Do not advance the gate without an explicit choice this turn.
 
 ### Gate (when `.cursor/gate.json` enabled)
 
 - Source of truth is `gate.json`, not plan Status markdown.
-- Agent must not edit `gate.json` or run mutating `./scripts/gate.sh` commands.
+- Never edit `gate.json` directly.
+- After an explicit human chat choice, run the matching `./scripts/gate.sh` command; otherwise re-offer the menu (terminal CLI is equivalent).
 - Code writes require `plan_approved` and step in `implement|verify|review`.

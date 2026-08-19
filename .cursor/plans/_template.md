@@ -108,4 +108,4 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
 
 Draft | **Approved** | In Progress (Phase N · step K/6) | Done
 
-<!-- 강제 검사 진실 원천은 Status가 아니라 .cursor/gate.json (+ ./scripts/gate.sh) -->
+<!-- 강제 검사 진실 원천은 Status가 아니라 .cursor/gate.json (채팅 선택→./scripts/gate.sh) -->

@@ -14,7 +14,7 @@
 | `ai/agent-workflow.md` | **사람** — 킥오프·Phase 검수·프롬프트 | 복사 유지 |
 
 축: Rules · Skills · Hooks · Docs · Plans · Tests · **Human Review**.
-Large는 Delivery Phase마다 6단계 + 사람 검수. 강제 게이트: `./scripts/gate.sh`.
+Large는 Delivery Phase마다 6단계 + 사람 검수. 강제 게이트: 채팅 선택 → `./scripts/gate.sh` (터미널 동등).
 템플릿 구조는 `TEMPLATE.md`. Skills 목록: `.cursor/skills/README.md`.
 
 ## Rules vs Docs

@@ -4,5 +4,5 @@
   "phase": 1,
   "step": "explore",
   "allow_commit": false,
-  "note": "사람만 plan_approved/step/allow_commit/enabled를 전진시킨다. Agent는 이 파일을 수정하지 않는다. 사용: ./scripts/gate.sh"
+  "note": "사람 결정으로만 전진. 채널: 채팅 선택→Agent가 ./scripts/gate.sh 대행, 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다."
 }

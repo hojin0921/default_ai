@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cursor hook: gate code writes, git commit, and gate.sh self-approval."""
+"""Cursor hook: gate code writes, git commit, and direct gate.json shell edits."""
 
 from __future__ import annotations
 
@@ -48,11 +48,14 @@ def main() -> None:
         command = str(payload.get("command") or "")
 
     if hook_event == "beforeShellExecution" or (tool == "Shell" and command):
+        # ./scripts/gate.sh mutations allowed (chat-choice proxy). Block direct
+        # gate.json redirects/edits.
         if shell_mutates_gate(command):
             emit(
                 deny(
-                    "phase-gate: Agent cannot change the gate via shell. "
-                    "Ask the human to run ./scripts/gate.sh …"
+                    "phase-gate: do not edit .cursor/gate.json via shell. "
+                    "After an explicit human chat choice, run ./scripts/gate.sh … "
+                    "(or ask the human to run the same command)."
                 )
             )
             return
@@ -60,7 +63,8 @@ def main() -> None:
             emit(
                 deny(
                     "phase-gate: git commit blocked (allow_commit=false). "
-                    "Human: ./scripts/gate.sh allow-commit after Verify/User Test, "
+                    "After Verify/User Test, human chooses allow-commit in chat "
+                    "(Agent runs ./scripts/gate.sh allow-commit), or human runs it; "
                     "or ./scripts/gate.sh off for Small work."
                 )
             )
@@ -73,8 +77,9 @@ def main() -> None:
     if path and is_gate_file(path, root):
         emit(
             deny(
-                "phase-gate: Agent cannot modify .cursor/gate.json. "
-                "Human: ./scripts/gate.sh …"
+                "phase-gate: Agent cannot modify .cursor/gate.json directly. "
+                "After an explicit human chat choice, run ./scripts/gate.sh … "
+                "(or human runs the same command)."
             )
         )
         return
@@ -86,7 +91,8 @@ def main() -> None:
                 f"  enabled={gate.get('enabled')} plan_approved={gate.get('plan_approved')} "
                 f"phase={gate.get('phase')} step={gate.get('step')}\n"
                 "  Need: plan_approved=true and step in implement|verify|review.\n"
-                "  Human: ./scripts/gate.sh approve-plan && ./scripts/gate.sh advance implement"
+                "  Offer chat choices: approve-plan / advance implement "
+                "(or human runs ./scripts/gate.sh …)."
             )
         )
         return

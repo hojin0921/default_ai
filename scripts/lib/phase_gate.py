@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase gate helpers. Human-owned .cursor/gate.json is the source of truth."""
+"""Phase gate helpers. .cursor/gate.json is the source of truth (chat choice → gate.sh)."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ DEFAULT_GATE: dict[str, Any] = {
     "phase": 1,
     "step": "explore",
     "allow_commit": False,
-    "note": "사람만 plan_approved/step/allow_commit/enabled를 전진시킨다. Agent는 이 파일을 수정하지 않는다. 사용: ./scripts/gate.sh",
+    "note": "사람 결정으로만 전진. 채널: 채팅 선택→Agent가 ./scripts/gate.sh 대행, 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다.",
 }
 
 
@@ -141,19 +141,11 @@ def extract_tool_path(tool_input: dict[str, Any] | None) -> str | None:
 
 
 def shell_mutates_gate(command: str) -> bool:
-    """Best-effort: Agent trying to change gate via shell."""
+    """True when shell rewrites gate.json directly (not via ./scripts/gate.sh)."""
     c = command.strip()
     if not c:
         return False
-    # Human helper mutations (status allowed)
-    if re.search(r"gate\.sh\s+status\b", c):
-        return False
-    if re.search(
-        r"gate\.sh\s+(on|off|approve-plan|advance|allow-commit|deny-commit|next-phase)\b",
-        c,
-    ):
-        return True
-    # Direct writes to gate.json (avoid flagging mere mentions / tests)
+    # ./scripts/gate.sh is the approved channel (human chat choice → Agent CLI).
     if re.search(r"gate\.json", c):
         if re.search(
             r"(>|>>)\s*\S*gate\.json|tee\s+\S*gate\.json|"
