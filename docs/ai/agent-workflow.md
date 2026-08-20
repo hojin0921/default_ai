@@ -51,7 +51,8 @@
 | 6 Review | QA + 설계 | 기획(요구 누락) |
 
 킥오프: K1 질문 **기획**, K2 설계 초안 **기획 + 설계**, K3 문서화 **설계/기획**, K4 Phase Plan **기획 + 설계**.  
-응답 시작에 `역할: 시니어 ○○`을 한 줄로 밝힌다.
+응답 시작에 `역할: 시니어 ○○`을 한 줄로 밝힌다.  
+각 `senior-*` Skill의 **Quality bar**를 충족한다. 형용사만 있는 요약은 다시 쓴다.
 
 ### 명시 호출 우선
 
@@ -157,9 +158,19 @@ AskQuestion: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게
 
 **검증·리뷰 후 (사용자 테스트까지 한 뒤)**
 
-1. 검수 통과예요. 커밋해도 되게 열어 주세요 (`allow-commit`)  
+채팅에 **직접 확인 가이드**(실행 / 확인 / 기대 / 실패 시)를 먼저 넣는다.  
+마지막 Phase면 **실행 가이드**(준비 / 실행 / 접속)와 **역할 기여**(역할 / 만든 것 / 어떻게 쓰이는지)를 그 앞에 넣는다.  
+AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`  
+(화면이 없으면 `직접 확인해 보신 결과는 어떤가요?`)
+
+메뉴 라벨에 커밋을 넣지 않는다. `git commit`은 사람이 직접 한다.
+
+1. 직접 확인해 보니 통과예요  
 2. 아직 문제 있어요. 같은 Phase에서 고치고 검증을 다시 해 주세요 (같은 메시지에 수정 내용을 이어서 적어도 됨)  
-3. 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사만 해 주세요 (`next-phase`)
+3. 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사만 해 주세요  
+   (마지막 Phase: 이 Phase는 통과. 전체 개발을 마무리해 주세요)
+
+1번 → `allow-commit`(잠금만). 3번 → `next-phase`(이미 연 잠금은 유지). 마지막 Phase 3번은 `next-phase` 없음. 메뉴 라벨에는 커밋을 쓰지 않는다.
 
 메뉴에서 수정을 고를 때는 선택 후(또는 번호 `2`와 함께) 수정 프롬프트를 적는다. 수정 후 AI는 선택 UI를 다시 낸다.
 
@@ -172,7 +183,7 @@ AskQuestion: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게
 | Phase Plan 단계로 | `./scripts/gate.sh kickoff phase_plan` |
 | 전체 Plan 승인 (`design_approved` 필요) | `./scripts/gate.sh approve-plan` |
 | 단계 전진 | `./scripts/gate.sh advance implement` (등) |
-| 커밋 허용 | `./scripts/gate.sh allow-commit` |
+| 커밋 잠금 해제 (채팅 메뉴 라벨 없음) | `./scripts/gate.sh allow-commit` |
 | 다음 Phase | `./scripts/gate.sh next-phase` |
 | Small로 해제 | `./scripts/gate.sh off` |
 
@@ -268,12 +279,14 @@ Phase N / 단계에서 문제: …
 
 ```text
 좋아. 이 계획대로 구현해. 이 Phase 범위 밖·다음 Phase 금지.
+실행 가능하면 실행 가이드(준비·실행·접속)도 줘.
 ```
 
 **5. Verify**
 
 ```text
-테스트하고 검증해. 결과와 내가 따라 할 User Test Guide를 줘.
+테스트하고 검증해. AI 결과와 내가 따라 할 직접 확인 가이드(실행·확인·기대)를 줘.
+마지막 Phase면 실행 가이드(어떻게 켜는지)와 역할 기여(누가 무엇을·어디에 쓰이는지)도 앞에 줘.
 ```
 
 **6. Review**
@@ -306,6 +319,9 @@ docs 초안 + README 개요. 필요 시 전용 rules.
 - 전체 Plan만 승인받고 Phase 1에서 Explore/Document/Plan 없이 바로 구현
 - Phase 6단계 중 일부를 건너뜀
 - 사용자 검수 전 다음 Phase Explore 시작
-- User Test Guide 없이 “테스트해달라”만 요청
+- 직접 확인 가이드 없이 “직접 플레이해 보세요 / 테스트해달라”만 요청
+- 실행 가능한데 실행 가이드(켜는 법) 없이 “구현 완료”만 보고
+- 마지막 Phase인데 역할 기여(누가 무엇을) 없이 마무리
+- 시니어 역할인데 Quality bar를 무시하고 형용사·한 줄 요약으로 단계를 끝냄
 - 테스트 삭제로 통과
 - `.env` 실제 값을 채팅에 첨부

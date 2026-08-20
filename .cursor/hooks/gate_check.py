@@ -63,9 +63,9 @@ def main() -> None:
             emit(
                 deny(
                     "phase-gate: git commit blocked (allow_commit=false). "
-                    "After Verify/User Test, human chooses allow-commit in chat "
-                    "(Agent runs ./scripts/gate.sh allow-commit), or human runs it; "
-                    "or ./scripts/gate.sh off for Small work."
+                    "After Verify/User Test, pick 통과 in chat "
+                    "(Agent runs ./scripts/gate.sh allow-commit), or run that CLI; "
+                    "then git commit yourself. Or ./scripts/gate.sh off for Small work."
                 )
             )
             return

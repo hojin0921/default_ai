@@ -15,11 +15,11 @@
 
 - Skills: `.cursor/skills/`
 - Hooks: `.cursor/hooks.json` (Phase Gate)
-- Large 시: 채팅에서 승인 선택. 킥오프는 `approve-design` → `kickoff phase_plan` → `approve-plan` (`on`과 `approve-plan`을 한 번에 묶지 않음). 이후 `advance` → `allow-commit`.
+- Large 시: 채팅에서 승인 선택. 킥오프는 `approve-design` → `kickoff phase_plan` → `approve-plan` (`on`과 `approve-plan`을 한 번에 묶지 않음). 이후 `advance`. 검증 통과 후 커밋 잠금 해제는 채팅 1번(통과) 또는 `./scripts/gate.sh allow-commit`. `git commit`은 사람이 직접.
 
 ## Setup
 
-<!-- TODO: 설치·환경변수·로컬 실행 절차 -->
+<!-- 실행 가능한 산출물이 생기면 실제 설치·환경변수 이름·로컬 실행 명령을 채운다. 추측 금지. secret 금지. -->
 
 ## Common Commands
 

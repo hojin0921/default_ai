@@ -105,8 +105,6 @@ def main(argv: list[str]) -> int:
             print(f"invalid step: {step}", file=sys.stderr)
             return 1
         gate["step"] = step
-        if step in ("explore", "document", "plan"):
-            gate["allow_commit"] = False
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
@@ -126,7 +124,6 @@ def main(argv: list[str]) -> int:
     if cmd == "next-phase":
         gate["phase"] = int(gate.get("phase") or 1) + 1
         gate["step"] = "explore"
-        gate["allow_commit"] = False
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0

@@ -11,7 +11,7 @@
 - Phase 0은 bootstrap 또는 제품 없이 Docs만 초기화할 때만. 제품 설명이면 킥오프 K1부터.
 - 관련 파일·관련 docs만. docs 전체 읽기 금지. secret 출력 금지.
 - 구현 후 관련 테스트. 실패 무시 금지.
-- 보고: 단계 결과, docs, 검증, User Test Guide, 리뷰, 남은 이슈.
+- 보고: 단계 결과, docs, 검증, User Test Guide, 실행 가이드(실행 가능 시), 역할 기여(마지막 Phase), 리뷰, 남은 이슈.
 
 ## Bootstrap (Phase 0)
 

@@ -20,7 +20,7 @@ Usage: ./scripts/gate.sh <command> [args]
   advance <step>         Set step (explore|document|plan|implement|verify|review|human_verify)
   allow-commit           Allow git commit
   deny-commit            Disallow git commit
-  next-phase             phase+=1, step=explore, allow_commit=false
+  next-phase             phase+=1, step=explore (does not change allow_commit)
 
 Enforcement source of truth: .cursor/gate.json
 EOF

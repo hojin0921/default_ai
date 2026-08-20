@@ -46,6 +46,7 @@ picks an option in **this** turn.
    - a **한눈 그림** (Mermaid, small)
    - **확인할 파일** (real paths)
    AskQuestion `prompt` should tell them to review the diagram and files first.
+6. After Verify, the chat body must include **직접 확인 가이드** before the choice UI. Last Phase: **실행 가이드** then **역할 기여** before that.
 
 Humans may run the same CLI themselves (equivalent).
 
@@ -87,12 +88,22 @@ AskQuestion prompt: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, �
 
 **After Verify / Review (and human user test)**
 
-1. 검수 통과예요. 커밋해도 되게 열어 주세요  
-   → `./scripts/gate.sh allow-commit` (commit only if user asks)  
+Chat must include **직접 확인 가이드** (실행 / 확인 / 기대 / 실패 시) before the menu.  
+If this is the **last** Phase in the Plan, also include **실행 가이드** (준비 / 실행 / 접속) and **역할 기여** (역할 / 만든 것 / 어떻게 쓰이는지) *before* 직접 확인 가이드.  
+AskQuestion prompt (N = `gate.json` `phase`): `Phase N을 직접 플레이해 보신 결과는 어떤가요?`  
+Protocol/docs-only: `Phase N을 직접 확인해 보신 결과는 어떤가요?`
+
+Do **not** put 커밋 / `git commit` / `allow-commit` in option labels. Humans commit themselves.
+
+1. 직접 확인해 보니 통과예요  
+   → `./scripts/gate.sh allow-commit` (unlocks hook only; do not `git commit`)  
 2. 아직 문제 있어요. 같은 Phase에서 고치고 검증을 다시 해 주세요  
    — same/next message may include what’s wrong / how to fix  
-3. 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
+3. (다음 Phase가 있으면) 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
    → `./scripts/gate.sh next-phase`, then Explore only  
+   (`next-phase` does not change `allow_commit`. If already unlocked, it stays open.)  
+3. (마지막 Phase이면) 이 Phase는 통과. 전체 개발을 마무리해 주세요  
+   → do **not** run `next-phase`. Keep **실행 가이드** and **역할 기여** in the reply (or repeat them).  
 
 When the human picks the **edit** option with extra instructions in the same
 or next message, apply those edits and then re-offer the choice UI. Do not
@@ -108,7 +119,7 @@ treat “edit” alone as approval.
 ./scripts/gate.sh kickoff phase_plan
 ./scripts/gate.sh approve-plan      # requires design_approved
 ./scripts/gate.sh advance implement # after approving Phase detail plan
-./scripts/gate.sh allow-commit      # after Verify / user test
+./scripts/gate.sh allow-commit      # after human picks 통과 (not a chat menu label)
 ./scripts/gate.sh next-phase
 ./scripts/gate.sh off               # Small work
 ```
@@ -119,5 +130,6 @@ treat “edit” alone as approval.
 - Mutating `gate.sh` only after explicit human choice this turn (AskQuestion
   answer, numbered reply, or human already ran the CLI).
 - Do not advance on vague “proceed / approve somehow” without a clear selection.
+- Never offer a chat option whose label is about unlocking or making a git commit.
 - If blocked by hooks, re-offer AskQuestion (or text menu) or show the equivalent
   `./scripts/gate.sh` line.

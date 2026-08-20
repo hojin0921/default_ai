@@ -196,6 +196,39 @@ def _run(root: Path) -> None:
     assert g2["step"] == "explore"
     print("PASS approve-design then approve-plan")
 
+    g_open = load_gate(root)
+    g_open["allow_commit"] = True
+    g_open["phase"] = 1
+    g_open["step"] = "review"
+    save_gate(g_open, root)
+    p = gate_cmd("next-phase")
+    assert p.returncode == 0, p.stderr
+    after_next = load_gate(root)
+    assert after_next["phase"] == 2
+    assert after_next["step"] == "explore"
+    assert after_next["allow_commit"] is True
+    print("PASS next-phase keeps allow_commit")
+
+    g_closed = load_gate(root)
+    g_closed["allow_commit"] = False
+    g_closed["phase"] = 2
+    g_closed["step"] = "review"
+    save_gate(g_closed, root)
+    p = gate_cmd("next-phase")
+    assert p.returncode == 0, p.stderr
+    after_closed = load_gate(root)
+    assert after_closed["phase"] == 3
+    assert after_closed["allow_commit"] is False
+    print("PASS next-phase does not force-open commit")
+
+    g_open2 = load_gate(root)
+    g_open2["allow_commit"] = True
+    save_gate(g_open2, root)
+    p = gate_cmd("advance", "document")
+    assert p.returncode == 0, p.stderr
+    assert load_gate(root)["allow_commit"] is True
+    print("PASS advance document keeps allow_commit")
+
     tmp = Path(tempfile.mkdtemp())
     (tmp / ".cursor").mkdir()
     legacy = {

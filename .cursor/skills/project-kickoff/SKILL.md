@@ -18,7 +18,8 @@ description: >-
 | K4 Phase Plan | 기획 + 설계 | `senior-pm`, `senior-architect` |
 
 Start replies with `역할: 시니어 ○○`.  
-If the user explicitly names one role for the turn, that override wins (`delivery-phase` / `guide.md` §2-3).
+If the user explicitly names one role for the turn, that override wins (`delivery-phase` / `guide.md` §2-3).  
+Meet that role skill’s **Quality bar** (decision-forcing questions, testable In/Out, real paths)—do not ship a thin paraphrase of the user’s prompt.
 
 ## Instructions
 
@@ -114,7 +115,7 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 1. Create `.cursor/plans/<short-name>.md` from `.cursor/plans/_template.md`.
 2. Map every must-have feature to Delivery **Phase 1…N** (dependency, risk, demoable slices).
-3. For each Phase, fill Goal, In/Out, AI Verify, User Test Guide draft, and the 6-step checklist.
+3. For each Phase, fill Goal, In/Out, AI Verify, User Test Guide draft, 실행 가이드 draft (or “실행 대상 없음”), and the 6-step checklist. Leave **역할 기여** rows empty until Review / last Phase.
 4. Add a **한눈 그림** (Mermaid flowchart Phase 1→N, short titles, arrows = 순서·의존). Put it in the plan file and in chat.
 5. Set Status to **Draft**. Ask the human to approve before any Delivery Phase work.
 6. End with the Phase **한눈 그림**, then **확인할 파일**, then:

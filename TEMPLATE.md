@@ -19,7 +19,7 @@ Human(목표·채팅 승인·사용자 테스트)
 | Hooks | `.cursor/hooks.json` | 구현/커밋 차단 · `gate.json` 직접 수정 차단 |
 | Docs | `docs/` | 프로젝트 지식 |
 | Plans | `.cursor/plans/` | 전체 Plan + Phase 상세 |
-| Tests | AI Verify + User Test Guide | 검증 |
+| Tests | AI Verify + User Test Guide + 실행 가이드 | 검증·실행 |
 | Human Review | 사람 + `docs/ai/agent-workflow.md` | 승인·검수 |
 
 Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa`)로 나뉜다.  
@@ -34,7 +34,7 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 K1 질문 → K2 전체 설계 합의 → K3 docs → K4 Phase Plan
   → Human Review (채팅 선택 → gate approve-plan)
   → Phase N: Explore → Document → Plan → (채팅 승인)
-             → Implement → Verify(+User Test Guide) → Review
+             → Implement → Verify(+User Test Guide, 실행 가이드, 마지막이면 역할 기여) → Review
              → Human Verify
   → 다음 Phase …
 ```

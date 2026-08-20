@@ -56,11 +56,21 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
 - Changes (files):
 - 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
-- User Test Guide:
-  - Setup / Run:
-  - Check:
-  - Expected:
-  - If fails, report:
+- User Test Guide / 직접 확인 가이드:
+  - 실행:
+  - 확인:
+  - 기대:
+  - 실패 시 보고:
+- 실행 가이드 (이 Phase 산출물을 켜는 법. 없으면 “실행 대상 없음”):
+  - 준비:
+  - 실행:
+  - 접속:
+- 역할 기여 (이 Phase에서 실제로 한 일. 안 쓴 역할은 “해당 없음”):
+  - 기획:
+  - 설계:
+  - 디자인:
+  - 개발:
+  - QA:
 - Human Verify: [ ] 통과 (다음 Phase 전 필수)
 
 ### Phase 2 — <!-- 제목 -->
@@ -78,11 +88,21 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
 - Changes (files):
 - 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
-- User Test Guide:
-  - Setup / Run:
-  - Check:
-  - Expected:
-  - If fails, report:
+- User Test Guide / 직접 확인 가이드:
+  - 실행:
+  - 확인:
+  - 기대:
+  - 실패 시 보고:
+- 실행 가이드 (이 Phase 산출물을 켜는 법. 없으면 “실행 대상 없음”):
+  - 준비:
+  - 실행:
+  - 접속:
+- 역할 기여 (이 Phase에서 실제로 한 일. 안 쓴 역할은 “해당 없음”):
+  - 기획:
+  - 설계:
+  - 디자인:
+  - 개발:
+  - QA:
 - Human Verify: [ ] 통과 (다음 Phase 전 필수)
 
 <!-- 필요 시 Phase N 추가 -->
@@ -100,11 +120,25 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
 3. 승인 후 Phase 2도 동일 6단계 …
 4. 전체 마무리 Review
 
+## 역할 기여 (전체)
+
+<!-- 마지막 Phase에서 채팅에도 넣는다. 경로·근거만. 안 쓴 역할은 해당 없음. -->
+
+| 역할 | 만든 것 | 어떻게 쓰이는지 |
+|------|---------|-----------------|
+| 시니어 기획 | | |
+| 시니어 설계 | | |
+| 시니어 디자인 | | |
+| 시니어 개발 | | |
+| 시니어 QA | | |
+
 ## Verification
 
 - [ ] Phase마다 6단계 완료
 - [ ] 관련 테스트 / typecheck / lint / build (해당 시)
 - [ ] User Test Guide 제공 (Phase마다)
+- [ ] 실행 가이드 제공 (실행 가능한 산출물 · 마지막 Phase 필수)
+- [ ] 역할 기여 제공 (마지막 Phase · Plan + 채팅)
 - [ ] docs 갱신 (Phase 2 Document)
 
 ## Risks

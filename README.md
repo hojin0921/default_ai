@@ -8,7 +8,7 @@
 
 ## Setup
 
-<!-- TODO: 설치·환경변수(`.env.example`)·실행. 상세는 docs/development.md -->
+<!-- 실행 가능한 산출물이 생기면 AI가 실제 설치·실행 명령을 채운다. 추측 금지. 상세는 docs/development.md -->
 
 ## Development
 
@@ -27,6 +27,6 @@
 클론 후: ./scripts/install-hooks.sh (.git 없이 복사 권장 — guide.md §1)
 
 A. 프로젝트 설명 → 질문 → 전체 설계 합의 → docs → Plan(Phase) Draft → 채팅에서 승인 (+ gate approve-plan)
-B. Phase마다 6단계 (Skill: delivery-phase + senior-*) → User Test Guide → 검수 → 다음 Phase
+B. Phase마다 6단계 (Skill: delivery-phase + senior-*) → User Test Guide → 실행 가이드(켤 수 있으면) → 검수 → 다음 Phase. 마지막 Phase면 역할 기여(누가 무엇을)도.
 Skills: .cursor/skills/ (kickoff / delivery-phase / phase-gate / senior-*) | Gate: 채팅 선택→gate.sh
 -->

@@ -20,7 +20,8 @@ def main() -> int:
         "phase-gate: commit blocked.\n"
         f"  enabled={gate.get('enabled')} plan_approved={gate.get('plan_approved')} "
         f"phase={gate.get('phase')} step={gate.get('step')} allow_commit={gate.get('allow_commit')}\n"
-        "  After Verify/User Test: chat choose allow-commit (or ./scripts/gate.sh allow-commit)\n"
+        "  After Verify/User Test: chat pick 통과 (Agent runs ./scripts/gate.sh allow-commit),\n"
+        "  or run that CLI, then git commit yourself.\n"
         "  Or Small work: ./scripts/gate.sh off",
         file=sys.stderr,
     )

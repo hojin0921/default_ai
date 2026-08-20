@@ -26,6 +26,7 @@
 
 잘못된 자동 선택 완화: `delivery-phase`가 현재 단계의 primary 역할을 **명시**한다.  
 응답 관례: `역할: 시니어 ○○` 한 줄.  
+각 Skill의 **Quality bar**를 충족할 것. 피상적 요약은 실패.  
 **사용자 명시 호출**(“시니어 QA로만 …”)이 있으면 그 역할이 Role map보다 우선 — `guide.md` §2-3.
 
 Cursor: Customize → Skills, 또는 Agent가 description 기준으로 자동 선택.
