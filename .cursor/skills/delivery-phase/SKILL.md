@@ -13,6 +13,24 @@ description: >-
 
 Work **only the current Phase** and **only the current step**. Do not start the next Phase until Human Verify.
 
+At the start of each reply for this Phase work, state the active role line, e.g.
+`역할: 시니어 설계`. Read and follow the matching **role Skill** under `.cursor/skills/`.
+
+### Role map (primary → Skill)
+
+| Step | Primary | Optional | Skill(s) |
+|------|---------|----------|----------|
+| 1 Explore | 설계 (+ 기획) | — | `senior-architect`, `senior-pm` |
+| 2 Document | 설계 / 기획 | 디자인 if UX docs | `senior-architect` / `senior-pm` (+ `senior-design`) |
+| 3 Plan | 기획 + 설계 | 디자인 if UI; 개발 for feasibility | `senior-pm`, `senior-architect` (+ …) |
+| 4 Implement | 개발 | 디자인 if UI | `senior-dev` (+ `senior-design`) |
+| 5 Verify | QA | 개발 for fixes | `senior-qa` (+ `senior-dev`) |
+| 6 Review | QA + 설계 | 기획 for requirement gaps | `senior-qa`, `senior-architect` (+ `senior-pm`) |
+
+### Explicit role override
+
+If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어 디자인 관점으로`), that role **wins over** the Role map for the reply. Follow only that `senior-*` skill; skip other senior stances unless they asked for a sequence (e.g. 설계 후 QA). Still honor Phase step limits (no Implement during Explore) and phase-gate rules. See `guide.md` §2-3.
+
 ### Step order (required)
 
 1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.
@@ -28,7 +46,8 @@ Work **only the current Phase** and **only the current step**. Do not start the 
 
 ### After each step
 
-Report: what changed, and a **numbered Korean chat menu** for the next human decision when the gate is enabled (or when approval is required). Use the phrasing in `guide.md` §4. Do not advance the gate without an explicit choice this turn.
+Every reply for this Phase work must include the line `역할: 시니어 ○○` (Role map, or the user-overridden role).  
+Report: what changed, and a **decision UI** for the next human choice when the gate is enabled (or when approval is required). Prefer **`AskQuestion`** with Korean options from `guide.md` §4; if unavailable, use numbered Korean text. Do not advance the gate without an explicit choice this turn.
 
 ### Gate (when `.cursor/gate.json` enabled)
 

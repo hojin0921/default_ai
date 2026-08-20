@@ -1,6 +1,6 @@
 # Project Name
 
-<!-- Phase 0 이후 AI가 프로젝트 개요로 채운다. 템플릿 사용법: 가이드.md / TEMPLATE.md -->
+<!-- Phase 0 이후 AI가 프로젝트 개요로 채운다. 템플릿 사용법: guide.md / TEMPLATE.md -->
 
 ## Overview
 
@@ -23,10 +23,10 @@
 <!-- TODO: 배포 개요. 상세는 docs/deployment.md -->
 
 <!--
-템플릿: TEMPLATE.md | 사용법: docs/ai/agent-workflow.md
-클론 후: ./scripts/install-hooks.sh
+템플릿: TEMPLATE.md | 사용법: guide.md (§2-2 시니어 역할) / docs/ai/agent-workflow.md
+클론 후: ./scripts/install-hooks.sh (.git 없이 복사 권장 — guide.md §1)
 
 A. 프로젝트·필수 기능 → Plan(Phase) Draft → 채팅에서 승인 (+ gate approve-plan)
-B. Phase마다 6단계 (Skill: delivery-phase) → User Test Guide → 검수 → 다음 Phase
-Skills: .cursor/skills/ | Hooks: .cursor/hooks.json | Gate: .cursor/gate.json (채팅 선택→gate.sh)
+B. Phase마다 6단계 (Skill: delivery-phase + senior-*) → User Test Guide → 검수 → 다음 Phase
+Skills: .cursor/skills/ (kickoff / delivery-phase / phase-gate / senior-*) | Gate: 채팅 선택→gate.sh
 -->

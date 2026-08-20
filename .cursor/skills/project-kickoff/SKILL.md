@@ -8,6 +8,12 @@ description: >-
 
 # Project Kickoff
 
+## Roles
+
+Primary: **시니어 기획** (`senior-pm`) + **시니어 설계** (`senior-architect`).  
+Start replies with `역할: 시니어 기획` (and note 설계 co-lead when architecture cuts Phases).  
+If the user explicitly names one role for the turn, that override wins (see `delivery-phase` Explicit role override / `guide.md` §2-3).
+
 ## Instructions
 
 1. Treat the request as **Large / kickoff**. Do **not** implement code yet.
@@ -16,7 +22,10 @@ description: >-
 4. Map every must-have feature to a Delivery **Phase 1…N** (dependency, risk, demoable slices).
 5. For each Phase, fill Goal, In/Out, AI Verify, User Test Guide draft, and the 6-step checklist.
 6. Set Status to **Draft**. Ask the human to approve before any Phase work.
-7. End with a **numbered Korean menu**, for example:
+7. End with a **decision UI**:
+   - Prefer **`AskQuestion`** (clickable Korean options) when available.
+   - Else numbered Korean text `1` / `2` / `3`.
+   Example options:
    1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요  
       → run `./scripts/gate.sh on` then `approve-plan`, then Phase 1 Explore only  
    2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  

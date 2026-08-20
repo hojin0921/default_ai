@@ -6,7 +6,7 @@ Cursor의 **Rules · Skills · Hooks**(+ 선택 MCP)를 레포에 묶어,
 
 ```
 Human(목표·채팅 승인·사용자 테스트)
-  → AI(Skills: kickoff / delivery-phase; 선택 후 gate.sh 대행)
+  → AI(Skills: kickoff / delivery-phase + senior-* 역할; 선택 후 gate.sh 대행)
     → Hooks(gate) + Plans + Docs + Tests
 ```
 
@@ -15,12 +15,15 @@ Human(목표·채팅 승인·사용자 테스트)
 | 축 | 위치 | 목적 |
 |----|------|------|
 | Rules | `AGENTS.md`, `.cursor/rules/` | AI 행동 |
-| Skills | `.cursor/skills/` | 킥오프·Phase·gate 절차 |
+| Skills | `.cursor/skills/` | 킥오프·Phase·gate + **시니어 역할** |
 | Hooks | `.cursor/hooks.json` | 구현/커밋 차단 · `gate.json` 직접 수정 차단 |
 | Docs | `docs/` | 프로젝트 지식 |
 | Plans | `.cursor/plans/` | 전체 Plan + Phase 상세 |
 | Tests | AI Verify + User Test Guide | 검증 |
 | Human Review | 사람 + `docs/ai/agent-workflow.md` | 승인·검수 |
+
+Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa`)로 나뉜다.  
+한 Agent Chat · 단계마다 `역할: 시니어 ○○` 고지. 사람용 요약: [`guide.md`](guide.md) §2-2.
 
 Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하면 Skills+Hooks+Rules가 함께 간다.
 (나중에 Cursor Marketplace Plugin으로 재패키징 가능.)
@@ -47,7 +50,7 @@ Phase 0 = bootstrap. Delivery Phase는 1부터, 진행 시 6단계 필수.
 ├── .env.example / .gitignore / .cursorignore
 ├── .cursor/
 │   ├── rules/
-│   ├── skills/          # project-kickoff, delivery-phase, phase-gate
+│   ├── skills/          # kickoff, delivery-phase, phase-gate, senior-*
 │   ├── hooks.json + hooks/   # gate-check, protect-gate
 │   ├── gate.json
 │   └── plans/_template.md
