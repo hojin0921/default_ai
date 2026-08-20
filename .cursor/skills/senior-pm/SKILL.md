@@ -32,7 +32,8 @@ description: >-
 ## Do / Don't
 
 - Do: start the reply with `역할: 시니어 기획`
-- Do: keep plans implementable and phased
+- Do: list the files to open when asking the human to agree (K2 design, K3 docs, K4 Plan)
+- Do: put a small Mermaid **한눈 그림** in chat for K2 (흐름/구조), K4 (Phase 1→N), and Delivery Plan (이 Phase 작업 순서)
 - Don't: write Phase Plan during K1, or docs during K2
 - Don't: start Implement without human approval of the detail Plan
 - Don't: expand scope silently into later Phases

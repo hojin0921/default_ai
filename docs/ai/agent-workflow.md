@@ -121,11 +121,17 @@
 
 **K2 전체 설계 초안 후**
 
+채팅에 **한눈 그림**(Mermaid)과 `확인할 파일` (예: `.cursor/plans/<이름>-design.md`)을 먼저 넣는다.  
+AskQuestion: `아래 그림과 설계 파일을 확인한 뒤, 어떻게 할까요?`
+
 1. 이 전체 설계를 합의하고, 이제 문서화해 주세요 (`approve-design`)  
 2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
 3. 지금은 보류할게요  
 
 **K3 docs 문서화 후**
+
+합의된 K2 그림과 `확인할 파일` (`docs/product.md` 등)을 먼저 넣는다.  
+AskQuestion: `아래 그림과 문서를 확인한 뒤, 어떻게 할까요?`
 
 1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요 (`kickoff phase_plan`)  
 2. 문서를 수정해 주세요  
@@ -133,11 +139,17 @@
 
 **K4 전체 개발 계획(Draft) 후**
 
+채팅에 **Phase 한눈 그림**(1→N Mermaid)과 `확인할 파일` (`.cursor/plans/<이름>.md`)을 먼저 넣는다.  
+AskQuestion: `아래 Phase 그림과 Plan 파일을 확인한 뒤, 어떻게 할까요?`
+
 1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요 (`approve-plan`)  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
 **이 Phase 상세 구현 계획 후**
+
+채팅에 **이 Phase 한눈 그림**(작업 순서 Mermaid)과 `확인할 파일`을 먼저 넣는다.  
+AskQuestion: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요 (`advance implement`)  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
@@ -248,7 +260,8 @@ Phase N / 단계에서 문제: …
 
 ```text
 이 기능을 어떻게 구현할지 계획해.
-변경 파일·순서·AI Verify·User Test Guide 초안. 승인 전 구현 금지.
+변경 파일·순서·AI Verify·User Test Guide 초안.
+이 Phase 작업 순서 한눈 그림(Mermaid)과 확인할 파일 경로를 채팅에 넣고, 승인 전 구현 금지.
 ```
 
 **4. Implement**

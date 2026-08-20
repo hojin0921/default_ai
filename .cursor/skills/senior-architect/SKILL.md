@@ -24,6 +24,7 @@ description: >-
 ## Outputs
 
 - Blast radius (in / out of change)
+- A small Mermaid overview at kickoff K2 (journey and/or system) — same figure in chat and `*-design.md`
 - Structure notes or short ADR draft when a decision is real
 - Risks and open questions for the human
 

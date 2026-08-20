@@ -35,7 +35,24 @@ If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어
 
 1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.
 2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.
-3. **Plan** — Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.
+3. **Plan** — Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.  
+   Before the approve/implement choice, show:
+   - **한눈 그림**: Mermaid of **this Phase only** (작업 순서: 무엇 → 무엇). Not the whole 1→N kickoff diagram unless reminding context in one line.
+   - **확인할 파일**: every path this Phase will change, plus the Plan file itself.
+   AskQuestion prompt: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
+
+   예시:
+   ```mermaid
+   flowchart LR
+     A["1 스키마"] --> B["2 API"]
+     B --> C["3 UI"]
+     C --> D["4 테스트"]
+   ```
+   ```
+   확인할 파일
+   - `.cursor/plans/<name>.md` — 이 Phase 상세 (Goal·순서)
+   - `src/…` — 이번에 손댈 코드
+   ```
 4. **Implement** — Minimal changes for this Phase only.
 5. **Verify** — Run related tests → typecheck/lint → build if needed. Never delete/weaken tests to pass. Then output **User Test Guide**:
    - Setup / Run
@@ -47,7 +64,7 @@ If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어
 ### After each step
 
 Every reply for this Phase work must include the line `역할: 시니어 ○○` (Role map, or the user-overridden role).  
-Report: what changed, and a **decision UI** for the next human choice when the gate is enabled (or when approval is required). Prefer **`AskQuestion`** with Korean options from `guide.md` §4; if unavailable, use numbered Korean text. Do not advance the gate without an explicit choice this turn.
+Report: what changed, and a **decision UI** for the next human choice when the gate is enabled (or when approval is required). Prefer **`AskQuestion`** with Korean options from `guide.md` §4; if unavailable, use numbered Korean text. When the choice is “approve this design/docs/plan”, show a small **Mermaid 한눈 그림** and list **확인할 파일** (real paths) in the chat first. Do not advance the gate without an explicit choice this turn.
 
 ### Gate (when `.cursor/gate.json` enabled)
 

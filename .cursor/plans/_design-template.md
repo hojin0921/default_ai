@@ -16,7 +16,13 @@
 
 ## Journeys
 
-<!-- 주요 사용자 흐름 -->
+<!-- 주요 사용자 흐름. 아래 Mermaid를 채팅에도 그대로 넣는다. -->
+
+```mermaid
+flowchart LR
+  A[시작] --> B[핵심 행동]
+  B --> C[결과]
+```
 
 ## System
 

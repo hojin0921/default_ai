@@ -23,6 +23,16 @@ Small | Medium | **Large**
 |---------|-------|-------|
 | | | |
 
+## 한눈 그림
+
+<!-- 채팅에도 그대로 넣는다. 노드 제목은 짧게. 화살표 = 진행 순서·의존. -->
+
+```mermaid
+flowchart LR
+  P1["Phase 1"] --> P2["Phase 2"]
+  P2 --> P3["Phase 3"]
+```
+
 ## Delivery Phases
 
 <!--
@@ -44,6 +54,7 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - [ ] 6 Review → Human Verify
 - Docs to update:
 - Changes (files):
+- 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
 - User Test Guide:
   - Setup / Run:
@@ -65,6 +76,7 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - [ ] 6 Review → Human Verify
 - Docs to update:
 - Changes (files):
+- 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
 - User Test Guide:
   - Setup / Run:

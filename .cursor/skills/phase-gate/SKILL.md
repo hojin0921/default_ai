@@ -42,6 +42,10 @@ picks an option in **this** turn.
    a documented set). Then `./scripts/gate.sh status`
    and report briefly.
 4. If the choice is unclear, ask again — do not run mutating `gate.sh`.
+5. For K2/K3/K4 (and Phase detail Plan), the chat body must include:
+   - a **한눈 그림** (Mermaid, small)
+   - **확인할 파일** (real paths)
+   AskQuestion `prompt` should tell them to review the diagram and files first.
 
 Humans may run the same CLI themselves (equivalent).
 
@@ -71,6 +75,9 @@ Humans may run the same CLI themselves (equivalent).
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
 **After Phase detail Plan**
+
+Chat must include a **한눈 그림** (this Phase work order) and **확인할 파일**.  
+AskQuestion prompt: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
    → `./scripts/gate.sh advance implement`, then Implement  

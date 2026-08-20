@@ -58,7 +58,7 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰
 ## Plan
 
 - 킥오프: K1–K4 (`_design-template.md` + `_template.md`) → K4 Status=Draft 승인 요청
-- Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서/AI Verify/User Test Guide
+- Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서 + **한눈 그림**(이 Phase 작업 순서) + 확인할 파일 → 승인 요청
 
 ## Implement / Verify / Review
 
