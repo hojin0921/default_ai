@@ -4,8 +4,8 @@ description: >-
   Explains the phase gate (.cursor/gate.json and scripts/gate.sh). Prefer
   AskQuestion clickable choices when available; else Korean numbered text.
   Agent may run mutating gate.sh only after an explicit choice. Use when the
-  user mentions gate, approve-plan, allow-commit, phase enforcement, or commit
-  blocked by phase-gate.
+  user mentions gate, approve-plan, approve-design, kickoff, allow-commit,
+  phase enforcement, or commit blocked by phase-gate.
 ---
 
 # Phase Gate
@@ -17,9 +17,11 @@ Source of truth: `.cursor/gate.json`
 | Field | Meaning |
 |-------|---------|
 | `enabled` | Large enforcement on/off (Small → off) |
-| `plan_approved` | Whole plan approved |
+| `plan_approved` | Whole Phase Plan approved |
+| `design_approved` | Kickoff overall design agreed |
 | `phase` | Current Delivery Phase number |
 | `step` | explore\|document\|plan\|implement\|verify\|review\|human_verify |
+| `kickoff_step` | discover\|design\|docs\|phase_plan\|done |
 | `allow_commit` | git commit allowed |
 
 ## Channel (default: chat)
@@ -37,7 +39,7 @@ picks an option in **this** turn.
    button UI in markdown.
 3. After an unambiguous choice, run the matching `./scripts/gate.sh`
    command(s) for that option (one decision per turn; a menu item may bundle
-   a documented set such as `on` + `approve-plan`). Then `./scripts/gate.sh status`
+   a documented set). Then `./scripts/gate.sh status`
    and report briefly.
 4. If the choice is unclear, ask again — do not run mutating `gate.sh`.
 
@@ -45,10 +47,25 @@ Humans may run the same CLI themselves (equivalent).
 
 ### Menu options (Korean — AskQuestion labels or text numbers)
 
-**After whole-plan Draft**
+**After K2 overall design Draft**
+
+1. 이 전체 설계를 합의하고, 이제 문서화해 주세요  
+   → `./scripts/gate.sh approve-design`, then K3 only  
+2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
+3. 지금은 보류할게요  
+
+**After K3 docs**
+
+1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요  
+   → `./scripts/gate.sh kickoff phase_plan`, then K4 only  
+2. 문서를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**After whole-plan Draft (K4)**
 
 1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요  
-   → `./scripts/gate.sh on` then `approve-plan`, then Phase 1 Explore only  
+   → `./scripts/gate.sh approve-plan`, then Phase 1 Explore only  
+   Do **not** run `on` with `approve-plan` (`on` clears `design_approved`).  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
    — same/next message may include edit details  
 3. 지금은 보류할게요. 나중에 이어갈게요  
@@ -79,8 +96,10 @@ treat “edit” alone as approval.
 ```bash
 ./scripts/install-hooks.sh          # once per clone
 ./scripts/gate.sh status
-./scripts/gate.sh on                # start Large
-./scripts/gate.sh approve-plan      # after reviewing Draft plan
+./scripts/gate.sh on                # Large reset (discover, design not approved)
+./scripts/gate.sh approve-design    # after agreeing overall design
+./scripts/gate.sh kickoff phase_plan
+./scripts/gate.sh approve-plan      # requires design_approved
 ./scripts/gate.sh advance implement # after approving Phase detail plan
 ./scripts/gate.sh allow-commit      # after Verify / user test
 ./scripts/gate.sh next-phase

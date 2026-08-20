@@ -50,7 +50,7 @@
 | 5 Verify | QA (+ 개발 수정) | — |
 | 6 Review | QA + 설계 | 기획(요구 누락) |
 
-킥오프 전체 Plan Draft는 **기획 + 설계** 주도.  
+킥오프: K1 질문 **기획**, K2 설계 초안 **기획 + 설계**, K3 문서화 **설계/기획**, K4 Phase Plan **기획 + 설계**.  
 응답 시작에 `역할: 시니어 ○○`을 한 줄로 밝힌다.
 
 ### 명시 호출 우선
@@ -61,17 +61,22 @@
 
 목록·트리거: `.cursor/skills/README.md`. 사람용 요약: [`guide.md`](../../guide.md) §2-2. 전체 Plan: `.cursor/plans/senior-role-agents.md`.
 
-## 두 겹의 계획
+## 계획의 층
 
-| 계획 | 내용 |
-|------|------|
-| 전체 Plan | 필수 기능을 Delivery Phase 1…N으로 분할 (구현 전 Draft) |
-| Phase 상세 Plan | 해당 Phase를 **어떻게** 구현할지 (6단계 중 3번) |
+| 층 | 내용 | 시점 |
+|----|------|------|
+| 전체 설계 | 문제·사용자·범위·구조 (`*-design.md` → 합의 후 docs) | 킥오프 K2–K3 |
+| Phase Plan | 필수 기능을 Delivery Phase 1…N으로 분할 | 킥오프 K4 |
+| Phase 상세 Plan | 해당 Phase를 **어떻게** 구현할지 (6단계 중 3번) | 각 Phase |
+
+결정: [`docs/decisions/001-kickoff-design-first.md`](../decisions/001-kickoff-design-first.md).
 
 ## 표준 흐름
 
 ```
-킥오프: 전체 Plan(Phases) → Human Review
+킥오프:
+  K1 질문 라운드 → K2 전체 설계 초안·합의 → K3 docs 문서화
+  → K4 Phase Plan Draft → Human Review
   → Phase N:
       1 Explore → 2 Document → 3 Plan → (승인)
       → 4 Implement → 5 Verify(+User Test Guide) → 6 Review
@@ -83,14 +88,15 @@
 |------|------|
 | Small | Implement → Verify |
 | Medium | Explore → 짧은 Plan → Implement → Verify |
-| Large / 킥오프 | 전체 Plan 승인 후, **Phase마다 6단계** |
+| Large / 킥오프 | K1–K4 후 Phase Plan 승인, **Phase마다 6단계** |
 
-### Phase 0 vs Delivery Phase
+### Phase 0 vs Delivery Phase vs 킥오프
 
 | 이름 | 의미 |
 |------|------|
-| Phase 0 | bootstrap / 초기 문서화 요청 시 |
-| Phase 1…N | 기능 단위 Delivery. 진행 시 6단계 필수 |
+| 킥오프 K1–K4 | 제품을 만들겠다는 설명으로 시작. 질문·설계 합의·docs·Phase Plan |
+| Phase 0 | 제품 없이 bootstrap / 템플릿 docs만 요청할 때 |
+| Phase 1…N | 기능 단위 Delivery. 진행 시 6단계 필수. Phase 1 Document는 K3 이후 **변경분** |
 
 ## Phase Gate (채팅 선택 기본 / 터미널 동등)
 
@@ -107,9 +113,27 @@
 
 ### 채팅 메뉴 예 (한글 · AskQuestion 라벨 / 번호 공통)
 
-**전체 개발 계획(Draft) 후**
+**K1 질문 라운드 후 (이해 요약)**
 
-1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요 (`on` + `approve-plan`)  
+1. 이 이해로 전체 설계 초안을 작성해 주세요  
+2. 더 질문하거나 이해를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**K2 전체 설계 초안 후**
+
+1. 이 전체 설계를 합의하고, 이제 문서화해 주세요 (`approve-design`)  
+2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
+3. 지금은 보류할게요  
+
+**K3 docs 문서화 후**
+
+1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요 (`kickoff phase_plan`)  
+2. 문서를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**K4 전체 개발 계획(Draft) 후**
+
+1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요 (`approve-plan`)  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
@@ -131,8 +155,10 @@
 
 | 상황 | 명령 |
 |------|------|
-| Large 시작 | `./scripts/gate.sh on` |
-| 전체 Plan 승인 | `./scripts/gate.sh approve-plan` |
+| Large 리셋 (설계 미합의) | `./scripts/gate.sh on` |
+| 전체 설계 합의 | `./scripts/gate.sh approve-design` |
+| Phase Plan 단계로 | `./scripts/gate.sh kickoff phase_plan` |
+| 전체 Plan 승인 (`design_approved` 필요) | `./scripts/gate.sh approve-plan` |
 | 단계 전진 | `./scripts/gate.sh advance implement` (등) |
 | 커밋 허용 | `./scripts/gate.sh allow-commit` |
 | 다음 Phase | `./scripts/gate.sh next-phase` |
@@ -142,30 +168,27 @@
 
 ## 프로젝트 킥오프
 
-Agent Skill: `project-kickoff` (자동 또는 명시).
+Agent Skill: `project-kickoff` (자동 또는 명시).  
+바로 Phase Plan을 쓰지 않는다. K1 질문 → K2 설계 합의 → K3 docs → K4 Phase Plan.
 
 ```text
-코드 작성하지 말고, 아래 프로젝트의 전체 개발 Plan만 세워줘.
-.cursor/plans/에 _template.md 형식으로 Draft.
-필수 기능을 Delivery Phase로 나누고, 각 Phase는 6단계
-(Explore→Document→Plan→Implement→Verify→Review)로 진행한다고 명시해.
-지금은 구현하지 마.
+코드 작성하지 말고, 아래 프로젝트 킥오프를 K1부터 진행해.
+지금은 질문만. Phase Plan·docs 본문·구현은 하지 마.
 
 ## 프로젝트
-<!-- 무엇을 만드는지 -->
+<!-- 무엇을 만드는지. 비어 있으면 질문으로 채움 -->
 
 ## 꼭 들어가야 할 기능
-- 
-- 
+-
 
 ## 있으면 좋은 기능 (나중 Phase 가능)
-- 
+-
 
 ## 제약
 <!-- 스택, 기한, 플랫폼 등. 없으면 생략 -->
 ```
 
-전체 Plan 승인 후 **Phase 1을 6단계로** (한 번에 구현 시키지 말 것).  
+K4 Phase Plan 승인 후 **Phase 1을 6단계로** (한 번에 구현 시키지 말 것).  
 채팅에서 메뉴 `1`(승인)을 고르거나:
 
 ```text
@@ -254,16 +277,19 @@ Phase N / 단계에서 문제: …
 
 ## Phase 0 (조건부)
 
-bootstrap 요청, 또는 Docs 비어 있음 + 초기/문서화일 때만.
-일반 Small은 Docs TODO로 막지 않는다. Delivery Phase의 Document(2단계)와 혼동하지 않는다.
+제품 설명 없이 bootstrap / 템플릿 docs만 요청할 때만.
+제품을 만들겠다고 하면 킥오프 K1부터 (Phase 0으로 가지 않음).
+일반 Small은 Docs TODO로 막지 않는다. 킥오프 K3·Delivery Document(2단계)와 혼동하지 않는다.
 
 ```text
 Phase 0부터. 코드 수정 금지.
-docs 초안 + README 개요. 필요 시 전용 rules. 첫 Large면 전체 plan Draft.
+docs 초안 + README 개요. 필요 시 전용 rules.
+제품 아이디어가 있으면 킥오프 K1(질문)부터.
 ```
 
 ## Anti-patterns
 
+- 프로젝트 설명만 받고 질문·설계 합의 없이 바로 Phase Plan
 - 전체 Plan만 승인받고 Phase 1에서 Explore/Document/Plan 없이 바로 구현
 - Phase 6단계 중 일부를 건너뜀
 - 사용자 검수 전 다음 Phase Explore 시작

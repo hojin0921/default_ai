@@ -12,9 +12,11 @@ usage() {
 Usage: ./scripts/gate.sh <command> [args]
 
   status                 Show current gate
-  on                     Enable Large/kickoff gate (plan not approved)
+  on                     Enable Large (kickoff_step=discover, design not approved)
   off                    Disable gate (Small work)
-  approve-plan           plan_approved=true, step=explore, allow_commit=false
+  approve-design         design_approved=true, kickoff_step=docs
+  kickoff <step>         Set kickoff_step (discover|design|docs|phase_plan|done)
+  approve-plan           requires design_approved; plan_approved=true, kickoff_step=done, step=explore
   advance <step>         Set step (explore|document|plan|implement|verify|review|human_verify)
   allow-commit           Allow git commit
   deny-commit            Disallow git commit

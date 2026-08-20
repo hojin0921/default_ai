@@ -4,6 +4,7 @@
 
 | 파일 | 역할 | 상태 |
 |------|------|------|
+| `product.md` | 사용자·문제·필수 기능·저니 | 스텁 (킥오프 K3에서 채움) |
 | `architecture.md` | 구조·데이터 흐름 | TODO |
 | `development.md` | 로컬 실행·기여 | TODO |
 | `testing.md` | 테스트 전략·명령 | TODO |
@@ -15,7 +16,8 @@
 
 축: Rules · Skills · Hooks · Docs · Plans · Tests · **Human Review**.  
 Skills = 워크플로 + **시니어 역할** (`senior-*`). 사람용 요약: `guide.md` §2-2.  
-Large는 Delivery Phase마다 6단계 + 사람 검수. 강제 게이트: 채팅 선택 → `./scripts/gate.sh` (터미널 동등).  
+Large 킥오프: 질문 → 전체 설계 합의 → docs → Phase Plan. 그다음 Delivery Phase마다 6단계 + 사람 검수.  
+강제 게이트: 채팅 선택 → `./scripts/gate.sh` (터미널 동등). 결정: `docs/decisions/001-kickoff-design-first.md`.  
 템플릿 구조는 `TEMPLATE.md`. Skills 목록: `.cursor/skills/README.md`.
 
 ## Rules vs Docs

@@ -114,22 +114,21 @@ FAQ:
 
 ## 3. 새 프로젝트 (Large) — 권장 순서
 
-### 3-1. 전체 Plan만 받기 (구현 금지)
+바로 Phase Plan을 받지 않는다. **질문 → 전체 설계 합의 → docs → Phase Plan** 순이다.  
+AI Skill: `project-kickoff` (자동 또는 명시).
 
-새 Chat에서:
+### 3-1. 질문 라운드 (K1)
+
+새 Chat에서. 기능이 비어 있어도 된다.
 
 ```text
-코드 작성하지 말고, 아래 프로젝트의 전체 개발 Plan만 세워줘.
-.cursor/plans/에 _template.md 형식으로 Draft.
-필수 기능을 Delivery Phase로 나누고, 각 Phase는 6단계
-(Explore→Document→Plan→Implement→Verify→Review)로 진행한다고 명시해.
-지금은 구현하지 마.
+코드 작성하지 말고, 아래 프로젝트 킥오프를 K1부터 진행해.
+지금은 질문만. Phase Plan·docs 본문·구현은 하지 마.
 
 ## 프로젝트
-<!-- 무엇을 만드는지 -->
+<!-- 무엇을 만드는지. 비어 있으면 질문으로 채움 -->
 
 ## 꼭 들어가야 할 기능
--
 -
 
 ## 있으면 좋은 기능 (나중 Phase 가능)
@@ -139,11 +138,22 @@ FAQ:
 <!-- 스택, 플랫폼, 기한 등. 없으면 생략 -->
 ```
 
-AI Skill: `project-kickoff` (자동 또는 명시).
+AI가 질문 3–7개를 한 번에 한다. 모르면 “제안해”라고 답해도 된다.  
+선택 UI: 이 이해로 설계 초안 / 더 질문·수정 / 보류.
 
-### 3-2. Plan 검토 후 채팅에서 선택
+### 3-2. 전체 설계 합의 (K2)
 
-1. `.cursor/plans/` 의 Draft를 읽는다  
+`.cursor/plans/<이름>-design.md` Draft를 읽는다.  
+선택 UI: 합의하고 문서화 / 설계 수정 / 보류.
+
+### 3-3. docs 문서화 (K3)
+
+합의된 내용이 `docs/product.md`, `docs/architecture.md` 등에 반영됐는지 확인한다.  
+선택 UI: Phase Plan 초안 작성 / 문서 수정 / 보류.
+
+### 3-4. Phase Plan 검토 후 채팅에서 선택 (K4)
+
+1. `.cursor/plans/` 의 Phase Plan Draft를 읽는다  
 2. AI가 내는 **선택 UI**에서 고른다  
    - **버튼 카드**가 보이면 해당 항목을 클릭  
    - 텍스트 번호만 보이면 `1` / `2` / `3`  
@@ -151,7 +161,7 @@ AI Skill: `project-kickoff` (자동 또는 명시).
 
 (터미널을 쓰고 싶다면 §4-3 동등 명령 참고.)
 
-### 3-3. Phase마다 6단계
+### 3-5. Phase마다 6단계
 
 **Phase 개수**는 프로젝트마다 다르다 (Phase 1…N).  
 **각 Phase 안**에서 아래 6단계를 건너뛰지 않는다.
@@ -188,21 +198,35 @@ AI Skill: `delivery-phase` (+ 단계별 `senior-*`).
 화살표(→) 줄은 선택 시 돌아가는 게이트 동작이다.  
 버튼 라벨도 **같은 한글 문장**을 쓴다.
 
-**① 전체 개발 계획(Draft)을 받은 뒤**
+**① 킥오프 K2 — 전체 설계 초안 후**
+
+1. 이 전체 설계를 합의하고, 이제 문서화해 주세요  
+   → `approve-design` 후 문서화  
+2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
+3. 지금은 보류할게요  
+
+**② 킥오프 K3 — docs 문서화 후**
+
+1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요  
+   → `kickoff phase_plan` 후 Phase Plan  
+2. 문서를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**③ 킥오프 K4 — 전체 개발 계획(Draft)을 받은 뒤**
 
 1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요  
-   → 게이트 켜기(`on`) + 계획 승인(`approve-plan`) 후 Explore  
+   → `approve-plan` 후 Explore (`on`과 묶지 않음)  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
-**② 이 Phase의 상세 구현 계획을 받은 뒤**
+**④ 이 Phase의 상세 구현 계획을 받은 뒤**
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
    → `advance implement` 후 구현  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
 3. 지금은 보류할게요  
 
-**③ 검증(Verify) / 리뷰(Review) 후, 내가 테스트까지 해본 뒤**
+**⑤ 검증(Verify) / 리뷰(Review) 후, 내가 테스트까지 해본 뒤**
 
 1. 검수 통과예요. 커밋해도 되게 열어 주세요  
    → `allow-commit` (실제 `git commit`은 내가 따로 요청할 때만)  
@@ -250,7 +274,9 @@ Phase 2 Verify에서 로그인이 실패해.
 | 상황 | 명령 |
 |------|------|
 | 현재 상태 | `./scripts/gate.sh status` |
-| Large 시작 | `./scripts/gate.sh on` |
+| Large 리셋 (설계 미합의) | `./scripts/gate.sh on` |
+| 전체 설계 합의 | `./scripts/gate.sh approve-design` |
+| Phase Plan 단계로 | `./scripts/gate.sh kickoff phase_plan` |
 | 전체 Plan 승인 | `./scripts/gate.sh approve-plan` |
 | 단계 설정 | `./scripts/gate.sh advance explore\|document\|plan\|implement\|verify\|review\|human_verify` |
 | 커밋 허용 | `./scripts/gate.sh allow-commit` |
@@ -308,6 +334,7 @@ Explore → 짧은 Plan → Implement → Verify.
 ## 8. 하지 말 것
 
 - “로그인/결제 전부 만들어줘”만으로 전 Phase 한 번에 구현 시키기  
+- 질문·전체 설계 합의 없이 바로 Phase Plan  
 - Plan·단계 **선택/승인 없이** 구현·게이트 전진  
 - 사용자 테스트 없이 다음 Phase로 넘어가기  
 - AI에게 `gate.json`을 **직접** 고치게 하기  
@@ -317,5 +344,5 @@ Explore → 짧은 Plan → Implement → Verify.
 
 ## 9. 한 줄 요약
 
-**프로젝트 설명 → 채팅 선택(버튼 우선)으로 Plan 승인 → Phase마다 6단계(역할 Skill) → AI 검증 + 내가 테스트 → 선택으로 다음 진행.**  
+**프로젝트 설명 → 질문 → 전체 설계 합의 → docs → 채팅 선택(버튼 우선)으로 Phase Plan 승인 → Phase마다 6단계(역할 Skill) → AI 검증 + 내가 테스트 → 선택으로 다음 진행.**  
 수정이 필요하면 **수정 선택 + 고칠 내용**을 쓰면 된다. 버튼이 안 보이면 모델을 Composer/Claude/GPT로 바꾸거나, 번호 `1`/`2`/`3`으로 고른다.

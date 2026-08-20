@@ -10,7 +10,8 @@ alwaysApply: true
 
 ## Phase 0 (조건부 · bootstrap)
 
-bootstrap/docs 요청, 또는 Docs 비어 있음 **그리고** 초기·문서화 작업일 때만.
+bootstrap/docs 요청, 또는 제품 설명 없이 Docs만 초기화할 때만.
+제품·필수 기능을 설명하면 **킥오프 K1**부터 (Phase 0으로 가지 않음).
 그 외 Small/Medium은 Docs TODO로 막지 않는다.
 Phase 0 ≠ Delivery Phase. 제품 개발 Phase는 1부터.
 
@@ -19,7 +20,7 @@ Phase 0 ≠ Delivery Phase. 제품 개발 Phase는 1부터.
 - **Small**: Implement → Verify (긴 Plan 금지)
 - **Medium**: Explore → (짧은 Plan) → Implement → Verify
 - **Large / 프로젝트 킥오프**:
-  1) 전체 Plan(Delivery Phases) Draft → **사람 승인**
+  1) 킥오프 K1 질문 → K2 전체 설계 합의 → K3 docs → K4 Phase Plan Draft → **사람 승인**
   2) 각 Delivery Phase는 아래 **6단계**를 순서대로 (특히 Phase 1 필수)
   3) Phase Human Verify 후에만 다음 Phase
 
@@ -30,16 +31,18 @@ Large·킥오프는 승인 없이 구현하지 않는다.
 
 사용자가 프로젝트·필수 기능을 설명하면:
 
-1. 구현 전에 전체 Plan Draft (`.cursor/plans/`, Phase 1…N 분할)
-2. 전체 Plan 승인 전 구현 금지
-3. 승인 후 **Phase 1부터 6단계**로 진행. 다음 Phase 임의 진행 금지
+1. K1 질문 라운드 (Phase Plan·docs 본문·코드 금지)
+2. K2 전체 설계 초안 (`.cursor/plans/<name>-design.md`) → 사람 합의
+3. K3 합의 내용을 `docs/`에 기록
+4. K4 Phase Plan Draft (`.cursor/plans/`, `_template.md`) → 승인 전 구현 금지
+5. 승인 후 **Phase 1부터 6단계**. 다음 Phase 임의 진행 금지
 
 ## Delivery Phase 6단계 (필수)
 
 각 Delivery Phase(Phase 1부터)를 진행할 때 **건너뛰지 말고** 순서대로:
 
 1. **Explore** — 코드 작성 금지. 관련 코드·요구·기존 패턴·영향 범위만 정리
-2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). Phase 1은 기초 docs를 채우고, 이후 Phase는 변경분만 갱신
+2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). 기초 product/architecture는 킥오프 K3. Delivery Document는 변경분.
 3. **Plan** — 이 Phase를 어떻게 구현할지 상세 계획(변경 파일·순서·테스트·User Test Guide 초안). Status 반영 후 **사람 승인 대기**. 승인 전 구현 금지
 4. **Implement** — 승인한 이 Phase 범위만 최소 변경으로 구현
 5. **Verify** — AI: 관련 테스트 → typecheck/lint → 필요 시 build. 실패 무시·테스트 삭제 금지. 이어서 **User Test Guide** 제공 (실행법·확인할 것·기대 결과·실패 시 보고 정보)
@@ -54,7 +57,7 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰
 
 ## Plan
 
-- 킥오프 전체 Plan: `_template.md` + Delivery Phases, Status=Draft → 승인 요청
+- 킥오프: K1–K4 (`_design-template.md` + `_template.md`) → K4 Status=Draft 승인 요청
 - Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서/AI Verify/User Test Guide
 
 ## Implement / Verify / Review
@@ -67,14 +70,14 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 리뷰
 
 - Large일 때 진실 원천은 `.cursor/gate.json` (plan Status 마크다운이 아님).
 - Agent는 `gate.json`을 **직접** 수정하지 않는다 (Write/StrReplace/Delete·리다이렉트 금지).
-- mutating `./scripts/gate.sh`(on/off/approve-plan/advance/allow-commit/deny-commit/next-phase)는 **이번 사용자 메시지의 명시적 채팅 선택/승인**이 있을 때만 실행한다. 선택→명령은 1:1(또는 메뉴에 명시된 한 세트). 애매하면 재질문하고 실행하지 않는다.
+- mutating `./scripts/gate.sh`(on/off/approve-design/kickoff/approve-plan/advance/allow-commit/deny-commit/next-phase)는 **이번 사용자 메시지의 명시적 채팅 선택/승인**이 있을 때만 실행한다. 선택→명령은 1:1(또는 메뉴에 명시된 한 세트). 애매하면 재질문하고 실행하지 않는다.
 - 결정 지점마다 선택 UI를 제시한다: **`AskQuestion`이 있으면 한글 옵션 클릭 카드(우선)**, 없으면 `guide.md` §4의 **한글 번호 텍스트**로 대체. 선택 전에는 게이트를 전진·구현하지 않는다. 사람은 동일 명령을 터미널에서 직접 실행해도 된다.
 - 커밋은 `allow_commit` 필요 (`./scripts/install-hooks.sh` 후 pre-commit).
 
 ## Skills (템플릿)
 
 ### 워크플로
-- `.cursor/skills/project-kickoff` — 전체 Plan (기획+설계)
+- `.cursor/skills/project-kickoff` — 질문 → 설계 합의 → docs → Phase Plan (기획+설계)
 - `.cursor/skills/delivery-phase` — Phase 6단계 + 역할 매핑
 - `.cursor/skills/phase-gate` — 게이트 운영
 

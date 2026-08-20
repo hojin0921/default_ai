@@ -31,7 +31,8 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 핵심 흐름 (Large / 킥오프):
 
 ```
-전체 Plan(Phase 1…N) → Human Review (채팅 선택 → gate approve-plan)
+K1 질문 → K2 전체 설계 합의 → K3 docs → K4 Phase Plan
+  → Human Review (채팅 선택 → gate approve-plan)
   → Phase N: Explore → Document → Plan → (채팅 승인)
              → Implement → Verify(+User Test Guide) → Review
              → Human Verify
@@ -39,7 +40,7 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 ```
 
 Small은 Implement→Verify만. Medium은 Explore 후 짧은 Plan.
-Phase 0 = bootstrap. Delivery Phase는 1부터, 진행 시 6단계 필수.
+Phase 0 = bootstrap (제품 없이 docs만). 제품 설명이면 킥오프 K1부터. Delivery Phase는 1부터, 진행 시 6단계 필수.
 
 ## 디렉터리
 
@@ -53,7 +54,7 @@ Phase 0 = bootstrap. Delivery Phase는 1부터, 진행 시 6단계 필수.
 │   ├── skills/          # kickoff, delivery-phase, phase-gate, senior-*
 │   ├── hooks.json + hooks/   # gate-check, protect-gate
 │   ├── gate.json
-│   └── plans/_template.md
+│   └── plans/_template.md, _design-template.md
 ├── .githooks/pre-commit
 ├── scripts/gate.sh, install-hooks.sh, phase-gate-check.sh
 ├── docs/ ... + docs/ai/agent-workflow.md

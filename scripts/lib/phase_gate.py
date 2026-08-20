@@ -20,6 +20,14 @@ VALID_STEPS = (
     "human_verify",
 )
 
+VALID_KICKOFF_STEPS = (
+    "discover",
+    "design",
+    "docs",
+    "phase_plan",
+    "done",
+)
+
 # Relative path prefixes treated as application code (blocked before implement).
 CODE_PREFIXES = (
     "src/",
@@ -42,8 +50,10 @@ GATE_REL = ".cursor/gate.json"
 DEFAULT_GATE: dict[str, Any] = {
     "enabled": False,
     "plan_approved": False,
+    "design_approved": False,
     "phase": 1,
     "step": "explore",
+    "kickoff_step": "done",
     "allow_commit": False,
     "note": "사람 결정으로만 전진. 채널: 채팅 선택→Agent가 ./scripts/gate.sh 대행, 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다.",
 }
@@ -69,6 +79,10 @@ def load_gate(root: Path | None = None) -> dict[str, Any]:
         data = json.load(f)
     out = dict(DEFAULT_GATE)
     out.update(data)
+    if "kickoff_step" not in data:
+        out["kickoff_step"] = "done" if data.get("plan_approved") else "discover"
+    if "design_approved" not in data:
+        out["design_approved"] = bool(data.get("plan_approved"))
     return out
 
 
@@ -79,13 +93,20 @@ def save_gate(data: dict[str, Any], root: Path | None = None) -> None:
     ordered = {
         "enabled": bool(data.get("enabled", False)),
         "plan_approved": bool(data.get("plan_approved", False)),
+        "design_approved": bool(data.get("design_approved", False)),
         "phase": int(data.get("phase", 1)),
         "step": str(data.get("step", "explore")),
+        "kickoff_step": str(data.get("kickoff_step", "done")),
         "allow_commit": bool(data.get("allow_commit", False)),
         "note": data.get("note", DEFAULT_GATE["note"]),
     }
     if ordered["step"] not in VALID_STEPS:
         raise SystemExit(f"invalid step: {ordered['step']}. valid: {', '.join(VALID_STEPS)}")
+    if ordered["kickoff_step"] not in VALID_KICKOFF_STEPS:
+        raise SystemExit(
+            f"invalid kickoff_step: {ordered['kickoff_step']}. "
+            f"valid: {', '.join(VALID_KICKOFF_STEPS)}"
+        )
     with path.open("w", encoding="utf-8") as f:
         json.dump(ordered, f, ensure_ascii=False, indent=2)
         f.write("\n")

@@ -11,6 +11,7 @@ description: >-
 ## When
 
 - Delivery step **Explore** (primary), architecture-heavy **Document/Plan/Review**
+- **project-kickoff** K2 Design and K3 Docs (with PM)
 - User asks for structure, boundaries, security posture, or impact analysis
 - If the user explicitly names this role (e.g. "시니어 설계로만"), follow **only** this skill for that turn and skip other senior role stances unless they ask for a sequence
 
@@ -31,7 +32,7 @@ description: >-
 - Do: start the reply with `역할: 시니어 설계`
 - Do: stay evidence-based from related code/docs only
 - Don't: implement app code during Explore
-- Don't: own phase-gate CLI or whole-product kickoff alone (use `phase-gate` / `project-kickoff`)
+- Don't: own phase-gate CLI or skip kickoff K1 (use `phase-gate` / `project-kickoff`)
 - Don't: skip Human Review on architecture/security choices
 
 ## With delivery-phase

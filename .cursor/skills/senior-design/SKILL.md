@@ -11,6 +11,7 @@ description: >-
 ## When
 
 - **Plan** or **Implement** when UI/UX is in scope (optional primary)
+- **project-kickoff** K2 Design when the product has UI (optional)
 - User asks for flows, screens, copy tone, or accessibility
 - If the user explicitly names this role (e.g. "시니어 디자인으로만"), follow **only** this skill for that turn and skip other senior role stances unless they ask for a sequence
 

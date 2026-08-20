@@ -6,7 +6,7 @@
 
 | Skill | 언제 |
 |-------|------|
-| `project-kickoff` | 프로젝트·필수 기능 → 전체 Plan(Phase 분할), 구현 금지 · 기획+설계 관점 |
+| `project-kickoff` | 질문 → 전체 설계 합의 → docs → Phase Plan, 구현 금지 · 기획+설계 관점 |
 | `delivery-phase` | Phase마다 6단계 진행 · 단계별 primary 역할 Skill 지정 |
 | `phase-gate` | `gate.json` / `gate.sh` — 채팅 선택 후 대행 |
 

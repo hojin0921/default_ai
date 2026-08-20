@@ -1,5 +1,7 @@
 # Plan: <!-- 짧은 제목 -->
 
+<!-- 킥오프 K4에서만 작성. 선행: K1 질문 → K2 전체 설계 합의 → K3 docs. -->
+
 ## Goal
 
 <!-- 무엇을 달성하는가 -->
@@ -81,7 +83,7 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
 
 ## Steps
 
-1. 전체 Plan 승인
+1. 킥오프 K1–K4 후 전체 Plan 승인
 2. Phase 1: Explore → Document → Plan → (승인) Implement → Verify → Review → 사람 검수
 3. 승인 후 Phase 2도 동일 6단계 …
 4. 전체 마무리 Review

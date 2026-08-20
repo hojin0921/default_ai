@@ -10,7 +10,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from lib.phase_gate import VALID_STEPS, find_repo_root, load_gate, save_gate  # noqa: E402
+from lib.phase_gate import (  # noqa: E402
+    VALID_KICKOFF_STEPS,
+    VALID_STEPS,
+    find_repo_root,
+    load_gate,
+    save_gate,
+)
 
 
 def main(argv: list[str]) -> int:
@@ -29,6 +35,8 @@ def main(argv: list[str]) -> int:
     if cmd == "on":
         gate["enabled"] = True
         gate["plan_approved"] = False
+        gate["design_approved"] = False
+        gate["kickoff_step"] = "discover"
         gate["phase"] = int(gate.get("phase") or 1)
         gate["step"] = "explore"
         gate["allow_commit"] = False
@@ -43,10 +51,45 @@ def main(argv: list[str]) -> int:
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
 
+    if cmd == "approve-design":
+        if not gate.get("enabled"):
+            gate["enabled"] = True
+        gate["design_approved"] = True
+        gate["kickoff_step"] = "docs"
+        gate["plan_approved"] = False
+        gate["allow_commit"] = False
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "kickoff":
+        if len(argv) < 2:
+            print(
+                f"usage: gate.sh kickoff <{'|'.join(VALID_KICKOFF_STEPS)}>",
+                file=sys.stderr,
+            )
+            return 1
+        kstep = argv[1]
+        if kstep not in VALID_KICKOFF_STEPS:
+            print(f"invalid kickoff_step: {kstep}", file=sys.stderr)
+            return 1
+        gate["kickoff_step"] = kstep
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
     if cmd == "approve-plan":
+        if not gate.get("design_approved"):
+            print(
+                "approve-plan requires design_approved=true "
+                "(run ./scripts/gate.sh approve-design first)",
+                file=sys.stderr,
+            )
+            return 1
         if not gate.get("enabled"):
             gate["enabled"] = True
         gate["plan_approved"] = True
+        gate["kickoff_step"] = "done"
         gate["step"] = "explore"
         gate["allow_commit"] = False
         save_gate(gate, root)

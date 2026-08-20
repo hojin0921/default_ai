@@ -15,7 +15,7 @@
 
 - Skills: `.cursor/skills/`
 - Hooks: `.cursor/hooks.json` (Phase Gate)
-- Large 시: 채팅에서 승인 선택(또는 `./scripts/gate.sh on` → `approve-plan` → `advance` → `allow-commit`)
+- Large 시: 채팅에서 승인 선택. 킥오프는 `approve-design` → `kickoff phase_plan` → `approve-plan` (`on`과 `approve-plan`을 한 번에 묶지 않음). 이후 `advance` → `allow-commit`.
 
 ## Setup
 

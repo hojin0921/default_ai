@@ -34,7 +34,7 @@ If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어
 ### Step order (required)
 
 1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.
-2. **Document** — Update relevant `docs/` / README from evidence only. Phase 1: foundation docs; later Phases: deltas only.
+2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.
 3. **Plan** — Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.
 4. **Implement** — Minimal changes for this Phase only.
 5. **Verify** — Run related tests → typecheck/lint → build if needed. Never delete/weaken tests to pass. Then output **User Test Guide**:

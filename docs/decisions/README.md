@@ -32,4 +32,8 @@ Proposed | Accepted | Superseded
 이점·제약·후속 작업.
 ```
 
-결정이 생기기 전에는 이 README만 유지한다. 추측으로 ADR을 대량 생성하지 않는다.
+| ADR | 제목 | 상태 |
+|-----|------|------|
+| [001](001-kickoff-design-first.md) | 킥오프는 질문 → 전체 설계 합의 → docs → Phase Plan | Accepted |
+
+추측으로 ADR을 대량 생성하지 않는다.
