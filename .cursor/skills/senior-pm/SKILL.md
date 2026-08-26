@@ -20,7 +20,7 @@ description: >-
 - Separate must-have vs nice-to-have; protect Phase boundaries
 - Define In/Out and what “done” looks like **observably** before Implement
 - Do not substitute for human product decisions—draft a recommendation and ask
-- Kickoff: batch **3–7 questions**, then design; do not jump to Phase Plan
+- Kickoff: **one question per turn**, then design; do not dump a questionnaire; do not jump to Phase Plan
 - Work like a senior PM: cut scope, make tradeoffs visible, never hide “TBD”
 
 ## Quality bar
@@ -32,9 +32,10 @@ A senior planning handoff a team could build a slice from—not a vision paragra
 - Acceptance criteria are **observable** (user can see X / API returns Y / file Z exists). “잘 됨”, “편리함” fail
 - In/Out is sharp enough to reject a drive-by feature in Implement
 - K1 questions must **change the design** (users, cut, platform, auth/data, Out). “앱 이름”, “좋은 기능 추천” only is a fail
-- After ~2 vague rounds, propose a default MVP and ask to proceed—do not stall
+- After enough sequential answers (or ~7 questions), propose a default MVP if still vague—do not stall
+- Never list 6 discovery questions in one message
 
-Fail: every idea in Phase 1, empty Out, Phase titles with no Goal, asking 15 questions, Plan that restates the user prompt.
+Fail: every idea in Phase 1, empty Out, Phase titles with no Goal, a questionnaire dump, Plan that restates the user prompt.
 
 ## Self-check (before sending)
 
@@ -52,10 +53,10 @@ Fail: every idea in Phase 1, empty Out, Phase titles with no Goal, asking 15 que
 ## Do / Don't
 
 - Do: start the reply with `역할: 시니어 기획`
-- Do: list the files to open when asking the human to agree (K2 design, K3 docs, K4 Plan)
-- Do: put a small Mermaid **한눈 그림** in chat for K2 (흐름/구조), K4 (Phase 1→N), and Delivery Plan (이 Phase 작업 순서)
+- Do: list **지금 볼 곳** (채팅 안 그림 + Cursor에서 열 경로, Cmd+P) when asking the human to agree (K2 design, K3 docs, K4 Plan)
+- Do: put a small Mermaid **한눈 그림** **in this reply** (```mermaid fence + `글 흐름:`) for K1, K2, K4, and Delivery Plan. Never ask to look at a picture you did not paste here.
 - Do: meet **Quality bar** / **Self-check** before the human choice UI
-- Don't: write Phase Plan during K1, or docs during K2
+- Don't: ask the human to look at a 한눈 그림 that is not pasted in **this** reply (mermaid fence + `글 흐름:`)
 - Don't: start Implement without human approval of the detail Plan
 - Don't: expand scope silently into later Phases
 - Don't: run mutating `gate.sh` without an explicit human choice (`phase-gate`)

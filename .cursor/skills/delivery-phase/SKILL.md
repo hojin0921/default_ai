@@ -35,15 +35,21 @@ If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어
 
 The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjectives, empty Out, “구현 완료” with no paths, or a 직접 확인 가이드 a stranger cannot follow all fail—**rewrite before** the human choice UI. Do not skip Self-check.
 
+**그림 누락 금지:** Explore / Document / Plan (and kickoff K1 이해·K2/K3/K4) replies that ask the human to look at a 한눈 그림 must include, in **this same message**, a mermaid code fence **and** a one-line `글 흐름: A → B → C`. Asking “바로 위 그림을 보세요” with no diagram in the reply is a fail—draw it, then AskQuestion.
+
 ### Step order (required)
 
-1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.
-2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.
+1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.  
+   In **this same reply**, before AskQuestion: heading `## 한눈 그림`, a mermaid `flowchart LR` fence (fill with this Phase), and `글 흐름: 입력 → 이 Phase 핵심 → 결과`.  
+   **지금 볼 곳**: 그림은 선택 버튼 바로 위(이 답변). 파일이 없으면 파일을 찾으라고 하지 말 것.  
+   AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름)을 보신 뒤, 다음으로 어떻게 할까요?`
+2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.  
+   Show the Explore mermaid again (or the updated one if the flow changed) in chat; put it in the docs you touch if the journey/system changed.
 3. **Plan** — Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.  
    Before the approve/implement choice, show:
    - **한눈 그림**: Mermaid of **this Phase only** (작업 순서: 무엇 → 무엇). Not the whole 1→N kickoff diagram unless reminding context in one line.
-   - **확인할 파일**: every path this Phase will change, plus the Plan file itself.
-   AskQuestion prompt: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
+   - **지금 볼 곳**: every path this Phase will change, plus how to open in Cursor (`Cmd+P`).
+   AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
    예시:
    ```mermaid
@@ -53,9 +59,10 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
      C --> D["4 테스트"]
    ```
    ```
-   확인할 파일
-   - `.cursor/plans/<name>.md` — 이 Phase 상세 (Goal·순서)
-   - `src/…` — 이번에 손댈 코드
+   ## 지금 볼 곳
+   - 그림: 선택 버튼 **바로 위**, 이 답변 안의 Mermaid
+   - 파일: Cursor에서 `Cmd+P`로 열기
+     - `.cursor/plans/<name>.md` — 이 Phase 상세
    ```
 4. **Implement** — Minimal changes for this Phase only.  
    If the product is now runnable, put **실행 가이드** in the chat (준비 / 실행 / 접속) and fill `README.md` Setup + `docs/development.md` from evidence (no guessed commands). If there is nothing to run, say so in one line.
@@ -104,7 +111,7 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
 ### After each step
 
 Every reply for this Phase work must include the line `역할: 시니어 ○○` (Role map, or the user-overridden role).  
-Report: what changed, and a **decision UI** for the next human choice when the gate is enabled (or when approval is required). Prefer **`AskQuestion`** with Korean options from `guide.md` §4; if unavailable, use numbered Korean text. When the choice is “approve this design/docs/plan”, show a small **Mermaid 한눈 그림** and list **확인할 파일** (real paths) in the chat first. After Implement, show **실행 가이드** if runnable. After Verify, show **직접 확인 가이드** first (and **실행 가이드** then **역할 기여** first if this is the last Phase). Do not advance the gate without an explicit choice this turn.
+Report: what changed, and a **decision UI** for the next human choice when the gate is enabled (or when approval is required). Prefer **`AskQuestion`** with Korean options from `guide.md` §4; if unavailable, use numbered Korean text. When the choice is “approve this design/docs/plan”, show a small **Mermaid 한눈 그림**, then **지금 볼 곳** (채팅 안 그림 + Cursor에서 열 실제 경로). After Explore/Document, show the step’s **한눈 그림**. After Implement, show **실행 가이드** if runnable. After Verify, show **직접 확인 가이드** first (and **실행 가이드** then **역할 기여** first if this is the last Phase). Do not advance the gate without an explicit choice this turn.
 
 ### Gate (when `.cursor/gate.json` enabled)
 

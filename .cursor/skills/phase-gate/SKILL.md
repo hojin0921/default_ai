@@ -42,15 +42,21 @@ picks an option in **this** turn.
    a documented set). Then `./scripts/gate.sh status`
    and report briefly.
 4. If the choice is unclear, ask again — do not run mutating `gate.sh`.
-5. For K2/K3/K4 (and Phase detail Plan), the chat body must include:
-   - a **한눈 그림** (Mermaid, small)
-   - **확인할 파일** (real paths)
-   AskQuestion `prompt` should tell them to review the diagram and files first.
+5. For K1 (after 이해 요약), K2/K3/K4, Phase Explore/Document, and Phase detail Plan: the **same reply** must contain a fenced ```mermaid block and a `글 흐름: … → …` line **above** AskQuestion.  
+   Never AskQuestion about a picture that is not in this message.  
+   K2/K3/K4 and detail Plan also include **지금 볼 곳**. Files: Cursor `Cmd+P` / `Ctrl+P`.  
+   Prompt wording: 바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름). Name the Cursor path when there is a file.
 6. After Verify, the chat body must include **직접 확인 가이드** before the choice UI. Last Phase: **실행 가이드** then **역할 기여** before that.
 
 Humans may run the same CLI themselves (equivalent).
 
 ### Menu options (Korean — AskQuestion labels or text numbers)
+
+**After K1 이해 요약** (한눈 그림 필수)
+
+1. 이 이해로 전체 설계 초안을 작성해 주세요  
+2. 더 질문하거나 이해를 수정해 주세요  
+3. 지금은 보류할게요  
 
 **After K2 overall design Draft**
 
@@ -77,8 +83,8 @@ Humans may run the same CLI themselves (equivalent).
 
 **After Phase detail Plan**
 
-Chat must include a **한눈 그림** (this Phase work order) and **확인할 파일**.  
-AskQuestion prompt: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
+Chat must include a **한눈 그림** (this Phase work order) and **지금 볼 곳** (path + how to open in Cursor).  
+AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
    → `./scripts/gate.sh advance implement`, then Implement  

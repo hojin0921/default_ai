@@ -26,7 +26,7 @@
 템플릿: TEMPLATE.md | 사용법: guide.md (§2-2 시니어 역할) / docs/ai/agent-workflow.md
 클론 후: ./scripts/install-hooks.sh (.git 없이 복사 권장 — guide.md §1)
 
-A. 프로젝트 설명 → 질문 → 전체 설계 합의 → docs → Plan(Phase) Draft → 채팅에서 승인 (+ gate approve-plan)
+A. 첫 메시지: 무엇을 만들지 (§3-0 안내) → 질문 → 전체 설계 합의 → docs → Plan(Phase) Draft → 채팅에서 승인 (+ gate approve-plan)
 B. Phase마다 6단계 (Skill: delivery-phase + senior-*) → User Test Guide → 실행 가이드(켤 수 있으면) → 검수 → 다음 Phase. 마지막 Phase면 역할 기여(누가 무엇을)도.
 Skills: .cursor/skills/ (kickoff / delivery-phase / phase-gate / senior-*) | Gate: 채팅 선택→gate.sh
 -->

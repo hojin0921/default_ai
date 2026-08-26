@@ -26,19 +26,44 @@ Meet that role skill’s **Quality bar** (decision-forcing questions, testable I
 Treat the request as **Large / kickoff**. Do **not** implement app code.  
 Do **not** skip to K4. Do **not** write a Phase Plan during K1.
 
+**First K1 reply:** show a short friendly **시작 가이드** (`guide.md` §3-0). If they already described the product, use it—do not make them paste the template. Then ask **exactly one** question (AskQuestion). Tone: kind, short, Korean.
+
 Decision UI after each step: prefer **`AskQuestion`** (Korean options); else numbered `1` / `2` / `3`.  
+**한 메시지에 질문 하나.** K1에서 확인 질문 6개를 한 번에 나열하지 않는다.  
 Do not run mutating `gate.sh` until they pick an option this turn.
 
-Before every K2/K3/K4 choice:
-1. Put a **한눈 그림** in the chat (Mermaid). Keep it small (about 5–12 nodes). Korean labels. No giant tables as the overview.
-2. List **확인할 파일** with real repo paths (and a one-line what to check).
+### 한눈 그림 (같은 답변에 반드시)
 
-AskQuestion `prompt` must mention both, e.g.  
-`아래 그림과 설계 파일을 확인한 뒤, 어떻게 할까요?` /  
-`아래 그림과 문서를 확인한 뒤, 어떻게 할까요?` /  
-`아래 Phase 그림과 Plan 파일을 확인한 뒤, 어떻게 할까요?`  
-Do not ask to approve without the diagram and file paths.
+If you will ask the human to look at a picture, **draw it in this reply first**.  
+A prompt like “바로 위 한눈 그림” with no diagram in the same message is a fail.
 
+Order in the message: `역할:` → 짧은 설명 → **한눈 그림 블록** → 지금 볼 곳(해당 시) → AskQuestion.
+
+Required block (copy and fill; do not omit). Use a mermaid fence in the **user-facing** reply, not only in a plan file:
+
+- Heading `## 한눈 그림`
+- A `mermaid` code block with `flowchart LR` and 5–12 Korean node labels
+- A line `글 흐름: 사람 → 하는 일 → 결과` (always visible if Mermaid does not render)
+
+Never say only “아래 그림과 파일을 확인하세요”. People do not know where “아래” is.
+
+Before the choice UI, always put this block **after** the Mermaid:
+
+```
+## 지금 볼 곳
+- 그림: 선택 버튼 **바로 위**, 이 답변 안에 그린 Mermaid입니다. 다른 폴더·탭을 찾지 마세요.
+- 파일: (파일이 있을 때만) Cursor 왼쪽 트리 또는 `Cmd+P`(Windows `Ctrl+P`)로 아래 경로를 여세요.
+  - `.cursor/plans/<실제-파일>.md` — (한 줄: 무엇을 보는지)
+```
+
+AskQuestion `prompt` must say the picture is **바로 위**, and name the real path when there is a file, e.g.  
+`바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<name>-design.md 를 연 뒤 어떻게 할까요?`
+
+Before every K1 (after 이해 요약), K2/K3/K4, and Phase Explore/Document/Plan choice:
+1. Put the **한눈 그림 블록** in **this reply** (Mermaid fence + 글 흐름). Do not AskQuestion about a picture that is missing from this message.
+2. For K2/K3/K4 and Delivery Plan, also put **지금 볼 곳**.
+
+K1 diagram: current understanding (who → does what → result). Unknown = a node `미정`.  
 K2 diagram: user journey and/or system (who → what → where). Same figure goes into `*-design.md`.  
 K4 diagram: Phase 1→N left-to-right (or top-down) with short titles. Same figure goes into the Phase Plan.  
 K3: reuse the agreed K2 diagram in chat; do not invent a new architecture.
@@ -49,36 +74,32 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 ### K1 Discover
 
-1. Optional short Explore of existing repo patterns; do not read all of `docs/`.
-2. Ask **3–7 questions** in one batch (not 20). Topics as needed: users/problem, must-have vs later, platform/stack, auth/data/integrations, success/MVP, explicit Out. User may answer “모르겠어, 제안해”.
+1. Start with the **시작 가이드** (`guide.md` §3-0 bullets). Optional short Explore of existing repo patterns; do not read all of `docs/`.
+2. Ask **one question per turn** with AskQuestion (or one numbered question if AskQuestion is unavailable).  
+   - Do **not** paste a list titled “확인이 필요한 질문 (6개)” or similar.  
+   - Every question includes **「제안해」** (and **「잘 모르겠음」** when useful).  
+   - The next question may depend on the last answer. Typical total **4–7** questions; skip topics already answered in the first prompt.  
+   - After each answer: one line of what you now assume, then the **next single** question.  
+   - Topics as needed: platform, core loop, must-have fun, win/lose, Out, visual tone.  
 3. Do **not** write `.cursor/plans/` Phase Plan, `docs/` body, or `src/`.
-4. Summarize understanding. End with:
+4. When enough is known (or after the last needed question), summarize, then the **한눈 그림 블록** (Mermaid + 글 흐름) in this reply, then:
+
+   AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)을 보신 뒤, 전체 설계 초안으로 갈까요?`
 
    1. 이 이해로 전체 설계 초안을 작성해 주세요 → K2 only  
    2. 더 질문하거나 이해를 수정해 주세요  
    3. 지금은 보류할게요  
 
-   If still ambiguous after ~2 rounds, propose defaults and ask to proceed to K2.
+   If still ambiguous after ~7 questions or ~2 “제안해” loops, propose defaults and ask to proceed to K2.
 
 ### K2 Design
 
 1. Create `.cursor/plans/<short-name>-design.md` from `.cursor/plans/_design-template.md`.
 2. Fill from K1 answers only; mark remaining gaps as Open questions. Status **Draft**. Include a **한눈 그림** (Mermaid) in the file and in chat.
 3. Do **not** write Phase Plan (`_template.md`) or fill `docs/` yet.
-4. End with the **한눈 그림** (same Mermaid as the design file), then **확인할 파일**, then:
+4. End with the **한눈 그림**, then **지금 볼 곳** (path + how to open), then:
 
-   예시:
-   ```mermaid
-   flowchart LR
-     U[사용자] --> A[앱]
-     A --> API[서버]
-   ```
-   ```
-   확인할 파일
-   - `.cursor/plans/<short-name>-design.md` — 문제·Must-have·흐름·Out
-   ```
-
-   AskQuestion prompt: `아래 그림과 설계 파일을 확인한 뒤, 어떻게 할까요?`
+   AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<short-name>-design.md 를 연 뒤 어떻게 할까요?`
 
    1. 이 전체 설계를 합의하고, 이제 문서화해 주세요  
       → `./scripts/gate.sh approve-design`, then K3 only  
@@ -95,16 +116,9 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
    Leave development/testing/deployment TODO if unknown.
 2. Mark `*-design.md` Status **Documented** (optional).
 3. Do **not** write Phase Plan yet.
-4. End with the agreed K2 **한눈 그림** (do not invent a new one), then **확인할 파일** of every docs path written this step, then:
+4. End with the agreed K2 **한눈 그림** (do not invent a new one), then **지금 볼 곳** of every docs path written this step, then:
 
-   예시:
-   ```
-   확인할 파일
-   - `docs/product.md` — 사용자·필수 기능·저니
-   - `docs/architecture.md` — 구조·데이터·경계
-   ```
-
-   AskQuestion prompt: `아래 그림과 문서를 확인한 뒤, 어떻게 할까요?`
+   AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 docs/product.md (및 안내한 경로)를 연 뒤 어떻게 할까요?`
 
    1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요  
       → `./scripts/gate.sh kickoff phase_plan`, then K4 only  
@@ -118,20 +132,9 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 3. For each Phase, fill Goal, In/Out, AI Verify, User Test Guide draft, 실행 가이드 draft (or “실행 대상 없음”), and the 6-step checklist. Leave **역할 기여** rows empty until Review / last Phase.
 4. Add a **한눈 그림** (Mermaid flowchart Phase 1→N, short titles, arrows = 순서·의존). Put it in the plan file and in chat.
 5. Set Status to **Draft**. Ask the human to approve before any Delivery Phase work.
-6. End with the Phase **한눈 그림**, then **확인할 파일**, then:
+6. End with the Phase **한눈 그림**, then **지금 볼 곳**, then:
 
-   예시:
-   ```mermaid
-   flowchart LR
-     P1["1 기반"] --> P2["2 핵심 기능"]
-     P2 --> P3["3 다듬기"]
-   ```
-   ```
-   확인할 파일
-   - `.cursor/plans/<short-name>.md` — Phase 분할·In/Out
-   ```
-
-   AskQuestion prompt: `아래 Phase 그림과 Plan 파일을 확인한 뒤, 어떻게 할까요?`
+   AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<short-name>.md 를 연 뒤 어떻게 할까요?`
 
    1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요  
       → `./scripts/gate.sh approve-plan`, then Phase 1 Explore only  

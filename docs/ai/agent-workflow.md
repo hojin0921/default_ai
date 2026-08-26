@@ -35,7 +35,7 @@
 |-------|------|---------|-----------|
 | `senior-architect` | 시니어 설계 | 아키텍처·경계·데이터·보안·확장 | 구조 메모, ADR 초안, 영향 범위 |
 | `senior-pm` | 시니어 기획 | 요구·우선순위·범위·수락 기준 | Phase 목표, In/Out, 수락 기준 |
-| `senior-design` | 시니어 디자인 | UX/UI·정보구조·카피·접근성 | 화면 흐름, UI 가이드, 카피 톤 |
+| `senior-design` | 시니어 디자인 | 시각·레이아웃·UX·카피·접근성 | 시각 스펙(Figma 또는 레이아웃·타이포·색), 화면 흐름, 카피 |
 | `senior-dev` | 시니어 개발 | 구현·패턴·최소 변경·테스트 가능성 | 코드, 구현 상세 Plan |
 | `senior-qa` | 시니어 QA | 검증·회귀·User Test Guide·리스크 | 테스트 계획, UTG, 버그 리포트 |
 
@@ -114,7 +114,14 @@
 
 ### 채팅 메뉴 예 (한글 · AskQuestion 라벨 / 번호 공통)
 
+**K1 질문**
+
+한 메시지에 질문 **하나**. 「제안해」 옵션. 답을 받은 뒤 다음 질문. 목록 덤프 금지.
+
 **K1 질문 라운드 후 (이해 요약)**
+
+채팅 **안의** 한눈 그림.  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)을 보신 뒤, 전체 설계 초안으로 갈까요?`
 
 1. 이 이해로 전체 설계 초안을 작성해 주세요  
 2. 더 질문하거나 이해를 수정해 주세요  
@@ -122,8 +129,8 @@
 
 **K2 전체 설계 초안 후**
 
-채팅에 **한눈 그림**(Mermaid)과 `확인할 파일` (예: `.cursor/plans/<이름>-design.md`)을 먼저 넣는다.  
-AskQuestion: `아래 그림과 설계 파일을 확인한 뒤, 어떻게 할까요?`
+채팅 안 한눈 그림 + **지금 볼 곳** (Cursor에서 `.cursor/plans/<이름>-design.md` 를 `Cmd+P`로 열기).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<이름>-design.md 를 연 뒤 어떻게 할까요?`
 
 1. 이 전체 설계를 합의하고, 이제 문서화해 주세요 (`approve-design`)  
 2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
@@ -131,8 +138,8 @@ AskQuestion: `아래 그림과 설계 파일을 확인한 뒤, 어떻게 할까�
 
 **K3 docs 문서화 후**
 
-합의된 K2 그림과 `확인할 파일` (`docs/product.md` 등)을 먼저 넣는다.  
-AskQuestion: `아래 그림과 문서를 확인한 뒤, 어떻게 할까요?`
+합의된 K2 그림(채팅 안)과 **지금 볼 곳** (`docs/product.md` 등, Cursor에서 열기).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 docs/product.md 를 연 뒤 어떻게 할까요?`
 
 1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요 (`kickoff phase_plan`)  
 2. 문서를 수정해 주세요  
@@ -140,8 +147,8 @@ AskQuestion: `아래 그림과 문서를 확인한 뒤, 어떻게 할까요?`
 
 **K4 전체 개발 계획(Draft) 후**
 
-채팅에 **Phase 한눈 그림**(1→N Mermaid)과 `확인할 파일` (`.cursor/plans/<이름>.md`)을 먼저 넣는다.  
-AskQuestion: `아래 Phase 그림과 Plan 파일을 확인한 뒤, 어떻게 할까요?`
+채팅 **안**의 **Phase 한눈 그림**과 **지금 볼 곳** (`.cursor/plans/<이름>.md`, Cursor `Cmd+P`).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<이름>.md 를 연 뒤 어떻게 할까요?`
 
 1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요 (`approve-plan`)  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
@@ -149,8 +156,8 @@ AskQuestion: `아래 Phase 그림과 Plan 파일을 확인한 뒤, 어떻게 할
 
 **이 Phase 상세 구현 계획 후**
 
-채팅에 **이 Phase 한눈 그림**(작업 순서 Mermaid)과 `확인할 파일`을 먼저 넣는다.  
-AskQuestion: `아래 이 Phase 그림과 상세 Plan을 확인한 뒤, 어떻게 할까요?`
+채팅 **안**의 **이 Phase 한눈 그림**과 **지금 볼 곳**.  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요 (`advance implement`)  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
@@ -192,7 +199,8 @@ AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`
 ## 프로젝트 킥오프
 
 Agent Skill: `project-kickoff` (자동 또는 명시).  
-바로 Phase Plan을 쓰지 않는다. K1 질문 → K2 설계 합의 → K3 docs → K4 Phase Plan.
+바로 Phase Plan을 쓰지 않는다. K1 질문 → K2 설계 합의 → K3 docs → K4 Phase Plan.  
+K1 첫 응답에 `guide.md` §3-0 시작 가이드. 설계·기획 단계마다 한눈 그림.
 
 ```text
 코드 작성하지 말고, 아래 프로젝트 킥오프를 K1부터 진행해.
@@ -259,12 +267,14 @@ Phase N / 단계에서 문제: …
 ```text
 코드 작성하지 말고 프로젝트를 이해해.
 (또는: 이 Phase 관련 코드·요구만 조사해. docs 전체는 읽지 마.)
+이해한 내용을 한눈 그림(Mermaid)으로도 보여 줘.
 ```
 
 **2. Document**
 
 ```text
 이해한 내용을 문서화해. 관련 docs/README만. 추측으로 TODO 채우지 마.
+흐름이 바뀌었으면 한눈 그림도 문서와 채팅에 넣어 줘.
 ```
 
 **3. Plan**
@@ -272,7 +282,7 @@ Phase N / 단계에서 문제: …
 ```text
 이 기능을 어떻게 구현할지 계획해.
 변경 파일·순서·AI Verify·User Test Guide 초안.
-이 Phase 작업 순서 한눈 그림(Mermaid)과 확인할 파일 경로를 채팅에 넣고, 승인 전 구현 금지.
+이 Phase 작업 순서 한눈 그림(Mermaid)과 지금 볼 곳(경로·Cursor에서 여는 법)을 채팅에 넣고, 승인 전 구현 금지.
 ```
 
 **4. Implement**
@@ -323,5 +333,8 @@ docs 초안 + README 개요. 필요 시 전용 rules.
 - 실행 가능한데 실행 가이드(켜는 법) 없이 “구현 완료”만 보고
 - 마지막 Phase인데 역할 기여(누가 무엇을) 없이 마무리
 - 시니어 역할인데 Quality bar를 무시하고 형용사·한 줄 요약으로 단계를 끝냄
+- 설계·기획 단계(K1–K4, Explore/Document/Plan)인데 한눈 그림 없이 승인·다음을 요청
+- K1에서 질문 여러 개를 한 메시지에 나열
+- 한눈 그림을 보라고 하면서 그 답변에 Mermaid(또는 글 흐름)를 안 그림
 - 테스트 삭제로 통과
 - `.env` 실제 값을 채팅에 첨부

@@ -27,6 +27,7 @@ description: >-
 A senior implementation a reviewer would approve without “please finish this”.
 
 - Match existing names, folders, error handling, and test style in the files you touch
+- If this Phase has UI, follow the **시니어 디자인** visual spec (layout, type, color, components). Do not invent a parallel look
 - Handle the edges the Plan’s acceptance criteria imply (empty, invalid, auth fail, not-found)
 - Tests (or the repo’s equivalent) cover the change; do not delete/weaken tests to pass
 - Types/lint/build that this repo already uses must pass for the touched area

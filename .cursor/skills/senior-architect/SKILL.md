@@ -44,7 +44,7 @@ Fail: “확장 가능한 구조”, cloud-box diagrams with no repo paths, sile
 ## Outputs
 
 - Blast radius (in / out of change) with paths
-- A small Mermaid overview at kickoff K2 (journey and/or system) — same figure in chat and `*-design.md`
+- A small Mermaid at **Explore** (this Phase flow/impact) and at kickoff **K2** (journey and/or system) — K2 figure also in `*-design.md`
 - Structure notes or a short ADR when a decision is real (context, options, choice, consequence)
 - Risks and **decision-shaped** open questions (A vs B, default if the human says “모르겠어”)
 
@@ -53,6 +53,7 @@ Fail: “확장 가능한 구조”, cloud-box diagrams with no repo paths, sile
 - Do: start the reply with `역할: 시니어 설계`
 - Do: stay evidence-based from related code/docs only
 - Do: meet **Quality bar** / **Self-check** before the human choice UI
+- Do: on Explore, paste a mermaid fence and `글 흐름:` in **this** reply before any “그림을 보세요” AskQuestion
 - Don't: implement app code during Explore
 - Don't: own phase-gate CLI or skip kickoff K1 (use `phase-gate` / `project-kickoff`)
 - Don't: skip Human Review on architecture/security choices

@@ -31,7 +31,7 @@ Large·킥오프는 승인 없이 구현하지 않는다.
 
 사용자가 프로젝트·필수 기능을 설명하면:
 
-1. K1 질문 라운드 (Phase Plan·docs 본문·코드 금지)
+1. K1 질문 라운드 (Phase Plan·docs 본문·코드 금지). 첫 응답에 `guide.md` §3-0 시작 가이드. **질문 하나씩**. 이해 요약에 한눈 그림.
 2. K2 전체 설계 초안 (`.cursor/plans/<name>-design.md`) → 사람 합의
 3. K3 합의 내용을 `docs/`에 기록
 4. K4 Phase Plan Draft (`.cursor/plans/`, `_template.md`) → 승인 전 구현 금지
@@ -41,8 +41,8 @@ Large·킥오프는 승인 없이 구현하지 않는다.
 
 각 Delivery Phase(Phase 1부터)를 진행할 때 **건너뛰지 말고** 순서대로:
 
-1. **Explore** — 코드 작성 금지. 관련 코드·요구·기존 패턴·영향 범위만 정리
-2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). 기초 product/architecture는 킥오프 K3. Delivery Document는 변경분.
+1. **Explore** — 코드 작성 금지. 관련 코드·요구·기존 패턴·영향 범위만 정리. **한눈 그림**(이 Phase)
+2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). 기초 product/architecture는 킥오프 K3. Delivery Document는 변경분. **한눈 그림** (Explore와 같거나 변경분)
 3. **Plan** — 이 Phase를 어떻게 구현할지 상세 계획(변경 파일·순서·테스트·User Test Guide 초안). Status 반영 후 **사람 승인 대기**. 승인 전 구현 금지
 4. **Implement** — 승인한 이 Phase 범위만 최소 변경으로 구현. 실행 가능하면 **실행 가이드**(채팅 + README/`docs/development.md`)
 5. **Verify** — AI: 관련 테스트 → typecheck/lint → 필요 시 build. 실패 무시·테스트 삭제 금지. 이어서 **직접 확인 가이드** (실행법·확인할 것·기대 결과·실패 시 보고). 마지막 Phase면 **실행 가이드**와 **역할 기여**를 그 앞에. 선택 UI보다 앞에 둔다.
@@ -58,7 +58,7 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 실행
 ## Plan
 
 - 킥오프: K1–K4 (`_design-template.md` + `_template.md`) → K4 Status=Draft 승인 요청
-- Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서 + **한눈 그림**(이 Phase 작업 순서) + 확인할 파일 → 승인 요청
+- Phase 상세 Plan(6단계의 3): 해당 Phase Goal/In-Out/파일/순서 + **한눈 그림**(이 답변에 Mermaid + 글 흐름) + **지금 볼 곳**(Cursor에서 열 경로) → 승인 요청. 그림 없이 “바로 위 그림을 보세요” 금지.
 
 ## Implement / Verify / Review
 

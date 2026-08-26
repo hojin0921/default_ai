@@ -18,7 +18,7 @@
 |-------|------|------|
 | `senior-architect` | 시니어 설계 | Explore, 구조·보안·영향 범위 |
 | `senior-pm` | 시니어 기획 | 킥오프·Plan, 범위·수락 기준 |
-| `senior-design` | 시니어 디자인 | UI/UX·정보구조·카피 |
+| `senior-design` | 시니어 디자인 | 시각·레이아웃·정보구조·카피 |
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review·User Test Guide |
 
