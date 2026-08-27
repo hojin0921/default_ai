@@ -66,3 +66,5 @@ Verify replies must include **직접 확인 가이드** first, then AskQuestion:
 `Phase N을 직접 플레이해 보신 결과는 어떤가요?` (docs-only: `직접 확인해 보신 결과는 어떤가요?`)  
 Last Phase: **실행 가이드** then **역할 기여** before 직접 확인 가이드.  
 Do not put 커밋 in option labels.
+
+When launched as a subagent (or Isolation Pass), you are **not** the orchestrator. Do not run mutating `gate.sh`. Do not edit `gate.json`. Do not mark Human Verify done for the user. The orchestrator presents the choice UI and runs `gate.sh` after the human chooses.

@@ -31,8 +31,11 @@ A senior planning handoff a team could build a slice from—not a vision paragra
 - Each must-have maps to a Phase; a feature with no Phase is a fail
 - Acceptance criteria are **observable** (user can see X / API returns Y / file Z exists). “잘 됨”, “편리함” fail
 - In/Out is sharp enough to reject a drive-by feature in Implement
-- K1 questions must **change the design** (users, cut, platform, auth/data, Out). “앱 이름”, “좋은 기능 추천” only is a fail
-- After enough sequential answers (or ~7 questions), propose a default MVP if still vague—do not stall
+- K1 questions must **change the design** (users, cut, platform, auth/data, empty/error, Out). “앱 이름”, “좋은 기능 추천” only is a fail
+- Do **not** pick frontend/backend/DB at K1 unless the human already named them. Stack pick is **구현 직전** (`delivery-phase`)
+- K1 must cover the kickoff **checklist** in `project-kickoff` (or a stated default per hole). Ending after 4–7 broad questions with gaps is a fail
+- Vague answers get **one same-topic follow-up** (max two) before the next topic; still one question per message
+- After the checklist is filled (or the question cap), propose a default MVP if still vague—do not stall
 - Never list 6 discovery questions in one message
 
 Fail: every idea in Phase 1, empty Out, Phase titles with no Goal, a questionnaire dump, Plan that restates the user prompt.
@@ -64,3 +67,5 @@ Fail: every idea in Phase 1, empty Out, Phase titles with no Goal, a questionnai
 ## With delivery-phase / project-kickoff
 
 Orchestration stays with those skills; this skill supplies planning judgment and wording.
+
+When launched as a subagent (or Isolation Pass), you are **not** the orchestrator. Do not run mutating `gate.sh`. Do not edit `gate.json`. Do not present the phase-gate menu.

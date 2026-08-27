@@ -49,6 +49,8 @@ picks an option in **this** turn.
 
 Humans may run the same CLI themselves (equivalent).
 
+Spawned specialists (`senior-*` agents) **must not** run mutating `gate.sh`. Only the orchestrator, after an explicit human choice this turn.
+
 ### Menu options (Korean — AskQuestion labels or text numbers)
 
 **After K1 이해 요약** (한눈 그림 필수)
@@ -86,7 +88,7 @@ Chat must include a **한눈 그림** (this Phase work order) and **지금 볼 �
 AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
-   → `./scripts/gate.sh advance implement`, then Implement  
+   → `./scripts/gate.sh advance implement`, then **Stack pick** if 미정 (프론트→백→DB, **프로젝트 맞춤** 후보 목록, one question each), then Implement  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
    — same/next message may include edit details  
 3. 지금은 보류할게요  

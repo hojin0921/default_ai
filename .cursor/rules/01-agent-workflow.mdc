@@ -31,7 +31,7 @@ Large·킥오프는 승인 없이 구현하지 않는다.
 
 사용자가 프로젝트·필수 기능을 설명하면:
 
-1. K1 질문 라운드 (Phase Plan·docs 본문·코드 금지). 첫 응답에 `guide.md` §3-0 시작 가이드. **질문 하나씩**. 이해 요약에 한눈 그림.
+1. K1 질문 라운드 (Phase Plan·docs 본문·코드 금지). 첫 응답에 `guide.md` §3-0 시작 가이드. **질문 하나씩**, 흐린 답은 같은 주제 후속. 이해 요약에 한눈 그림.
 2. K2 전체 설계 초안 (`.cursor/plans/<name>-design.md`) → 사람 합의
 3. K3 합의 내용을 `docs/`에 기록
 4. K4 Phase Plan Draft (`.cursor/plans/`, `_template.md`) → 승인 전 구현 금지
@@ -83,11 +83,11 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 실행
 - `.cursor/skills/delivery-phase` — Phase 6단계 + 역할 매핑
 - `.cursor/skills/phase-gate` — 게이트 운영
 
-### 역할 (시니어 관점)
+### 역할 (시니어 에이전트)
 - `senior-architect` / `senior-pm` / `senior-design` / `senior-dev` / `senior-qa`
-- 단계별 primary는 `delivery-phase` Role map. 응답 첫 줄에 `역할: 시니어 ○○`.
-- 해당 `senior-*` Skill의 **Quality bar**를 충족한다. 피상적 요약으로 단계를 끝내지 않는다.
-- 사용자가 역할을 명시하면(**시니어 ○○로만** 등) 그 지정이 Role map보다 **우선** (`guide.md` §2-3).
+- 오케스트레이터는 `delivery-phase` Role map대로 **전문 에이전트를 띄운다**. 응답 첫 줄에 `역할: 시니어 ○○`.
+- Quality bar는 해당 `senior-*` Skill. 피상적 요약으로 단계를 끝내지 않는다.
+- 사용자가 역할을 명시하면(**시니어 ○○로만** 등) 그 에이전트만 띄운다 (`guide.md` §2-3).
 - 상세: `docs/ai/agent-workflow.md` 「역할 Skill」
 
 ## Context

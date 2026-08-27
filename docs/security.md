@@ -19,6 +19,8 @@
 ## Threat Notes
 
 - 스킬 파일이 세 경로에 복제된다. 내용에 secret을 넣으면 유출면이 세 배가 되므로 스킬에는 비밀을 두지 않는다.
+- 전문 에이전트 정의(`.cursor/agents/` 등)에도 secret을 넣지 않는다. 오케스트레이터가 자식에게 넘기는 입력 패키지에 `.env` 실제 값을 넣지 않는다.
+- 전문 에이전트도 `.cursor/gate.json`을 직접 수정하지 않는다. mutating `gate.sh`는 사람 선택 후 오케스트레이터만.
 - Cursor 밖에서는 `.cursor/hooks.json` 쓰기 차단이 없다. 구현 전 코드 쓰기는 규칙 + 사람 승인 + git pre-commit에 의존한다.
 
 ## Reporting

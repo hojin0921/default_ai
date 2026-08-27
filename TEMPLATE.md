@@ -23,7 +23,7 @@ Human(목표·채팅 승인·사용자 테스트)
 | Human Review | 사람 + `docs/ai/agent-workflow.md` | 승인·검수 |
 
 Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa`)로 나뉜다.  
-한 Agent Chat · 단계마다 `역할: 시니어 ○○` 고지. 사람용 요약: [`guide.md`](guide.md) §2-2.
+한 채팅의 오케스트레이터가 단계마다 전문 에이전트(`senior-*`)를 띄움. 사람용 요약: [`guide.md`](guide.md) §2-2.
 
 Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하면 Skills+Hooks+Rules가 함께 간다.
 (나중에 Cursor Marketplace Plugin으로 재패키징 가능.)
@@ -52,11 +52,15 @@ Phase 0 = bootstrap (제품 없이 docs만). 제품 설명이면 킥오프 K1부
 ├── .cursor/
 │   ├── rules/
 │   ├── skills/          # Cursor. 동일 내용: .claude/skills/ , .agents/skills/
+│   ├── agents/          # 전문 에이전트. Claude: .claude/agents/ , Antigravity: .agents/agents/ , Codex: .codex/agents/
 │   ├── hooks.json + hooks/   # gate-check, protect-gate (Cursor)
 │   ├── gate.json
 │   └── plans/_template.md, _design-template.md
 ├── .claude/skills/      # Claude Code
+├── .claude/agents/
 ├── .agents/skills/      # Codex · Antigravity
+├── .agents/agents/      # Antigravity
+├── .codex/agents/       # Codex TOML
 ├── .githooks/pre-commit
 ├── scripts/gate.sh, install-hooks.sh, phase-gate-check.sh
 ├── docs/ ... + docs/ai/agent-workflow.md

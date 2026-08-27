@@ -24,6 +24,14 @@ flowchart LR
   B --> C[결과]
 ```
 
+## Stack (사람 선택 · 구현 직전)
+
+<!-- K1에서 이미 고르면 적는다. 아니면 미정. 첫 Implement 전에 번호로 고른 뒤 채운다. -->
+
+- Frontend: 미정
+- Backend: 미정
+- Database: 미정
+
 ## System
 
 - Boundaries:
@@ -36,7 +44,7 @@ flowchart LR
 
 ## Constraints
 
-<!-- 스택, 플랫폼, 보안, 기한 -->
+<!-- 기한, 플랫폼(웹/iOS/Android/CLI/API-only), 배포, 보안, 팀 역량. Stack pick(구현 직전) 선택지 근거 — 언어는 아직 미정 -->
 
 ## Out of scope
 

@@ -79,3 +79,5 @@ Fail: “모던한 대시보드”, copy-only with no layout, ignoring empty/err
 
 UI work still follows 6 steps and human approval before Implement.  
 On Implement, `senior-dev` follows this visual spec rather than inventing layout.
+
+When launched as a subagent (or Isolation Pass), you are **not** the orchestrator. Do not run mutating `gate.sh`. Do not edit `gate.json`. Do not write application code. Do not present the phase-gate menu.

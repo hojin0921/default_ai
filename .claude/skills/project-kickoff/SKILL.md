@@ -10,16 +10,18 @@ description: >-
 
 ## Roles
 
-| Step | Primary | Skill(s) |
-|------|---------|----------|
-| K1 Discover | 시니어 기획 | `senior-pm` |
-| K2 Design | 기획 + 설계 | `senior-pm`, `senior-architect` (+ `senior-design` if UI) |
-| K3 Docs | 설계 / 기획 | `senior-architect` / `senior-pm` |
-| K4 Phase Plan | 기획 + 설계 | `senior-pm`, `senior-architect` |
+| Step | Launch (sequential if several) | Skill Quality bar |
+|------|--------------------------------|-------------------|
+| K1 Discover | `senior-pm` | `senior-pm` |
+| K2 Design | `senior-pm` then `senior-architect` then (`senior-design` if UI) | matching |
+| K3 Docs | `senior-pm` (`docs/product.md`) then `senior-architect` | matching |
+| K4 Phase Plan | `senior-pm` then `senior-architect` | matching |
 
-Start replies with `역할: 시니어 ○○`.  
-If the user explicitly names one role for the turn, that override wins (`delivery-phase` / `guide.md` §2-3).  
-Meet that role skill’s **Quality bar** (decision-forcing questions, testable In/Out, real paths)—do not ship a thin paraphrase of the user’s prompt.
+You are the **orchestrator**. Do **not** write K2/K3/K4 specialist bodies yourself. Launch per `delivery-phase` **Specialist launch** (host adapter + Isolation Pass). Input package: K1 answers, paths, previous artifacts. No `.env` secrets.
+
+Start orchestrator replies by naming whom you launched, e.g. `역할: 시니어 기획` after `senior-pm` returns.  
+If the user explicitly names one role for the turn, launch **only** that agent (`delivery-phase` / `guide.md` §2-3).  
+The launched agent must meet that role skill’s **Quality bar**.
 
 ## Instructions
 
@@ -76,13 +78,26 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 1. Start with the **시작 가이드** (`guide.md` §3-0 bullets). Optional short Explore of existing repo patterns; do not read all of `docs/`.
 2. Ask **one question per turn** with AskQuestion or host equivalent (or one numbered question if unavailable).  
-   - Do **not** paste a list titled “확인이 필요한 질문 (6개)” or similar.  
+   - Do **not** paste a list titled “확인이 필요한 질문 (6개)” or similar. Never dump the checklist as one questionnaire.  
    - Every question includes **「제안해」** (and **「잘 모르겠음」** when useful).  
-   - The next question may depend on the last answer. Typical total **4–7** questions; skip topics already answered in the first prompt.  
+   - Skip a topic only if the first prompt already answered it **specifically** (not “편하게”, “그냥 웹”).  
    - After each answer: one line of what you now assume, then the **next single** question.  
-   - Topics as needed: platform, core loop, must-have fun, win/lose, Out, visual tone.  
+   - **Follow-up (required when thin):** if the answer is vague, adjective-only, or “다 / 모두 / 잘 됐으면”, ask **one deeper question on the same topic** before moving on. Max **two** follow-ups per topic, then propose a default and continue.  
+   - **Cover this checklist** (order may follow the last answer; do not skip a hole to rush K2):
+     1. Who it is for (concrete user, not “everyone”)
+     2. Primary job / success (what they do → what “done” looks like)
+     3. Must-have now vs later (cut)
+     4. Surface (web / app / both / CLI)
+     5. If UI: key flow screen-by-screen (entry → success). If no UI: say so and skip 6.
+     6. If UI: empty / error / fail (what they see)
+     7. Login / stored data / none (what is saved, who can see it)
+     8. Constraints (deadline, **platform** — web/iOS/Android/CLI/API-only/deploy, must-not) and **Out** (explicitly not building)
+     9. Only if it is a game: win/lose and what is fun. Only if visual tone is still unknown and there is UI: look-and-feel in one question (not a brand book)
+   - Typical total **8–14** questions including follow-ups. Cap **16**. First-prompt answers that are specific still skip that topic.  
+   - Do **not** ask frontend/backend/DB languages here. That is **구현 직전** (`delivery-phase` Stack pick — **contextual** options from design). If they already named a stack in the first prompt, record it; otherwise leave Stack as **미정**.  
 3. Do **not** write `.cursor/plans/` Phase Plan, `docs/` body, or `src/`.
-4. When enough is known (or after the last needed question), summarize, then the **한눈 그림 블록** (Mermaid + 글 흐름) in this reply, then:
+4. Go to the 이해 요약 only when every checklist item has a specific answer **or** a stated default. Do not end K1 after 4–7 broad questions if holes remain.  
+   Then summarize, then the **한눈 그림 블록** (Mermaid + 글 흐름) in this reply, then:
 
    AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)을 보신 뒤, 전체 설계 초안으로 갈까요?`
 
@@ -90,12 +105,13 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
    2. 더 질문하거나 이해를 수정해 주세요  
    3. 지금은 보류할게요  
 
-   If still ambiguous after ~7 questions or ~2 “제안해” loops, propose defaults and ask to proceed to K2.
+   If still ambiguous after the cap or ~2 “제안해” loops on the same hole, propose defaults for the rest and ask to proceed to K2.
 
 ### K2 Design
 
 1. Create `.cursor/plans/<short-name>-design.md` from `.cursor/plans/_design-template.md`.
-2. Fill from K1 answers only; mark remaining gaps as Open questions. Status **Draft**. Include a **한눈 그림** (Mermaid) in the file and in chat.
+2. Fill from K1 answers only; mark remaining gaps as Open questions. Status **Draft**. Include a **한눈 그림** (Mermaid) in the file and in chat.  
+   **Stack:** if K1 already named languages, copy them. Otherwise **미정** (구현 직전 사람 선택). Do not invent Next.js/Postgres here.
 3. Do **not** write Phase Plan (`_template.md`) or fill `docs/` yet.
 4. End with the **한눈 그림**, then **지금 볼 곳** (path + how to open), then:
 
@@ -110,7 +126,7 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 1. Write agreed design into `docs/` (no guesswork beyond the design file):
    - `docs/product.md` (users, must-have, journeys, Out)
-   - `docs/architecture.md` (structure, data, boundaries, integrations; include the K2 mermaid)
+   - `docs/architecture.md` (structure, data, boundaries, integrations, Stack if already chosen else **미정**; include the K2 mermaid)
    - `docs/security.md` if security decisions exist (no secrets)
    - `docs/README.md` status
    Leave development/testing/deployment TODO if unknown.

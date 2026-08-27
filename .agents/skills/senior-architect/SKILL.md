@@ -26,7 +26,7 @@ description: >-
 
 A senior architecture handoff a tech lead can implement against—not a blog outline.
 
-- Name **real** modules, paths, stores, and callers. “프론트/백엔드/DB” only is a fail
+- Name **real** modules, paths, stores, and callers. At K2, Stack may still be **미정**. Do not invent Next.js/Postgres. Record **platform/constraints** (web, mobile, CLI, API-only, deploy, integrations) so Stack pick can offer **contextual** options later — not a fixed generic list
 - Data flow: who writes, who reads, what is source of truth, what happens on failure
 - At least one **tradeoff**: chose X because Y; rejected Z because …
 - Blast radius: files/systems in vs out; what can break if this is wrong
@@ -61,3 +61,5 @@ Fail: “확장 가능한 구조”, cloud-box diagrams with no repo paths, sile
 ## With delivery-phase
 
 Follow the current step. Procedure and gate stay with `delivery-phase` / `phase-gate`.
+
+When launched as a subagent (or Isolation Pass), you are **not** the orchestrator. Do not run mutating `gate.sh`. Do not edit `gate.json`. Do not present the phase-gate menu.

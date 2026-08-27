@@ -28,8 +28,8 @@
 
 ## 역할 Skill (시니어 관점)
 
-한 Agent 채팅을 쓰되, Phase·6단계에 맞는 **역할 Skill**로 관점·산출물을 나눈다.  
-별도 봇 프로세스나 Marketplace 다중 에이전트가 아니다. 워크플로 Skill(`project-kickoff` / `delivery-phase` / `phase-gate`)이 오케스트레이션하고, 역할 Skill은 관점만 담당한다.
+한 **채팅**을 쓰되, 단계가 되면 오케스트레이터(`project-kickoff` / `delivery-phase` / `phase-gate`)가 해당 **전문 에이전트**를 띄운다.  
+역할 Skill(`senior-*`)은 Quality bar다. 기획·디자인·개발·QA **본문은 그 에이전트가 쓴다**. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패. Marketplace 다중 봇은 아니다. 합의: `.cursor/plans/specialist-agents-design.md`.
 
 | Skill | 한글 | 주 관점 | 주 산출물 |
 |-------|------|---------|-----------|
@@ -39,28 +39,27 @@
 | `senior-dev` | 시니어 개발 | 구현·패턴·최소 변경·테스트 가능성 | 코드, 구현 상세 Plan |
 | `senior-qa` | 시니어 QA | 검증·회귀·User Test Guide·리스크 | 테스트 계획, UTG, 버그 리포트 |
 
-### Delivery 6단계 ↔ primary 역할
+### Delivery 6단계 ↔ 띄울 에이전트
 
-| 단계 | Primary | Optional |
-|------|---------|----------|
-| 1 Explore | 설계 (+ 기획) | — |
-| 2 Document | 설계 / 기획 (문서 성격에 따라) | 디자인(UX 문서 시) |
-| 3 Plan | 기획 + 설계 (+ 디자인 if UI) | 개발(실현 가능성) |
-| 4 Implement | 개발 | 디자인(UI 구현 시) |
-| 5 Verify | QA (+ 개발 수정) | — |
-| 6 Review | QA + 설계 | 기획(요구 누락) |
+| 단계 | 전문 에이전트 |
+|------|----------------|
+| 1 Explore | 설계 |
+| 2 Document | 설계 또는 기획 (문서 성격) |
+| 3 Plan | 기획 → (UI면) 디자인 |
+| 4 Implement | 개발 (디자인 스펙 준수) |
+| 5 Verify | QA |
+| 6 Review | QA → 설계 |
 
-킥오프: K1 질문 **기획**, K2 설계 초안 **기획 + 설계**, K3 문서화 **설계/기획**, K4 Phase Plan **기획 + 설계**.  
-응답 시작에 `역할: 시니어 ○○`을 한 줄로 밝힌다.  
-각 `senior-*` Skill의 **Quality bar**를 충족한다. 형용사만 있는 요약은 다시 쓴다.
+킥오프: K1 **기획**, K2 **기획 → 설계 → (UI면) 디자인**, K3 **기획 → 설계**, K4 **기획 → 설계**.  
+오케스트레이터 응답에 지금 단계·띄운 에이전트를 밝힌다. 전문 에이전트는 `역할: 시니어 ○○`과 해당 Skill **Quality bar**를 충족한다.
 
 ### 명시 호출 우선
 
-사용자가 “시니어 QA로만 …”, “시니어 디자인 관점으로 …”처럼 **역할을 지정**하면 그 Skill이 우선이고, 지정하지 않은 역할 관점은 스킵한다.  
-지정이 없으면 Delivery Role map(위 표) / kickoff 기본(기획+설계)을 쓴다. Small·Medium에도 동일.  
-사람용 예시·FAQ: [`guide.md`](../../guide.md) §2-3.
+사용자가 “시니어 QA로만 …”, “시니어 디자인 관점으로 …”처럼 **역할을 지정**하면 오케스트레이터는 **그 전문 에이전트만** 띄운다.  
+지정이 없으면 위 표 / 킥오프 매핑을 쓴다. Small·Medium에도 동일.  
+사람용 예시·FAQ: [`guide.md`](../../guide.md) §2-3 (프로토콜 파일은 Implement에서 맞춤).
 
-목록·트리거: `.cursor/skills/README.md`. 사람용 요약: [`guide.md`](../../guide.md) §2-2. 전체 Plan: `.cursor/plans/senior-role-agents.md`.
+목록·트리거: `.cursor/skills/README.md`. 합의된 설계: `.cursor/plans/specialist-agents-design.md`.
 
 ## 계획의 층
 
@@ -116,7 +115,9 @@
 
 **K1 질문**
 
-한 메시지에 질문 **하나**. 「제안해」 옵션. 답을 받은 뒤 다음 질문. 목록 덤프 금지.
+한 메시지에 질문 **하나**. 「제안해」 옵션. 답을 받은 뒤 다음 질문. 목록 덤프 금지.  
+흐린 답은 같은 주제로 후속(최대 2). 체크리스트(누구 / 성공 / 지금·나중 / 화면 / 빈·에러 / 데이터 / Out)를 메운 뒤에만 이해 요약.  
+프론트·백·DB 언어는 여기가 아니라 **구현 직전** 번호 선택.
 
 **K1 질문 라운드 후 (이해 요약)**
 
@@ -160,6 +161,7 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디�
 AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요 (`advance implement`)  
+   Stack이 미정이면 코드를 쓰기 전에 프론트 → 백엔드 → DB를 **설계·Constraints에 맞는 후보 목록**으로 하나씩 고른다.  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
 3. 지금은 보류할게요  
 

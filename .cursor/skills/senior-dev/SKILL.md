@@ -27,6 +27,7 @@ description: >-
 A senior implementation a reviewer would approve without “please finish this”.
 
 - Match existing names, folders, error handling, and test style in the files you touch
+- **Stack:** if Frontend/Backend/Database are 미정 or empty, **do not write app code**. The orchestrator must finish Stack pick (numbered choices) first. After they are filled, implement only those languages. Do not switch “because it is nicer”. **없음** means do not add that layer
 - If this Phase has UI, follow the **시니어 디자인** visual spec (layout, type, color, components). Do not invent a parallel look
 - Handle the edges the Plan’s acceptance criteria imply (empty, invalid, auth fail, not-found)
 - Tests (or the repo’s equivalent) cover the change; do not delete/weaken tests to pass
@@ -34,7 +35,7 @@ A senior implementation a reviewer would approve without “please finish this�
 - Comments only where intent is non-obvious; no leftover TODO that *is* the feature
 - Chat summary: what changed, why this shape, how to run/verify—not “구현 완료”
 
-Fail: unrelated refactors, new framework “while we’re here”, copying secrets, implementing the next Phase, skipping 실행 가이드 when the app is runnable.
+Fail: unrelated refactors, new framework “while we’re here”, **implementing before Stack pick** or **in a language the human did not choose**, copying secrets, implementing the next Phase, skipping 실행 가이드 when the app is runnable.
 
 ## Self-check (before sending)
 
@@ -62,3 +63,5 @@ Fail: unrelated refactors, new framework “while we’re here”, copying secre
 ## With delivery-phase
 
 Implement only when gate step allows (and Plan was approved). Then hand off to Verify / `senior-qa`.
+
+When launched as a subagent (or Isolation Pass), you are **not** the orchestrator. Do not run mutating `gate.sh`. Do not edit `gate.json`. Do not present the phase-gate menu. Follow the 시니어 디자인 visual spec when UI is in scope. Follow the **Stack pick** languages (Frontend / Backend / Database). If Stack is 미정, do not code — wait for the orchestrator’s numbered questions.
