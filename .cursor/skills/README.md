@@ -1,6 +1,14 @@
-# Project Skills (Cursor)
+# Project Skills
 
 이 템플릿에 포함된 Agent Skills. 저장소를 복사하면 프로젝트 스킬로 따라간다.
+
+| 도구 | 경로 |
+|------|------|
+| Cursor | `.cursor/skills/<name>/SKILL.md` |
+| Claude Code | `.claude/skills/<name>/SKILL.md` |
+| Codex, Antigravity | `.agents/skills/<name>/SKILL.md` |
+
+세 경로의 `SKILL.md`는 같게 유지한다. 이 README는 `.cursor/skills/`에만 있다.
 
 ## 워크플로 (오케스트레이션)
 
@@ -22,11 +30,12 @@
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review·User Test Guide |
 
-경로: `.cursor/skills/<skill-name>/SKILL.md`
+경로: `.cursor/skills/<skill-name>/SKILL.md` (복제: `.claude/skills/`, `.agents/skills/`)
 
 잘못된 자동 선택 완화: `delivery-phase`가 현재 단계의 primary 역할을 **명시**한다.  
 응답 관례: `역할: 시니어 ○○` 한 줄.  
 각 Skill의 **Quality bar**를 충족할 것. 피상적 요약은 실패.  
 **사용자 명시 호출**(“시니어 QA로만 …”)이 있으면 그 역할이 Role map보다 우선 — `guide.md` §2-3.
 
-Cursor: Customize → Skills, 또는 Agent가 description 기준으로 자동 선택.
+Cursor: Customize → Skills, 또는 Agent가 description 기준으로 자동 선택.  
+Claude Code / Codex / Antigravity: 위 경로의 스킬을 도구가 자동 로드.

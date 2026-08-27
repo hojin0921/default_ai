@@ -7,7 +7,7 @@
 
 - Small → Implement→Verify / Medium → Explore 후 구현 / Large·킥오프 → K1 질문 → K2 설계 합의 → K3 docs → K4 Phase Plan, **승인 전 구현 금지**.
 - Delivery Phase는 6단계: Explore→Document→Plan→Implement→Verify(+User Test Guide)→Review. **단계·Phase 검수 전 다음 금지**.
-- Cursor 템플릿: `.cursor/skills/` (kickoff / delivery-phase / phase-gate + senior-*), `.cursor/hooks.json`, `.cursor/gate.json` + `./scripts/gate.sh` (Agent는 사람 채팅 선택 후에만 gate.sh 대행; `gate.json` 직접 수정 금지). 단계마다 `역할: 시니어 ○○`.
+- Skills: `.claude/skills/` (Cursor 원본은 `.cursor/skills/`, Codex·Antigravity는 `.agents/skills/` — 내용 동일). Hooks: `.cursor/hooks.json`은 Cursor만. `.cursor/gate.json` + `./scripts/gate.sh` (사람 채팅 선택 후에만 gate.sh 대행; `gate.json` 직접 수정 금지). 단계마다 `역할: 시니어 ○○`. 결정 메뉴는 `AskUserQuestion`이 있으면 쓰고, 없으면 한글 번호.
 - Phase 0은 bootstrap 또는 제품 없이 Docs만 초기화할 때만. 제품 설명이면 킥오프 K1부터.
 - 관련 파일·관련 docs만. docs 전체 읽기 금지. secret 출력 금지.
 - 구현 후 관련 테스트. 실패 무시 금지.

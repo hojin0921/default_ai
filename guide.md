@@ -1,6 +1,7 @@
 # 템플릿 사용 가이드
 
-이 저장소는 **앱 스캐폴드가 아니라** Cursor에서 AI와 같이 개발하기 위한 **프로토콜 템플릿**이다.  
+이 저장소는 **앱 스캐폴드가 아니라** AI와 같이 개발하기 위한 **프로토콜 템플릿**이다.  
+Cursor, Claude Code, Codex, Antigravity에서 같은 킥오프·6단계·게이트로 일한다.  
 Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 
 상세 프롬프트 모음: [`docs/ai/agent-workflow.md`](docs/ai/agent-workflow.md)  
@@ -15,14 +16,19 @@ Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 
 ### 권장: `.git` 없이 복사한 뒤 새 저장소
 
+Finder·탐색기·zip으로 폴더를 통째로 복사하면 `guide.md`도 **따라간다.** 빼려면 아래처럼 한다.
+
 ```bash
 # 예: 템플릿 → 새 프로젝트 폴더 (macOS)
-rsync -a --exclude='.git' /path/to/default_ai/ /path/to/my-new-project/
+rsync -a --exclude='.git' --exclude='guide.md' /path/to/default_ai/ /path/to/my-new-project/
 cd /path/to/my-new-project
 git init
 ./scripts/install-hooks.sh
 ./scripts/gate.sh status
 ```
+
+이미 통째로 복사했다면 새 폴더에서 `rm -f guide.md` 하면 된다.  
+사용법은 **원본 템플릿**의 `guide.md`를 연다. 새 프로젝트 Skills는 그대로 동작한다.
 
 이미 `.git`이 포함된 채로 복사했다면:
 
@@ -36,15 +42,26 @@ git init
 ```
 
 - `enabled: false` → 작은 작업은 게이트 없이 진행 가능  
-- Cursor로 **새 프로젝트 폴더**를 열고 **Agent** 채팅을 사용한다  
-- Large(새 프로젝트)에서는 **터미널보다 채팅 선택 UI**로 승인·단계 전진하는 것이 기본이다
+- **쓰는 도구로** 이 폴더를 연다 (Cursor Agent / Claude Code / Codex / Antigravity)  
+- Large에서는 **채팅 선택**(버튼 또는 번호)으로 승인·단계 전진하는 것이 기본이다  
+
+스킬은 클론만 하면 붙는다 (설치 스크립트 없음).
+
+| 도구 | 스킬 경로 |
+|------|-----------|
+| Cursor | `.cursor/skills/` |
+| Claude Code | `.claude/skills/` |
+| Codex, Antigravity | `.agents/skills/` |
+
+쓰기 차단 훅(`.cursor/hooks.json`)은 **Cursor만**. 다른 도구는 규칙 + `gate.sh` + git pre-commit.
 
 ### 선택 UI가 버튼으로 안 보일 때
 
-결정 메뉴는 가능하면 Cursor **`AskQuestion`(클릭 선택 카드)** 로 낸다.  
-일부 모델(예: Grok)에서는 이 도구가 없어 **한글 번호 텍스트**로 대체된다.
+결정 메뉴는 **구조화 질문 도구가 있으면** 클릭 카드, **없으면 한글 번호** `1` / `2` / `3` 이다. 가짜 버튼을 만들지 않는다.
 
-버튼 UI를 쓰려면 Agent 모델을 **Composer / Claude / GPT** 등으로 바꾸면 된다. (Auto가 Grok으로 가면 다시 텍스트가 될 수 있음.)
+- **Cursor:** 가능하면 `AskQuestion`. Grok·Auto가 Grok이면 번호로 나올 수 있다. 버튼을 쓰려면 Composer / Claude / GPT로 바꾼다.
+- **Claude Code:** `AskUserQuestion`이 있으면 카드, 없으면 번호.
+- **Codex · Antigravity:** 보통 번호 텍스트. `1` / `2` / `3`으로 고르면 게이트는 같다.
 
 ---
 
@@ -109,7 +126,7 @@ FAQ:
 - **Q. 역할을 안 쓰면?** → Large Phase면 단계 기본 역할. Small이면 보통 개발 중심으로 처리.  
 - **Q. 여러 역할을 한 번에?** → 가능하면 하나만. 필요하면 “설계 후 QA”처럼 **순서**를 적는다.  
 - **Q. Small인데 게이트는?** → 보통 `off`. 역할 지정과 게이트는 별개다.  
-- **Q. 그림·설계 파일은 어디?** → 그림은 **선택 버튼 바로 위**, 그 답변 안에 그린 Mermaid. 새 창이 아닙니다. 파일은 Cursor `Cmd+P`/`Ctrl+P`로 AI가 적어 준 경로.  
+- **Q. 그림·설계 파일은 어디?** → 그림은 **선택 버튼(또는 번호 메뉴) 바로 위**, 그 답변 안에 그린 Mermaid. 새 창이 아닙니다. 파일은 에디터에서 AI가 적어 준 경로 (Cursor는 `Cmd+P`/`Ctrl+P`).  
 - **Q. 질문을 한 번에 여러 개?** → K1은 **하나씩**. 「제안해」를 고르면 된다.  
 - **Q. 응답에 역할이 안 보이면?** → `역할: 시니어 ○○`이 없으면 다시 요청하거나 모델/Skills를 확인한다.
 
@@ -178,18 +195,18 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 
 ### 3-2. 전체 설계 합의 (K2)
 
-채팅 **메시지 바로 위(이 답변 안)** 한눈 그림과, AI가 적어 준 **지금 볼 곳** 경로를 Cursor에서 연다 (왼쪽 파일 트리 또는 `Cmd+P` / `Ctrl+P`).  
+채팅 **메시지 바로 위(이 답변 안)** 한눈 그림과, AI가 적어 준 **지금 볼 곳** 경로를 에디터에서 연다 (파일 트리 또는 Cursor `Cmd+P` / `Ctrl+P`).  
 보통 `.cursor/plans/<이름>-design.md`. 그림은 선택 카드 위 답변 안에 있고, 별도 앱이 아니다.  
 읽은 뒤 선택 UI: 합의하고 문서화 / 설계 수정 / 보류.
 
 ### 3-3. docs 문서화 (K3)
 
-같은 그림(채팅 안)과 **지금 볼 곳**의 `docs/product.md`, `docs/architecture.md` 등을 Cursor에서 연다.  
+같은 그림(채팅 안)과 **지금 볼 곳**의 `docs/product.md`, `docs/architecture.md` 등을 에디터에서 연다.  
 읽은 뒤 선택 UI: Phase Plan 초안 작성 / 문서 수정 / 보류.
 
 ### 3-4. Phase Plan 검토 후 채팅에서 선택 (K4)
 
-1. 채팅 안의 **Phase 한눈 그림**(1→N)과 **지금 볼 곳**의 Plan 파일(`.cursor/plans/<이름>.md`)을 Cursor에서 연다  
+1. 채팅 안의 **Phase 한눈 그림**(1→N)과 **지금 볼 곳**의 Plan 파일(`.cursor/plans/<이름>.md`)을 에디터에서 연다  
 2. AI가 내는 **선택 UI**에서 고른다  
    - **버튼 카드**가 보이면 해당 항목을 클릭  
    - 텍스트 번호만 보이면 `1` / `2` / `3`  
@@ -258,8 +275,8 @@ AI Skill: `delivery-phase` (+ 단계별 `senior-*`).
 
 ### 4-1. 선택 UI 우선순위 (Agent)
 
-1. **`AskQuestion` 사용 가능** → 한글 옵션으로 **클릭 가능한 선택 카드(버튼)** 제시 (한 메시지에 질문 하나)  
-2. **불가** → 아래와 같은 **한글 번호 텍스트 메뉴**로 대체  
+1. **구조화 질문 도구 사용 가능** (`AskQuestion` / `AskUserQuestion` 등) → 한글 옵션으로 **클릭 가능한 선택 카드** (한 메시지에 질문 하나)  
+2. **불가** (Grok, Codex, Antigravity 등) → 아래와 같은 **한글 번호 텍스트 메뉴**로 대체  
 3. 선택 전에는 게이트 전진·구현 금지. 선택 후 해당 `gate.sh`만 실행하고 `status`로 짧게 보고  
 
 ### 4-2. 메뉴 문구 (한글 · 버튼/번호 공통)
@@ -269,8 +286,8 @@ AI Skill: `delivery-phase` (+ 단계별 `senior-*`).
 
 **① 킥오프 K2 — 전체 설계 초안 후**
 
-채팅 안의 한눈 그림 + **지금 볼 곳**(Cursor에서 `.cursor/plans/…-design.md` 열기).  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <실제-경로> 를 연 뒤 어떻게 할까요?`
+채팅 안의 한눈 그림 + **지금 볼 곳**(에디터에서 `.cursor/plans/…-design.md` 열기).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <실제-경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 전체 설계를 합의하고, 이제 문서화해 주세요  
    → `approve-design` 후 문서화  
@@ -293,8 +310,8 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor�
 
 **④ 이 Phase의 상세 구현 계획을 받은 뒤**
 
-채팅 안의 **이 Phase 한눈 그림**과 **지금 볼 곳**의 Plan 파일을 Cursor에서 연다.  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
+채팅 안의 **이 Phase 한눈 그림**과 **지금 볼 곳**의 Plan 파일을 에디터에서 연다.  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
    → `advance implement` 후 구현  
@@ -429,5 +446,5 @@ Explore → 짧은 Plan → Implement → Verify.
 
 ## 9. 한 줄 요약
 
-**프로젝트 설명 → 질문 → 전체 설계 합의 → docs → 채팅 선택(버튼 우선)으로 Phase Plan 승인 → Phase마다 6단계(역할 Skill) → AI 검증 + 내가 테스트 → 선택으로 다음 진행.**  
-수정이 필요하면 **수정 선택 + 고칠 내용**을 쓰면 된다. 버튼이 안 보이면 모델을 Composer/Claude/GPT로 바꾸거나, 번호 `1`/`2`/`3`으로 고른다.
+**프로젝트 설명 → 질문 → 전체 설계 합의 → docs → 채팅 선택(버튼 또는 번호)으로 Phase Plan 승인 → Phase마다 6단계(역할 Skill) → AI 검증 + 내가 테스트 → 선택으로 다음 진행.**  
+수정이 필요하면 **수정 선택 + 고칠 내용**을 쓰면 된다. 버튼이 안 보이면 Cursor는 모델을 Composer/Claude/GPT로 바꾸거나, 모든 도구에서 번호 `1`/`2`/`3`으로 고른다.

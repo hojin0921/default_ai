@@ -1,23 +1,26 @@
 # Security
 
-<!-- 코드·설정을 확인한 뒤 채운다. 실제 secret 값은 절대 적지 않는다. -->
+앱 인증·사용자 데이터는 없다. 프로토콜 레포 수준의 원칙만 둔다.
 
 ## Principles
 
-<!-- TODO: 인증/인가, 비밀 관리, 입력 검증에 대한 프로젝트 원칙 -->
+- API key, password, token, secret을 스킬·docs·테스트·로그에 넣지 않는다.
+- `.env` 실제 값을 읽거나 출력하지 않는다.
+- Agent는 `.cursor/gate.json`을 직접 수정하지 않는다. 전진은 사람 선택 후 `./scripts/gate.sh`만.
 
 ## Secrets
 
-<!-- TODO: secret이 어디에 저장되는지 (env, vault 등). 값은 적지 말 것 -->
+이 템플릿은 secret 저장소가 없다. 복사한 프로젝트에서 쓰는 값은 환경변수 또는 secret manager. 값은 이 문서에 적지 않는다.
 
 ## AuthN / AuthZ
 
-<!-- TODO: 인증·권한 모델 개요 -->
+해당 없음 (앱 로그인 없음). 게이트는 개발 절차 잠금이지 인증이 아니다.
 
 ## Threat Notes
 
-<!-- TODO: 특별히 주의할 공격면 (XSS, IDOR 등)이 있으면 -->
+- 스킬 파일이 세 경로에 복제된다. 내용에 secret을 넣으면 유출면이 세 배가 되므로 스킬에는 비밀을 두지 않는다.
+- Cursor 밖에서는 `.cursor/hooks.json` 쓰기 차단이 없다. 구현 전 코드 쓰기는 규칙 + 사람 승인 + git pre-commit에 의존한다.
 
 ## Reporting
 
-<!-- TODO: 보안 이슈 제보/대응 절차가 있으면 -->
+해당 없음.

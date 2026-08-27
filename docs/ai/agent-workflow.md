@@ -11,7 +11,7 @@
 | 축 | 목적 |
 |----|------|
 | Rules | AI가 지킬 원칙 (`.cursor/rules/`) |
-| Skills | 킥오프·Phase·gate 절차 (`.cursor/skills/`) |
+| Skills | 킥오프·Phase·gate 절차 (`.cursor/skills/` · `.claude/skills/` · `.agents/skills/`) |
 | Hooks | 구현/커밋 차단 (`.cursor/hooks.json` + gate) |
 | Docs | 프로젝트 지식 |
 | Plans | 전체 Plan + Phase 상세 계획 |
@@ -24,11 +24,11 @@
 |----|------|
 | 탐색·문서 초안·계획·구현·자동 테스트·리뷰 초안 | 제품 방향·필수 기능·단계 승인 |
 | User Test Guide 작성 · (선택 후) `gate.sh` 대행 | Guide대로 직접 테스트·검수 |
-| 결정 지점 선택 UI 제시 (`AskQuestion` 우선, 없으면 번호 텍스트) | 채팅에서 선택 (또는 동등 터미널 명령) |
+| 결정 지점 선택 UI 제시 (`AskQuestion` 등 가능하면, 없으면 번호 텍스트) | 채팅에서 선택 (또는 동등 터미널 명령) |
 
 ## 역할 Skill (시니어 관점)
 
-한 Cursor Agent 채팅을 쓰되, Phase·6단계에 맞는 **역할 Skill**로 관점·산출물을 나눈다.  
+한 Agent 채팅을 쓰되, Phase·6단계에 맞는 **역할 Skill**로 관점·산출물을 나눈다.  
 별도 봇 프로세스나 Marketplace 다중 에이전트가 아니다. 워크플로 Skill(`project-kickoff` / `delivery-phase` / `phase-gate`)이 오케스트레이션하고, 역할 Skill은 관점만 담당한다.
 
 | Skill | 한글 | 주 관점 | 주 산출물 |
@@ -107,7 +107,7 @@
 ./scripts/install-hooks.sh
 ```
 
-전진 채널: **채팅 선택(`AskQuestion` 버튼 우선, 없으면 한글 번호) → AI가 `./scripts/gate.sh` 대행**, 또는 사람이 같은 명령을 터미널에서 실행.  
+전진 채널: **채팅 선택(구조화 질문 UI가 있으면 카드, 없으면 한글 번호) → AI가 `./scripts/gate.sh` 대행**, 또는 사람이 같은 명령을 터미널에서 실행.  
 `gate.json` 직접 수정은 금지. 선택 없이 게이트를 전진시키지 않는다.
 
 버튼 UI가 안 보이면 Agent 모델을 Composer / Claude / GPT 등으로 바꾸거나, 번호 `1`/`2`/`3`으로 고른다.
@@ -129,8 +129,8 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)을 보신 �
 
 **K2 전체 설계 초안 후**
 
-채팅 안 한눈 그림 + **지금 볼 곳** (Cursor에서 `.cursor/plans/<이름>-design.md` 를 `Cmd+P`로 열기).  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<이름>-design.md 를 연 뒤 어떻게 할까요?`
+채팅 안 한눈 그림 + **지금 볼 곳** (에디터에서 `.cursor/plans/<이름>-design.md` 열기, Cursor는 `Cmd+P`).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 .cursor/plans/<이름>-design.md 를 연 뒤 어떻게 할까요?`
 
 1. 이 전체 설계를 합의하고, 이제 문서화해 주세요 (`approve-design`)  
 2. 설계 내용을 수정해 주세요 (문서화는 아직 하지 않음)  
@@ -138,8 +138,8 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor�
 
 **K3 docs 문서화 후**
 
-합의된 K2 그림(채팅 안)과 **지금 볼 곳** (`docs/product.md` 등, Cursor에서 열기).  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 docs/product.md 를 연 뒤 어떻게 할까요?`
+합의된 K2 그림(채팅 안)과 **지금 볼 곳** (`docs/product.md` 등, 에디터에서 열기).  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 docs/product.md 를 연 뒤 어떻게 할까요?`
 
 1. 문서를 확인했습니다. Phase Plan 초안을 작성해 주세요 (`kickoff phase_plan`)  
 2. 문서를 수정해 주세요  
@@ -148,7 +148,7 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor�
 **K4 전체 개발 계획(Draft) 후**
 
 채팅 **안**의 **Phase 한눈 그림**과 **지금 볼 곳** (`.cursor/plans/<이름>.md`, Cursor `Cmd+P`).  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 .cursor/plans/<이름>.md 를 연 뒤 어떻게 할까요?`
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 .cursor/plans/<이름>.md 를 연 뒤 어떻게 할까요?`
 
 1. 이 전체 계획을 승인하고, Phase 1의 1단계(코드 없이 이해하기)부터 진행해 주세요 (`approve-plan`)  
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
@@ -157,7 +157,7 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor�
 **이 Phase 상세 구현 계획 후**
 
 채팅 **안**의 **이 Phase 한눈 그림**과 **지금 볼 곳**.  
-AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, Cursor에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요 (`advance implement`)  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
@@ -282,7 +282,7 @@ Phase N / 단계에서 문제: …
 ```text
 이 기능을 어떻게 구현할지 계획해.
 변경 파일·순서·AI Verify·User Test Guide 초안.
-이 Phase 작업 순서 한눈 그림(Mermaid)과 지금 볼 곳(경로·Cursor에서 여는 법)을 채팅에 넣고, 승인 전 구현 금지.
+이 Phase 작업 순서 한눈 그림(Mermaid)과 지금 볼 곳(경로·에디터에서 여는 법)을 채팅에 넣고, 승인 전 구현 금지.
 ```
 
 **4. Implement**

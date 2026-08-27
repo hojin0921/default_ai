@@ -4,15 +4,15 @@
 
 | 파일 | 역할 | 상태 |
 |------|------|------|
-| `product.md` | 사용자·문제·필수 기능·저니 | 스텁 (킥오프 K3에서 채움) |
-| `architecture.md` | 구조·데이터 흐름 | TODO |
+| `product.md` | 사용자·문제·필수 기능·저니 | K3 반영 (멀티 도구 프로토콜) |
+| `architecture.md` | 구조·데이터 흐름 | K3 + Phase 1 스킬 경로 + Phase 2 사람 가이드 |
 | `development.md` | 로컬 실행·기여 | TODO |
 | `testing.md` | 테스트 전략·명령 | TODO |
-| `security.md` | 보안 원칙(값 제외) | TODO |
+| `security.md` | 보안 원칙(값 제외) | K3 반영 (secret 없음·훅 범위) |
 | `environment.md` | env 이름·설명 | TODO |
 | `deployment.md` | 배포·CI | TODO |
 | `decisions/` | 왜 그렇게 결정했는지 (ADR) | README만 |
-| `ai/agent-workflow.md` | **사람** — 킥오프·Phase 검수·프롬프트 | 복사 유지 |
+| `ai/agent-workflow.md` | **사람** — 킥오프·Phase 검수·프롬프트 | Phase 2: 세 도구 경로·번호 선택 |
 
 축: Rules · Skills · Hooks · Docs · Plans · Tests · **Human Review**.  
 Skills = 워크플로 + **시니어 역할** (`senior-*`). 사람용 요약: `guide.md` §2-2.  

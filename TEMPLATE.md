@@ -1,7 +1,7 @@
 # AI Project Template v1
 
 복사해서 쓰는 **AI 개발 프로토콜** 템플릿.
-Cursor의 **Rules · Skills · Hooks**(+ 선택 MCP)를 레포에 묶어,
+`AGENTS.md` · Skills · (Cursor면) Hooks를 레포에 묶어,
 사람·AI가 같은 Phase 워크플로로 일하게 한다.
 
 ```
@@ -15,7 +15,7 @@ Human(목표·채팅 승인·사용자 테스트)
 | 축 | 위치 | 목적 |
 |----|------|------|
 | Rules | `AGENTS.md`, `.cursor/rules/` | AI 행동 |
-| Skills | `.cursor/skills/` | 킥오프·Phase·gate + **시니어 역할** |
+| Skills | `.cursor/skills/` · `.claude/skills/` · `.agents/skills/` (내용 동일) | 킥오프·Phase·gate + **시니어 역할** |
 | Hooks | `.cursor/hooks.json` | 구현/커밋 차단 · `gate.json` 직접 수정 차단 |
 | Docs | `docs/` | 프로젝트 지식 |
 | Plans | `.cursor/plans/` | 전체 Plan + Phase 상세 |
@@ -51,10 +51,12 @@ Phase 0 = bootstrap (제품 없이 docs만). 제품 설명이면 킥오프 K1부
 ├── .env.example / .gitignore / .cursorignore
 ├── .cursor/
 │   ├── rules/
-│   ├── skills/          # kickoff, delivery-phase, phase-gate, senior-*
-│   ├── hooks.json + hooks/   # gate-check, protect-gate
+│   ├── skills/          # Cursor. 동일 내용: .claude/skills/ , .agents/skills/
+│   ├── hooks.json + hooks/   # gate-check, protect-gate (Cursor)
 │   ├── gate.json
 │   └── plans/_template.md, _design-template.md
+├── .claude/skills/      # Claude Code
+├── .agents/skills/      # Codex · Antigravity
 ├── .githooks/pre-commit
 ├── scripts/gate.sh, install-hooks.sh, phase-gate-check.sh
 ├── docs/ ... + docs/ai/agent-workflow.md
@@ -79,5 +81,5 @@ Large: 채팅에서 Plan 승인(또는 동등하게 `./scripts/gate.sh on` → `
 
 ## 사람 가이드
 
-- 사용법 요약: [`guide.md`](guide.md)
+- 사용법 요약: 원본 템플릿 [`guide.md`](guide.md) (권장 `rsync`는 `guide.md`를 새 프로젝트에 넣지 않음)
 - 프롬프트·게이트 상세: `docs/ai/agent-workflow.md`
