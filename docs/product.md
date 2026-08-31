@@ -15,7 +15,7 @@
 - 오케스트레이터는 **단계 전환과 게이트만**. 기획·설계·디자인·코드·검수 본문은 해당 에이전트만 쓴다
 - Cursor, Claude Code, Codex, Antigravity에서 **사람 경험은 같게** (한 창, 같은 단계, 같은 승인)
 - 킥오프 K1–K4, Delivery 6단계, `./scripts/gate.sh` + 채팅 선택(카드 또는 번호)은 **유지**
-- 화면이 있는 Phase는 **Plan(구현 승인 전)** 에 디자인 에이전트가 시각 스펙을 낸다. 개발은 그걸 따른다. UI 없으면 디자인 에이전트는 건너뛴다
+- 화면이 있는 Phase는 Plan에서 **디자인 에이전트 필수**. gate enabled 시 Delivery 단계마다 `approve-explore` / `approve-document` / `approve-plan-body` / `approve-design-spec`(UI) / `approve-verify` 없이 advance·코드·커밋 훅 차단
 - 클론·폴더 복사만 하면 됨 (설치 스크립트·심볼릭 링크 없음)
 - 기존과 같이 워크플로·역할 **Skill 8개**가 도구별 경로에 있다 (Quality bar 원본)
 

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 from pathlib import Path
@@ -51,12 +50,38 @@ DEFAULT_GATE: dict[str, Any] = {
     "enabled": False,
     "plan_approved": False,
     "design_approved": False,
+    "explore_approved": False,
+    "document_approved": False,
+    "plan_body_approved": False,
+    "phase_has_ui": False,
+    "design_spec_approved": False,
+    "verify_approved": False,
     "phase": 1,
     "step": "explore",
     "kickoff_step": "done",
     "allow_commit": False,
     "note": "사람 결정으로만 전진. 채널: 채팅 선택→Agent가 ./scripts/gate.sh 대행, 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다.",
 }
+
+_PHASE_DELIVERY_FLAG_KEYS = (
+    "explore_approved",
+    "document_approved",
+    "plan_body_approved",
+    "phase_has_ui",
+    "design_spec_approved",
+    "verify_approved",
+)
+
+
+def reset_phase_delivery_flags(gate: dict[str, Any]) -> None:
+    """Reset per-Phase specialist approval flags (Delivery Phase boundary)."""
+    gate["explore_approved"] = False
+    gate["document_approved"] = False
+    gate["plan_body_approved"] = False
+    gate["phase_has_ui"] = False
+    gate["design_spec_approved"] = False
+    gate["verify_approved"] = False
+    gate["allow_commit"] = False
 
 
 def find_repo_root(start: Path | None = None) -> Path:
@@ -83,17 +108,25 @@ def load_gate(root: Path | None = None) -> dict[str, Any]:
         out["kickoff_step"] = "done" if data.get("plan_approved") else "discover"
     if "design_approved" not in data:
         out["design_approved"] = bool(data.get("plan_approved"))
+    for key in _PHASE_DELIVERY_FLAG_KEYS:
+        if key not in data:
+            out[key] = False
     return out
 
 
 def save_gate(data: dict[str, Any], root: Path | None = None) -> None:
     path = gate_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
-    # Keep stable key order
     ordered = {
         "enabled": bool(data.get("enabled", False)),
         "plan_approved": bool(data.get("plan_approved", False)),
         "design_approved": bool(data.get("design_approved", False)),
+        "explore_approved": bool(data.get("explore_approved", False)),
+        "document_approved": bool(data.get("document_approved", False)),
+        "plan_body_approved": bool(data.get("plan_body_approved", False)),
+        "phase_has_ui": bool(data.get("phase_has_ui", False)),
+        "design_spec_approved": bool(data.get("design_spec_approved", False)),
+        "verify_approved": bool(data.get("verify_approved", False)),
         "phase": int(data.get("phase", 1)),
         "step": str(data.get("step", "explore")),
         "kickoff_step": str(data.get("kickoff_step", "done")),
@@ -142,13 +175,120 @@ def can_write_code(gate: dict[str, Any]) -> bool:
         return True
     if not gate.get("plan_approved"):
         return False
-    return gate.get("step") in ("implement", "verify", "review")
+    step = gate.get("step")
+    if step not in ("implement", "verify", "review"):
+        return False
+    if step == "implement":
+        if not gate.get("plan_body_approved"):
+            return False
+        if gate.get("phase_has_ui") and not gate.get("design_spec_approved"):
+            return False
+    return True
+
+
+def can_advance_to(gate: dict[str, Any], target_step: str) -> tuple[bool, str]:
+    """Return (ok, error_message) for advance <target_step>."""
+    current = gate.get("step")
+
+    if target_step == "document":
+        if not gate.get("explore_approved"):
+            return (
+                False,
+                "advance document blocked: explore_approved=false. "
+                "Launch senior-architect in Explore, then "
+                "./scripts/gate.sh approve-explore when the human approves.",
+            )
+        return True, ""
+
+    if target_step == "plan":
+        if not gate.get("document_approved"):
+            return (
+                False,
+                "advance plan blocked: document_approved=false. "
+                "Launch senior-architect or senior-pm in Document, then "
+                "./scripts/gate.sh approve-document when the human approves.",
+            )
+        return True, ""
+
+    if target_step == "implement":
+        if current in ("explore", "document"):
+            return (
+                False,
+                "advance implement blocked: complete Plan first "
+                "(Explore→Document→Plan). Launch senior-pm; if UI, senior-design.",
+            )
+        if not gate.get("plan_body_approved"):
+            return (
+                False,
+                "advance implement blocked: plan_body_approved=false. "
+                "Launch senior-pm in Plan, then ./scripts/gate.sh approve-plan-body "
+                "when the human approves the Plan body.",
+            )
+        if gate.get("phase_has_ui") and not gate.get("design_spec_approved"):
+            return (
+                False,
+                "advance implement blocked: phase_has_ui=true but "
+                "design_spec_approved=false. Launch senior-design in Plan, then "
+                "./scripts/gate.sh approve-design-spec when the human approves.",
+            )
+        return True, ""
+
+    if target_step == "verify":
+        if current in ("explore", "document", "plan"):
+            return (
+                False,
+                "advance verify blocked: complete Implement first (senior-dev).",
+            )
+        return True, ""
+
+    if target_step == "review":
+        if not gate.get("verify_approved"):
+            return (
+                False,
+                "advance review blocked: verify_approved=false. "
+                "Launch senior-qa in Verify (tests + 직접 확인 가이드), then "
+                "./scripts/gate.sh approve-verify when the human approves.",
+            )
+        return True, ""
+
+    if target_step == "human_verify":
+        if current not in ("review", "human_verify"):
+            return (
+                False,
+                "advance human_verify blocked: complete Review first "
+                "(senior-qa then senior-architect).",
+            )
+        return True, ""
+
+    return True, ""
+
+
+def can_advance_to_implement(gate: dict[str, Any]) -> tuple[bool, str]:
+    """Backward-compatible alias."""
+    return can_advance_to(gate, "implement")
+
+
+def code_write_block_hint(gate: dict[str, Any]) -> str:
+    if not gate.get("plan_approved"):
+        return "Whole Phase Plan not approved (approve-plan)."
+    step = gate.get("step")
+    if step not in ("implement", "verify", "review"):
+        return f"step={step}; code only in implement|verify|review."
+    if step == "implement" and not gate.get("plan_body_approved"):
+        return "plan_body_approved=false; senior-pm Plan + approve-plan-body first."
+    if gate.get("phase_has_ui") and not gate.get("design_spec_approved"):
+        return "design_spec_approved=false; senior-design spec + approve-design-spec first."
+    return ""
 
 
 def can_commit(gate: dict[str, Any]) -> bool:
     if not gate.get("enabled"):
         return True
-    return bool(gate.get("allow_commit"))
+    if not gate.get("allow_commit"):
+        return False
+    if not gate.get("verify_approved"):
+        return False
+    return True
 
 
 def extract_tool_path(tool_input: dict[str, Any] | None) -> str | None:
@@ -166,7 +306,6 @@ def shell_mutates_gate(command: str) -> bool:
     c = command.strip()
     if not c:
         return False
-    # ./scripts/gate.sh is the approved channel (human chat choice → Agent CLI).
     if re.search(r"gate\.json", c):
         if re.search(
             r"(>|>>)\s*\S*gate\.json|tee\s+\S*gate\.json|"
@@ -179,7 +318,6 @@ def shell_mutates_gate(command: str) -> bool:
 
 
 def shell_is_git_commit(command: str) -> bool:
-    # Match git commit but not git commit-tree documentation greps lightly
     return bool(
         re.search(r"(?:^|[;&|]\s*)git(?:\s+-C\s+\S+)?\s+commit\b", command)
     )

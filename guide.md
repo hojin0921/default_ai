@@ -14,7 +14,26 @@ Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 폴더를 통째로 복사하면 **`.git`까지 같이 가서** 원래 원격(origin)에 연결된 채로 복제된다.  
 새 프로젝트로 쓰려면 **git 이력을 끊고** 새로 시작하는 것이 맞다.
 
-### 권장: `.git` 없이 복사한 뒤 새 저장소
+### 권장: 스크립트 한 번 (가장 쉬움)
+
+템플릿 폴더(`default_ai`)에서:
+
+```bash
+./scripts/new-project.sh
+```
+
+- **부모 폴더** (예: `~/Desktop`)와 **새 프로젝트 이름** (예: `my-new-project`)을 물어본다  
+- **폴더가 없으면 생성**, **있으면 그 안에** 템플릿 복사 (이전 실패로 일부만 있어도 재실행 가능)  
+- `.git` · `guide.md` · `.cursor/gate.json`(템플릿 개발 상태) 제외하고 복사  
+- `git init` → `install-hooks.sh` → `gate.sh status` 까지 자동 실행  
+
+경로를 한 번에 주려면:
+
+```bash
+./scripts/new-project.sh ~/Desktop/my-new-project
+```
+
+### 수동: rsync
 
 Finder·탐색기·zip으로 폴더를 통째로 복사하면 `guide.md`도 **따라간다.** 빼려면 아래처럼 한다.
 
@@ -80,6 +99,7 @@ git init
 
 사람은 **채팅 하나**. 단계가 되면 **오케스트레이터**가 해당 전문 에이전트를 띄운다.  
 역할 Skill(`senior-*`)은 Quality bar다. 기획·설계·디자인·개발·QA **본문은 그 에이전트**가 쓴다. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패다.  
+**건너뛰기 금지:** gate enabled 시 **단계마다** 해당 전문 에이전트 산출물 + `approve-*` 없이는 다음 step·코드·커밋 **훅 차단**. UI Phase는 `approve-design-spec` 포함. Verify 통과는 `approve-verify` → `allow-commit`.  
 Marketplace에 봇을 여러 개 설치하는 구조는 아니다. spawn이 안 되면 Isolation Pass(`▶ 전문 에이전트 시작`)로 같은 흐름을 유지한다.  
 AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역할 Skill의 **Quality bar**를 충족해야 한다.
 
@@ -87,7 +107,7 @@ AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역�
 |------------------|------|-----------|
 | `senior-architect` | 시니어 설계 | Explore, 구조·보안 |
 | `senior-pm` | 시니어 기획 | 킥오프·Plan, 범위 |
-| `senior-design` | 시니어 디자인 | Plan(UI면) 시각 스펙 |
+| `senior-design` | 시니어 디자인 | **Plan(UI면 필수)** 시각 스펙 — 생략 불가 |
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review |
 
@@ -134,7 +154,7 @@ FAQ:
 - **Q. 그림·설계 파일은 어디?** → 그림은 **선택 버튼(또는 번호 메뉴) 바로 위**, 그 답변 안에 그린 Mermaid. 새 창이 아닙니다. 파일은 에디터에서 AI가 적어 준 경로 (Cursor는 `Cmd+P`/`Ctrl+P`).  
 - **Q. 질문을 한 번에 여러 개?** → K1은 **하나씩**. 대신 턴이 더 길다(후속·체크리스트). 「제안해」를 고르면 된다.  
 - **Q. 개발 언어는 누가 정하나?** → **사람**. 기획·설계가 끝난 뒤, **구현 직전**에 `어떤 프론트…` / `어떤 백엔드…` / `어떤 DB…`를 **하나씩** 번호로 고른다. **선택지는 프로젝트마다 다름**(웹/앱/CLI/API 등 설계·Constraints 기준). AI가 Next.js 등을 미리 고르면 실패. 「제안해」면 **그 목록 안** 항을 추천하고 확인.  
-- **Q. 응답에 역할이 안 보이면?** → `역할: 시니어 ○○`이 없으면 다시 요청하거나 모델/Skills를 확인한다.
+- **Q. 디자인을 건너뛰면?** → **UI Phase면 불가.** Plan에서 `senior-design` 시각 스펙 → 사람 승인 → `approve-design-spec` → implement. gate·훅이 코드 쓰기를 막는다. `.cursor/skills/` 없으면 규칙만 있고 **강제는 안 됨** — 템플릿 전체 복사 필수.
 
 ---
 
@@ -245,6 +265,17 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 
 결정 지점마다 AI는 선택 UI(가능하면 버튼)를 낸다. 사용자가 고르기 전에 게이트를 전진하거나 구현하지 않는다.  
 응답에 **지금 역할**(`역할: 시니어 ○○`)이 보여야 한다.
+
+**gate enabled일 때 단계별 승인 (훅 강제):**
+
+| 단계 | 에이전트 | 사람 승인 → gate |
+|------|----------|------------------|
+| Explore | 설계 | `approve-explore` → `advance document` |
+| Document | 설계/기획 | `approve-document` → `advance plan` |
+| Plan | 기획 → (UI) 디자인 | `approve-plan-body` → (UI) `approve-design-spec` → `advance implement` |
+| Implement | 개발 | (Stack pick) → `advance verify` |
+| Verify | QA | `approve-verify` → (통과 시) `allow-commit` |
+| Review | QA→설계 | Human Verify → `next-phase` |
 
 AI Skill: `delivery-phase` (+ 단계별 `senior-*`).
 
@@ -364,17 +395,37 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디�
 2. 계획 내용을 수정해 주세요 (지금은 승인하지 않음)  
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
-**④ 이 Phase의 상세 구현 계획을 받은 뒤**
+**④ Delivery Explore (코드 없이 이해) 후**
+
+`역할: 시니어 설계` + 한눈 그림이 채팅에 있어야 한다.
+
+1. Explore를 승인하고 Document(문서화)로 진행해 주세요  
+   → `approve-explore` → `advance document`  
+2. Explore 내용을 수정해 주세요  
+3. 지금은 보류할게요  
+
+**⑤ Delivery Document 후**
+
+1. Document를 승인하고 Plan(상세 계획)으로 진행해 주세요  
+   → `approve-document` → `advance plan`  
+2. Document를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**⑥ 이 Phase의 상세 구현 계획(Plan)을 받은 뒤**
 
 채팅 안의 **이 Phase 한눈 그림**과 **지금 볼 곳**의 Plan 파일을 에디터에서 연다.  
+`역할: 시니어 기획` (+ UI면 `역할: 시니어 디자인` 시각 스펙)이 있어야 한다.  
 AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
-   → `advance implement` 후, Stack이 미정이면 §3-6처럼 **프론트 → 백엔드 → DB**를 번호로 하나씩 고른 뒤 구현 (코드는 선택 후)  
+   → `approve-plan-body`  
+   → **UI Phase:** `approve-design-spec`  
+   → `advance implement`  
+   → Stack 미정이면 §3-6 **프론트 → 백엔드 → DB** → **`senior-dev`**만  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
 3. 지금은 보류할게요  
 
-**⑤ 검증(Verify) / 리뷰(Review) 후, 내가 테스트까지 해본 뒤**
+**⑦ 검증(Verify) / 리뷰(Review) 후, 내가 테스트까지 해본 뒤**
 
 채팅의 **직접 확인 가이드**(실행·확인·기대)대로 직접 해본다.  
 마지막 Phase면 그 위에 **실행 가이드**(준비·실행·접속)와 **역할 기여**(누가 무엇을·어디에 쓰이는지)가 있어야 한다.  
@@ -384,13 +435,12 @@ AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`
 채팅 메뉴에는 **커밋 항목이 없다.** `git commit`은 내가 직접 한다.
 
 1. 직접 확인해 보니 통과예요  
+   → `approve-verify` → `allow-commit` (`git commit`은 내가 직접)  
 2. 아직 문제 있어요. 같은 Phase에서 고치고 검증을 다시 해 주세요  
 3. 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
    (마지막 Phase이면: 이 Phase는 통과. 전체 개발을 마무리해 주세요)
 
-1번을 고르면 커밋 잠금만 풀린다 (`allow-commit`). `git commit`은 내가 직접 한다.  
-3번(다음 Phase)은 `next-phase` 후 Explore만. 이미 연 커밋 잠금은 다음 Phase로 가도 유지된다.  
-마지막 Phase 3번은 `next-phase`를 하지 않는다.  
+3번(다음 Phase)은 `next-phase` 후 Explore만.  
 
 ### 4-3. 메뉴에서 수정할 때 (수정 선택 + 프롬프트)
 

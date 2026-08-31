@@ -13,9 +13,15 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from lib.phase_gate import (  # noqa: E402
     VALID_KICKOFF_STEPS,
     VALID_STEPS,
+    can_advance_to,
     find_repo_root,
     load_gate,
+    reset_phase_delivery_flags,
     save_gate,
+)
+
+_ADVANCE_CHECK_STEPS = frozenset(
+    {"document", "plan", "implement", "verify", "review", "human_verify"}
 )
 
 
@@ -36,10 +42,10 @@ def main(argv: list[str]) -> int:
         gate["enabled"] = True
         gate["plan_approved"] = False
         gate["design_approved"] = False
+        reset_phase_delivery_flags(gate)
         gate["kickoff_step"] = "discover"
         gate["phase"] = int(gate.get("phase") or 1)
         gate["step"] = "explore"
-        gate["allow_commit"] = False
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
@@ -91,7 +97,55 @@ def main(argv: list[str]) -> int:
         gate["plan_approved"] = True
         gate["kickoff_step"] = "done"
         gate["step"] = "explore"
-        gate["allow_commit"] = False
+        reset_phase_delivery_flags(gate)
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "approve-explore":
+        gate["explore_approved"] = True
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "approve-document":
+        gate["document_approved"] = True
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "approve-plan-body":
+        gate["plan_body_approved"] = True
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "phase-ui":
+        if len(argv) < 2 or argv[1] not in ("true", "false"):
+            print("usage: gate.sh phase-ui true|false", file=sys.stderr)
+            return 1
+        gate["phase_has_ui"] = argv[1] == "true"
+        if not gate["phase_has_ui"]:
+            gate["design_spec_approved"] = False
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "approve-design-spec":
+        if not gate.get("phase_has_ui"):
+            print(
+                "approve-design-spec requires phase_has_ui=true "
+                "(run ./scripts/gate.sh phase-ui true during Plan when UI is in scope)",
+                file=sys.stderr,
+            )
+            return 1
+        gate["design_spec_approved"] = True
+        save_gate(gate, root)
+        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "approve-verify":
+        gate["verify_approved"] = True
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
@@ -104,12 +158,24 @@ def main(argv: list[str]) -> int:
         if step not in VALID_STEPS:
             print(f"invalid step: {step}", file=sys.stderr)
             return 1
+        if step in _ADVANCE_CHECK_STEPS:
+            ok, msg = can_advance_to(gate, step)
+            if not ok:
+                print(msg, file=sys.stderr)
+                return 1
         gate["step"] = step
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
 
     if cmd == "allow-commit":
+        if gate.get("enabled") and not gate.get("verify_approved"):
+            print(
+                "allow-commit requires verify_approved=true "
+                "(run ./scripts/gate.sh approve-verify after senior-qa Verify)",
+                file=sys.stderr,
+            )
+            return 1
         gate["allow_commit"] = True
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
@@ -124,6 +190,7 @@ def main(argv: list[str]) -> int:
     if cmd == "next-phase":
         gate["phase"] = int(gate.get("phase") or 1) + 1
         gate["step"] = "explore"
+        reset_phase_delivery_flags(gate)
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0

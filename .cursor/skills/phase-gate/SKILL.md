@@ -19,6 +19,12 @@ Source of truth: `.cursor/gate.json`
 | `enabled` | Large enforcement on/off (Small → off) |
 | `plan_approved` | Whole Phase Plan approved |
 | `design_approved` | Kickoff overall design agreed |
+| `explore_approved` | **senior-architect** Explore approved (this Delivery Phase) |
+| `document_approved` | Document step approved (this Phase) |
+| `plan_body_approved` | **senior-pm** Plan body approved (this Phase) |
+| `phase_has_ui` | Current Delivery Phase includes UI (`phase-ui true`) |
+| `design_spec_approved` | **senior-design** visual spec approved (UI Phase) |
+| `verify_approved` | **senior-qa** Verify approved (this Phase) |
 | `phase` | Current Delivery Phase number |
 | `step` | explore\|document\|plan\|implement\|verify\|review\|human_verify |
 | `kickoff_step` | discover\|design\|docs\|phase_plan\|done |
@@ -82,16 +88,40 @@ Spawned specialists (`senior-*` agents) **must not** run mutating `gate.sh`. Onl
    — same/next message may include edit details  
 3. 지금은 보류할게요. 나중에 이어갈게요  
 
-**After Phase detail Plan**
+**After Delivery Explore (Phase N · step explore)**
 
-Chat must include a **한눈 그림** (this Phase work order) and **지금 볼 곳** (path + how to open in the editor).  
-AskQuestion prompt: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
+Must show **senior-architect** output + `역할: 시니어 설계` + 한눈 그림 in this reply.  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)을 보신 뒤, 다음으로 어떻게 할까요?`
+
+1. Explore를 승인하고 Document(문서화)로 진행해 주세요  
+   → `./scripts/gate.sh approve-explore` then `./scripts/gate.sh advance document`  
+2. Explore 내용을 수정해 주세요  
+3. 지금은 보류할게요  
+
+**After Delivery Document (step document)**
+
+1. Document를 승인하고 Plan(상세 계획)으로 진행해 주세요  
+   → `./scripts/gate.sh approve-document` then `./scripts/gate.sh advance plan`  
+2. Document를 수정해 주세요  
+3. 지금은 보류할게요  
+
+**After Phase detail Plan (step plan)**
+
+Chat must include **senior-pm** Plan + (if UI) **senior-design** spec + 한눈 그림 + **지금 볼 곳**.  
+AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디터에서 <Plan 경로> 를 연 뒤 어떻게 할까요?`
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요  
-   → `./scripts/gate.sh advance implement`, then **Stack pick** if 미정 (프론트→백→DB, **프로젝트 맞춤** 후보 목록, one question each), then Implement  
+   → `./scripts/gate.sh approve-plan-body`  
+   → UI Phase: `./scripts/gate.sh approve-design-spec` (after `phase-ui true` + design spec in reply)  
+   → `./scripts/gate.sh advance implement`  
+   → **Stack pick** if 미정, then **`senior-dev`** only  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
-   — same/next message may include edit details  
 3. 지금은 보류할게요  
+
+**After Implement (optional advance to Verify)**
+
+When Implement work is done and human agrees to verify:  
+→ `./scripts/gate.sh advance verify` then launch **senior-qa**
 
 **After Verify / Review (and human user test)**
 
@@ -103,7 +133,7 @@ Protocol/docs-only: `Phase N을 직접 확인해 보신 결과는 어떤가요?`
 Do **not** put 커밋 / `git commit` / `allow-commit` in option labels. Humans commit themselves.
 
 1. 직접 확인해 보니 통과예요  
-   → `./scripts/gate.sh allow-commit` (unlocks hook only; do not `git commit`)  
+   → `./scripts/gate.sh approve-verify` then `./scripts/gate.sh allow-commit` (unlocks hook only; do not `git commit`)  
 2. 아직 문제 있어요. 같은 Phase에서 고치고 검증을 다시 해 주세요  
    — same/next message may include what’s wrong / how to fix  
 3. (다음 Phase가 있으면) 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
@@ -124,9 +154,15 @@ treat “edit” alone as approval.
 ./scripts/gate.sh on                # Large reset (discover, design not approved)
 ./scripts/gate.sh approve-design    # after agreeing overall design
 ./scripts/gate.sh kickoff phase_plan
-./scripts/gate.sh approve-plan      # requires design_approved
-./scripts/gate.sh advance implement # after approving Phase detail plan
-./scripts/gate.sh allow-commit      # after human picks 통과 (not a chat menu label)
+./scripts/gate.sh approve-plan      # requires design_approved; resets Phase flags
+./scripts/gate.sh approve-explore   # senior-architect Explore (this Phase)
+./scripts/gate.sh approve-document  # Document (this Phase)
+./scripts/gate.sh approve-plan-body # senior-pm Plan body (this Phase)
+./scripts/gate.sh phase-ui true|false
+./scripts/gate.sh approve-design-spec  # senior-design (UI Phase)
+./scripts/gate.sh advance document|plan|implement|verify|review
+./scripts/gate.sh approve-verify    # senior-qa Verify (this Phase)
+./scripts/gate.sh allow-commit      # requires verify_approved when enabled
 ./scripts/gate.sh next-phase
 ./scripts/gate.sh off               # Small work
 ```

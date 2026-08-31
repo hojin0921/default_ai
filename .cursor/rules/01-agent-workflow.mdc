@@ -43,8 +43,8 @@ Large·킥오프는 승인 없이 구현하지 않는다.
 
 1. **Explore** — 코드 작성 금지. 관련 코드·요구·기존 패턴·영향 범위만 정리. **한눈 그림**(이 Phase)
 2. **Document** — 이해한 내용을 관련 `docs/`·필요 시 README에 반영 (추측으로 TODO를 채우지 않음). 기초 product/architecture는 킥오프 K3. Delivery Document는 변경분. **한눈 그림** (Explore와 같거나 변경분)
-3. **Plan** — 이 Phase를 어떻게 구현할지 상세 계획(변경 파일·순서·테스트·User Test Guide 초안). Status 반영 후 **사람 승인 대기**. 승인 전 구현 금지
-4. **Implement** — 승인한 이 Phase 범위만 최소 변경으로 구현. 실행 가능하면 **실행 가이드**(채팅 + README/`docs/development.md`)
+3. **Plan** — 이 Phase를 어떻게 구현할지 상세 계획(변경 파일·순서·테스트·User Test Guide 초안). **UI Phase면 `senior-pm` → `senior-design` 시각 스펙 필수.** Status 반영 후 **사람 승인 대기**. 승인 전 구현 금지
+4. **Implement** — **`senior-dev`만** 코드. UI면 디자인 스펙 준수. 승인한 이 Phase 범위만 최소 변경으로 구현. 실행 가능하면 **실행 가이드**(채팅 + README/`docs/development.md`)
 5. **Verify** — AI: 관련 테스트 → typecheck/lint → 필요 시 build. 실패 무시·테스트 삭제 금지. 이어서 **직접 확인 가이드** (실행법·확인할 것·기대 결과·실패 시 보고). 마지막 Phase면 **실행 가이드**와 **역할 기여**를 그 앞에. 선택 UI보다 앞에 둔다.
 6. **Review** — 요구 누락·버그·보안·불필요 변경 self-review 후 보고 → **Human Verify** 대기
 
@@ -71,7 +71,7 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 실행
 
 - Large일 때 진실 원천은 `.cursor/gate.json` (plan Status 마크다운이 아님).
 - Agent는 `gate.json`을 **직접** 수정하지 않는다 (Write/StrReplace/Delete·리다이렉트 금지).
-- mutating `./scripts/gate.sh`(on/off/approve-design/kickoff/approve-plan/advance/allow-commit/deny-commit/next-phase)는 **이번 사용자 메시지의 명시적 채팅 선택/승인**이 있을 때만 실행한다. 선택→명령은 1:1(또는 메뉴에 명시된 한 세트). 애매하면 재질문하고 실행하지 않는다.
+- mutating `./scripts/gate.sh`(on/off/approve-design/kickoff/approve-plan/approve-explore/approve-document/approve-plan-body/phase-ui/approve-design-spec/approve-verify/advance/allow-commit/deny-commit/next-phase)는 **이번 사용자 메시지의 명시적 채팅 선택/승인**이 있을 때만 실행한다. 선택→명령은 1:1(또는 메뉴에 명시된 한 세트). 애매하면 재질문하고 실행하지 않는다.
 - 결정 지점마다 선택 UI를 제시한다: **`AskQuestion`이 있으면 한글 옵션 클릭 카드(우선)**, 없으면 `guide.md` §4의 **한글 번호 텍스트**로 대체. 선택 전에는 게이트를 전진·구현하지 않는다. 사람은 동일 명령을 터미널에서 직접 실행해도 된다.
 - 검증 후 메뉴에 커밋 항목을 넣지 않는다. 통과 선택 시 `allow-commit`만 대행하고, `git commit`은 사람이 직접 한다.
 - 커밋은 `allow_commit` 필요 (`./scripts/install-hooks.sh` 후 pre-commit).
@@ -86,6 +86,7 @@ Phase 보고: 변경 요약, docs 갱신, 검증 결과, User Test Guide, 실행
 ### 역할 (시니어 에이전트)
 - `senior-architect` / `senior-pm` / `senior-design` / `senior-dev` / `senior-qa`
 - 오케스트레이터는 `delivery-phase` Role map대로 **전문 에이전트를 띄운다**. 응답 첫 줄에 `역할: 시니어 ○○`.
+- **건너뛰기 금지:** UI Phase Plan·Implement 전 **`senior-design` 시각 스펙 필수**. gate enabled 시 **`approve-explore` … `approve-verify`** 단계별 플래그 없으면 advance·코드·커밋 차단.
 - Quality bar는 해당 `senior-*` Skill. 피상적 요약으로 단계를 끝내지 않는다.
 - 사용자가 역할을 명시하면(**시니어 ○○로만** 등) 그 에이전트만 띄운다 (`guide.md` §2-3).
 - 상세: `docs/ai/agent-workflow.md` 「역할 Skill」

@@ -14,6 +14,7 @@ from lib.phase_gate import (  # noqa: E402
     allow,
     can_commit,
     can_write_code,
+    code_write_block_hint,
     deny,
     emit,
     extract_tool_path,
@@ -48,8 +49,6 @@ def main() -> None:
         command = str(payload.get("command") or "")
 
     if hook_event == "beforeShellExecution" or (tool == "Shell" and command):
-        # ./scripts/gate.sh mutations allowed (chat-choice proxy). Block direct
-        # gate.json redirects/edits.
         if shell_mutates_gate(command):
             emit(
                 deny(
@@ -60,12 +59,18 @@ def main() -> None:
             )
             return
         if shell_is_git_commit(command) and not can_commit(gate):
+            hint = ""
+            if gate.get("enabled") and gate.get("allow_commit") and not gate.get(
+                "verify_approved"
+            ):
+                hint = " verify_approved=false; run approve-verify before allow-commit."
+            elif gate.get("enabled") and not gate.get("allow_commit"):
+                hint = " allow_commit=false; pick 통과 in chat (approve-verify + allow-commit)."
             emit(
                 deny(
-                    "phase-gate: git commit blocked (allow_commit=false). "
-                    "After Verify/User Test, pick 통과 in chat "
-                    "(Agent runs ./scripts/gate.sh allow-commit), or run that CLI; "
-                    "then git commit yourself. Or ./scripts/gate.sh off for Small work."
+                    "phase-gate: git commit blocked."
+                    + hint
+                    + " Or ./scripts/gate.sh off for Small work."
                 )
             )
             return
@@ -85,14 +90,20 @@ def main() -> None:
         return
 
     if path and is_code_path(path, root) and not can_write_code(gate):
+        hint = code_write_block_hint(gate)
         emit(
             deny(
                 "phase-gate: code write blocked.\n"
                 f"  enabled={gate.get('enabled')} plan_approved={gate.get('plan_approved')} "
                 f"phase={gate.get('phase')} step={gate.get('step')}\n"
-                "  Need: plan_approved=true and step in implement|verify|review.\n"
-                "  Offer chat choices: approve-plan / advance implement "
-                "(or human runs ./scripts/gate.sh …)."
+                f"  explore_approved={gate.get('explore_approved')} "
+                f"document_approved={gate.get('document_approved')} "
+                f"plan_body_approved={gate.get('plan_body_approved')} "
+                f"phase_has_ui={gate.get('phase_has_ui')} "
+                f"design_spec_approved={gate.get('design_spec_approved')} "
+                f"verify_approved={gate.get('verify_approved')}\n"
+                + (f"  Hint: {hint}\n" if hint else "")
+                + "  Each Delivery step needs its specialist + approve-* before advance."
             )
         )
         return

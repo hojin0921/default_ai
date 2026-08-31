@@ -23,7 +23,7 @@ Human(목표·채팅 승인·사용자 테스트)
 | Human Review | 사람 + `docs/ai/agent-workflow.md` | 승인·검수 |
 
 Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa`)로 나뉜다.  
-한 채팅의 오케스트레이터가 단계마다 전문 에이전트(`senior-*`)를 띄움. 사람용 요약: [`guide.md`](guide.md) §2-2.
+한 채팅의 오케스트레이터가 단계마다 전문 에이전트(`senior-*`)를 띄움. **담당 산출물 건너뛰기 금지** — gate enabled 시 `approve-explore` / `approve-document` / `approve-plan-body` / `approve-design-spec`(UI) / `approve-verify` 후에만 advance·코드·커밋. 사람용: [`guide.md`](guide.md) §2-2 · §3-5.
 
 Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하면 Skills+Hooks+Rules가 함께 간다.
 (나중에 Cursor Marketplace Plugin으로 재패키징 가능.)
@@ -33,8 +33,8 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 ```
 K1 질문 → K2 전체 설계 합의 → K3 docs → K4 Phase Plan
   → Human Review (채팅 선택 → gate approve-plan)
-  → Phase N: Explore → Document → Plan → (채팅 승인)
-             → Implement → Verify(+User Test Guide, 실행 가이드, 마지막이면 역할 기여) → Review
+  → Phase N: Explore → Document → Plan (+ UI면 senior-design) → (채팅 승인 + approve-design-spec if UI)
+             → Implement (senior-dev) → Verify → Review
              → Human Verify
   → 다음 Phase …
 ```
@@ -62,7 +62,7 @@ Phase 0 = bootstrap (제품 없이 docs만). 제품 설명이면 킥오프 K1부
 ├── .agents/agents/      # Antigravity
 ├── .codex/agents/       # Codex TOML
 ├── .githooks/pre-commit
-├── scripts/gate.sh, install-hooks.sh, phase-gate-check.sh
+├── scripts/gate.sh, install-hooks.sh, new-project.sh, phase-gate-check.sh
 ├── docs/ ... + docs/ai/agent-workflow.md
 └── src/.gitkeep
 ```

@@ -162,6 +162,7 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디�
 
 1. 이 상세 계획을 승인하고, 이제 구현해 주세요 (`advance implement`)  
    Stack이 미정이면 코드를 쓰기 전에 프론트 → 백엔드 → DB를 **설계·Constraints에 맞는 후보 목록**으로 하나씩 고른다.  
+   **UI Phase:** human 승인 시 `approve-design-spec` → `advance implement` (순서). Plan에 `역할: 시니어 디자인` 시각 스펙 없으면 승인·implement 금지.  
 2. 상세 계획을 수정해 주세요 (구현은 아직 하지 않음)  
 3. 지금은 보류할게요  
 

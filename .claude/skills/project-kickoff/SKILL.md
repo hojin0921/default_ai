@@ -109,8 +109,8 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 ### K2 Design
 
-1. Create `.cursor/plans/<short-name>-design.md` from `.cursor/plans/_design-template.md`.
-2. Fill from K1 answers only; mark remaining gaps as Open questions. Status **Draft**. Include a **한눈 그림** (Mermaid) in the file and in chat.  
+1. Launch **`senior-architect`** (+ **`senior-pm`** for product sections). If the product has **UI**, launch **`senior-design`** for UX outline (flows, screen list — not final Implement spec). Orchestrator does not write K2 body.
+2. Create `.cursor/plans/<short-name>-design.md` from `.cursor/plans/_design-template.md` from specialist output.  
    **Stack:** if K1 already named languages, copy them. Otherwise **미정** (구현 직전 사람 선택). Do not invent Next.js/Postgres here.
 3. Do **not** write Phase Plan (`_template.md`) or fill `docs/` yet.
 4. End with the **한눈 그림**, then **지금 볼 곳** (path + how to open), then:

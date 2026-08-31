@@ -11,8 +11,9 @@ description: >-
 
 ## When
 
-- **Plan** or **Implement** when UI/UX is in scope (optional primary)
-- **project-kickoff** K2 Design when the product has UI (optional)
+- **Plan** when UI/UX is in scope — **required** (not optional). Orchestrator must launch this agent before Implement approval.
+- **project-kickoff** K2 when the product has UI — **required** UX/visual outline (Stack remains 미정)
+- **Implement** only when fixing visual gaps the Plan spec already covers; primary visual spec belongs in **Plan**
 - User asks for flows, screens, visual look, copy tone, or accessibility
 - If the user explicitly names this role (e.g. "시니어 디자인으로만"), follow **only** this skill for that turn and skip other senior role stances unless they ask for a sequence
 
@@ -50,7 +51,7 @@ A senior **visual + UX** handoff a developer can implement without guessing layo
 - If Figma is not available: a **시각 스펙** in chat (layout + type + color + components) plus a simple structure sketch (Mermaid or ASCII blocks). Text-only “직관적으로” is a fail
 - Do not invent a full design system / brand book unless asked
 
-Fail: “모던한 대시보드”, copy-only with no layout, ignoring empty/error, a new palette that fights existing tokens, skipping Figma when it is connected and UI is in scope.
+Fail: “모던한 대시보드”, copy-only with no layout, ignoring empty/error, a new palette that fights existing tokens, skipping Figma when it is connected and UI is in scope, **orchestrator writing visual spec without this agent**, Implement starting with no design spec when UI is in scope.
 
 ## Self-check (before sending)
 

@@ -7,7 +7,7 @@ cd "$ROOT"
 
 git config core.hooksPath .githooks
 chmod +x .githooks/pre-commit scripts/gate.sh scripts/phase-gate-check.sh \
-  scripts/install-hooks.sh scripts/_gate_cli.py \
+  scripts/install-hooks.sh scripts/new-project.sh scripts/_gate_cli.py \
   .cursor/hooks/gate-check.sh .cursor/hooks/protect-gate.sh 2>/dev/null || true
 
 echo "Installed: core.hooksPath=.githooks"

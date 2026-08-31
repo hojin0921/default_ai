@@ -17,10 +17,16 @@ Usage: ./scripts/gate.sh <command> [args]
   approve-design         design_approved=true, kickoff_step=docs
   kickoff <step>         Set kickoff_step (discover|design|docs|phase_plan|done)
   approve-plan           requires design_approved; plan_approved=true, kickoff_step=done, step=explore
+  approve-explore        senior-architect Explore approved (this Phase)
+  approve-document       Document step approved (this Phase)
+  approve-plan-body      senior-pm Plan body approved (this Phase)
+  phase-ui true|false    Mark current Delivery Phase UI scope (Plan step)
+  approve-design-spec    senior-design visual spec approved (requires phase_has_ui)
+  approve-verify         senior-qa Verify approved (this Phase)
   advance <step>         Set step (explore|document|plan|implement|verify|review|human_verify)
-  allow-commit           Allow git commit
+  allow-commit           Allow git commit (requires verify_approved when enabled)
   deny-commit            Disallow git commit
-  next-phase             phase+=1, step=explore (does not change allow_commit)
+  next-phase             phase+=1, step=explore (resets Phase delivery flags)
 
 Enforcement source of truth: .cursor/gate.json
 EOF

@@ -43,6 +43,52 @@ You are the **orchestrator**. Do **not** write specialist artifacts yourself.
 
 Fail: writing plan body, visual spec, app code, or UTG as the orchestrator without launching the specialist (or Isolation Pass).
 
+### Mandatory specialist ownership (건너뛰기 금지)
+
+오케스트레이터는 **Role map의 담당 에이전트만** 해당 산출물을 쓴다. spawn이 없어도 **Isolation Pass**로 동일 역할을 수행한다. “빠르게” 한 에이전트가 기획·디자인·개발·QA를 섞으면 **실패**.
+
+| 산출물 | 담당 (필수) | 오케스트레이터 직접 작성 |
+|--------|-------------|-------------------------|
+| Explore·구조·영향 범위 | `senior-architect` | 금지 |
+| Plan 본문·In/Out·Phase Goal | `senior-pm` | 금지 |
+| **UI 시각 스펙** (레이아웃·타이포·색·컴포넌트·상태) | **`senior-design`** (UI Phase **필수**) | **금지** |
+| 앱 코드·CSS·컴포넌트 구현 | `senior-dev` | 금지 |
+| 테스트·직접 확인 가이드 | `senior-qa` | 금지 |
+| Verify/Review 아키텍처 점검 | `senior-architect` | 금지 |
+
+**UI Phase 판별:** 이 Phase In/Out에 화면·레이아웃·CSS·컴포넌트·사용자 입력 UI가 있으면 UI Phase. API-only·CLI·배치만이면 UI 아님.
+
+**Plan (3단계) — UI Phase일 때 (필수 순서):**
+
+1. `./scripts/gate.sh phase-ui true` (gate enabled일 때)
+2. Launch `senior-pm` → Plan 본문
+3. Launch `senior-design` → **시각 스펙** (Plan의 `## Design spec` 절 또는 `.cursor/plans/<phase>-design-spec.md`). `역할: 시니어 디자인` 블록 필수.
+4. 사람 승인 메뉴 전: 디자인 스펙이 없으면 Implement 선택 UI를 **내지 않는다**.
+
+**Plan — UI 없을 때:** `./scripts/gate.sh phase-ui false`. `senior-design` 생략.
+
+**Implement 승인 (채팅 ④-1):** gate enabled일 때 순서 고정:  
+`approve-plan-body` → (UI면 `phase-ui true` + `senior-design` + `approve-design-spec`) → `advance implement` → Stack pick → **`senior-dev` only**.
+
+**Small/Medium:** gate `off`일 때도 **새 UI/코드**면 해당 역할 Isolation Pass 필수. gate `on`이면 동일 approve-* 적용.
+
+**Anti-pattern (실패):** CreatePlan 후 바로 `src/` 작성. Explore/Document/Plan·전문 에이전트·approve-* 생략.
+
+### Specialist gate map (enabled · Delivery Phase)
+
+| Step | Launch | Human 승인 → gate (순서) | advance |
+|------|--------|---------------------------|---------|
+| 1 Explore | `senior-architect` | `approve-explore` | `document` |
+| 2 Document | `senior-architect` or `senior-pm` | `approve-document` | `plan` |
+| 3 Plan | `senior-pm` → (UI) `senior-design` | `approve-plan-body` → (UI) `approve-design-spec` | `implement` |
+| 4 Implement | `senior-dev` | (Stack pick if needed) | `verify` |
+| 5 Verify | `senior-qa` | `approve-verify` | `review` |
+| 6 Review | `senior-qa` → `senior-architect` | Human Verify 메뉴 | `next-phase` / done |
+
+**통과(Verify):** `approve-verify` → `allow-commit` (순서). `verify_approved` 없으면 커밋 훅 차단.
+
+**next-phase / approve-plan:** Phase delivery flags 전부 리셋 (`explore_approved` … `verify_approved`).
+
 ### Explicit role override
 
 If the user names a senior role this turn (e.g. `시니어 QA로만`, `시니어 디자인 관점으로`), **launch only that agent**. Skip other specialists unless they asked for a sequence (e.g. 설계 후 QA). Still honor Phase step limits (no Implement during Explore) and phase-gate rules. See `guide.md` §2-3.
@@ -90,7 +136,11 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
    AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름)을 보신 뒤, 다음으로 어떻게 할까요?`
 2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.  
    Show the Explore mermaid again (or the updated one if the flow changed) in chat; put it in the docs you touch if the journey/system changed.
-3. **Plan** — Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.  
+3. **Plan** — Launch **`senior-pm`** first.  
+   **If UI Phase:** `./scripts/gate.sh phase-ui true`, then launch **`senior-design`** for visual spec (required). Attach spec path in Plan (`## Design spec`).  
+   **If no UI:** `./scripts/gate.sh phase-ui false`.  
+   Detail this Phase (files, order, tests, User Test Guide draft). Wait for human approval before Implement.  
+   **Do not** offer implement approval until `senior-design` output exists when UI Phase.  
    Before the approve/implement choice, show:
    - **한눈 그림**: Mermaid of **this Phase only** (작업 순서: 무엇 → 무엇). Not the whole 1→N kickoff diagram unless reminding context in one line.
    - **지금 볼 곳**: every path this Phase will change, plus how to open in the editor (Cursor: `Cmd+P`).
@@ -109,7 +159,8 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
    - 파일: 에디터에서 경로로 열기 (Cursor는 `Cmd+P`)
      - `.cursor/plans/<name>.md` — 이 Phase 상세
    ```
-4. **Implement** — If Stack is 미정/empty, **Stack pick first** (no app code). Then minimal changes in the **chosen** Frontend / Backend / Database only. Do not switch stack.  
+4. **Implement** — Launch **`senior-dev`** only. If UI Phase, dev must follow **`senior-design`** spec path from Plan.  
+   If Stack is 미정/empty, **Stack pick first** (no app code). Then minimal changes in the **chosen** Frontend / Backend / Database only. Do not switch stack.  
    If the product is now runnable, put **실행 가이드** in the chat (준비 / 실행 / 접속) and fill `README.md` Setup + `docs/development.md` from evidence (no guessed commands). If there is nothing to run, say so in one line.
 5. **Verify** — Run related tests → typecheck/lint → build if needed. Never delete/weaken tests to pass.  
    Then put **직접 확인 가이드** in the chat **before** the decision UI. Do not ask for play-test results without this block. A human who is not the author must be able to follow it.
@@ -163,4 +214,6 @@ Report: what changed, and a **decision UI** for the next human choice when the g
 - Source of truth is `gate.json`, not plan Status markdown.
 - Never edit `gate.json` directly.
 - After an explicit human chat choice, run the matching `./scripts/gate.sh` command; otherwise re-offer the menu (terminal CLI is equivalent).
-- Code writes require `plan_approved` and step in `implement|verify|review`.
+- **Per-step flags:** `explore_approved`, `document_approved`, `plan_body_approved`, `design_spec_approved` (if UI), `verify_approved`. See **Specialist gate map** above.
+- Code writes require `plan_approved`, step `implement|verify|review`, and for **implement**: `plan_body_approved` + (`design_spec_approved` if `phase_has_ui`).
+- `allow-commit` requires `verify_approved` when enabled.
