@@ -7,4 +7,5 @@ if [[ -z "${ROOT}" ]]; then
   ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fi
 
-exec "${ROOT}/scripts/phase-gate-check.sh"
+export PYTHONPATH="${ROOT}/scripts${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 "${ROOT}/scripts/_phase_gate_check.py"

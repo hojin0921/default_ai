@@ -3,19 +3,19 @@
   "hooks": {
     "preToolUse": [
       {
-        "command": "bash .cursor/hooks/protect-gate.sh",
+        "command": "python3 scripts/cursor_hook.py protect_gate",
         "matcher": "Write|StrReplace|Delete",
         "failClosed": true,
         "timeout": 10
       },
       {
-        "command": "bash .cursor/hooks/gate-check.sh",
+        "command": "python3 scripts/cursor_hook.py gate_check",
         "matcher": "Write|StrReplace|Delete",
         "failClosed": true,
         "timeout": 10
       },
       {
-        "command": "bash .cursor/hooks/gate-check.sh",
+        "command": "python3 scripts/cursor_hook.py gate_check",
         "matcher": "Shell",
         "failClosed": true,
         "timeout": 10
@@ -23,7 +23,7 @@
     ],
     "beforeShellExecution": [
       {
-        "command": "bash .cursor/hooks/gate-check.sh",
+        "command": "python3 scripts/cursor_hook.py gate_check",
         "failClosed": true,
         "timeout": 10
       }

@@ -62,17 +62,30 @@ Phase 0 = bootstrap (제품 없이 docs만). 제품 설명이면 킥오프 K1부
 ├── .agents/agents/      # Antigravity
 ├── .codex/agents/       # Codex TOML
 ├── .githooks/pre-commit
-├── scripts/gate.sh, install-hooks.sh, new-project.sh, phase-gate-check.sh
+├── scripts/gate.sh, gate.cmd, gate.ps1, install-hooks.sh, install-hooks.cmd,
+│   install_hooks.py, new-project.sh, new-project.cmd, new_project.py,
+│   phase-gate-check.sh, cursor_hook.py, _gate_cli.py
 ├── docs/ ... + docs/ai/agent-workflow.md
 └── src/.gitkeep
 ```
 
 ## 클론 후 한 번
 
+**macOS / Linux / Git Bash**
+
 ```bash
 ./scripts/install-hooks.sh
 ./scripts/gate.sh status   # 기본 enabled:false (Small 마찰 없음)
 ```
+
+**Windows (CMD / PowerShell)**
+
+```bat
+scripts\install-hooks.cmd
+scripts\gate.cmd status
+```
+
+공통: `python scripts/_gate_cli.py status`
 
 Large: 채팅에서 Plan 승인(또는 동등하게 `./scripts/gate.sh on` → `approve-plan`)
 
@@ -85,5 +98,5 @@ Large: 채팅에서 Plan 승인(또는 동등하게 `./scripts/gate.sh on` → `
 
 ## 사람 가이드
 
-- 사용법 요약: 원본 템플릿 [`guide.md`](guide.md) (권장 `rsync`는 `guide.md`를 새 프로젝트에 넣지 않음)
+- 사용법 요약: 원본 템플릿 [`guide.md`](guide.md) (권장: `new-project` 스크립트 — `guide.md`·`.cursor/gate.json` 제외 복사)
 - 프롬프트·게이트 상세: `docs/ai/agent-workflow.md`

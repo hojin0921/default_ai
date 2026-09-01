@@ -30,6 +30,18 @@ Source of truth: `.cursor/gate.json`
 | `kickoff_step` | discover\|design\|docs\|phase_plan\|done |
 | `allow_commit` | git commit allowed |
 
+## Gate CLI (OS)
+
+Run the same commands on every OS; only the wrapper differs.
+
+| OS | Wrapper | Example |
+|----|---------|---------|
+| macOS / Linux / Git Bash | `./scripts/gate.sh` | `./scripts/gate.sh status` |
+| Windows CMD / PowerShell | `.\scripts\gate.cmd` | `.\scripts\gate.cmd status` |
+| Any (Agent on Windows) | `python scripts/_gate_cli.py` | `python scripts/_gate_cli.py approve-plan` |
+
+**Orchestrator on Windows:** use `python scripts/_gate_cli.py <subcommand>` in Shell (PowerShell does not run `./scripts/gate.sh`). Humans may use `gate.cmd` instead.
+
 ## Channel (default: chat)
 
 At decision points, **do not** advance the gate or implement until the human
@@ -42,10 +54,7 @@ picks an option in **this** turn.
    option labels (same wording as below). This may render as a clickable card.
 2. **If unavailable**, fall back to a short Korean numbered `1` / `2` / `3`
    list in chat. Do not invent a fake button UI in markdown.
-3. After an unambiguous choice, run the matching `./scripts/gate.sh`
-   command(s) for that option (one decision per turn; a menu item may bundle
-   a documented set). Then `./scripts/gate.sh status`
-   and report briefly.
+3. After an unambiguous choice, run the matching gate CLI command(s) for that option (one decision per turn; a menu item may bundle a documented set). Use `./scripts/gate.sh` on macOS/Linux, `.\scripts\gate.cmd` on Windows, or `python scripts/_gate_cli.py` everywhere (required for Agent on Windows). Then run `status` and report briefly.
 4. If the choice is unclear, ask again — do not run mutating `gate.sh`.
 5. For K1 (after 이해 요약), K2/K3/K4, Phase Explore/Document, and Phase detail Plan: the **same reply** must contain a fenced ```mermaid block and a `글 흐름: … → …` line **above** AskQuestion.  
    Never AskQuestion about a picture that is not in this message.  
@@ -148,23 +157,42 @@ treat “edit” alone as approval.
 
 ## Equivalent CLI
 
+**macOS / Linux / Git Bash**
+
 ```bash
 ./scripts/install-hooks.sh          # once per clone
 ./scripts/gate.sh status
 ./scripts/gate.sh on                # Large reset (discover, design not approved)
-./scripts/gate.sh approve-design    # after agreeing overall design
+./scripts/gate.sh approve-design
 ./scripts/gate.sh kickoff phase_plan
-./scripts/gate.sh approve-plan      # requires design_approved; resets Phase flags
-./scripts/gate.sh approve-explore   # senior-architect Explore (this Phase)
-./scripts/gate.sh approve-document  # Document (this Phase)
-./scripts/gate.sh approve-plan-body # senior-pm Plan body (this Phase)
+./scripts/gate.sh approve-plan
+./scripts/gate.sh approve-explore
+./scripts/gate.sh approve-document
+./scripts/gate.sh approve-plan-body
 ./scripts/gate.sh phase-ui true|false
-./scripts/gate.sh approve-design-spec  # senior-design (UI Phase)
+./scripts/gate.sh approve-design-spec
 ./scripts/gate.sh advance document|plan|implement|verify|review
-./scripts/gate.sh approve-verify    # senior-qa Verify (this Phase)
-./scripts/gate.sh allow-commit      # requires verify_approved when enabled
+./scripts/gate.sh approve-verify
+./scripts/gate.sh allow-commit
 ./scripts/gate.sh next-phase
-./scripts/gate.sh off               # Small work
+./scripts/gate.sh off
+```
+
+**Windows (CMD / PowerShell)** — same subcommands, different wrapper:
+
+```bat
+scripts\install-hooks.cmd
+scripts\gate.cmd status
+scripts\gate.cmd on
+REM … (replace gate.sh with gate.cmd)
+```
+
+**Cross-platform (Agent on Windows, or any OS)**
+
+```bash
+python scripts/_gate_cli.py status
+python scripts/_gate_cli.py approve-plan
+# … same subcommands as gate.sh
 ```
 
 ## Agent rules

@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Local verification for phase gate (gate.sh allowed; direct gate.json shell edits denied)."""
+"""Local verification for phase gate (gate CLI allowed; direct gate.json shell edits denied)."""
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
 import sys
 import tempfile
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -21,14 +24,17 @@ from lib.phase_gate import (  # noqa: E402
     gate_path,
     load_gate,
     save_gate,
+    shell_uses_gate_cli,
 )
+from lib.python_exec import resolve_python_argv  # noqa: E402
 
 
-def hook(script: str, payload: dict) -> dict:
+def hook(name: str, payload: dict) -> dict:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT / "scripts")
+    py = resolve_python_argv()
     p = subprocess.run(
-        ["bash", script],
+        [*py, str(ROOT / "scripts" / "cursor_hook.py"), name],
         input=json.dumps(payload),
         text=True,
         capture_output=True,
@@ -43,8 +49,9 @@ def hook(script: str, payload: dict) -> dict:
 def gate_cmd(*args: str) -> subprocess.CompletedProcess[str]:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT / "scripts")
+    py = resolve_python_argv()
     return subprocess.run(
-        ["bash", str(ROOT / "scripts" / "gate.sh"), *args],
+        [*py, str(ROOT / "scripts" / "_gate_cli.py"), *args],
         text=True,
         capture_output=True,
         cwd=str(ROOT),
@@ -100,7 +107,7 @@ def _run(root: Path) -> None:
     print("PASS save_gate keeps kickoff fields")
 
     out = hook(
-        ".cursor/hooks/gate-check.sh",
+        "gate_check",
         {
             "hook_event_name": "preToolUse",
             "tool_name": "Write",
@@ -111,9 +118,10 @@ def _run(root: Path) -> None:
     print("PASS deny explore write")
 
     g["step"] = "implement"
+    g["plan_body_approved"] = True
     save_gate(g, root)
     out = hook(
-        ".cursor/hooks/gate-check.sh",
+        "gate_check",
         {
             "hook_event_name": "preToolUse",
             "tool_name": "Write",
@@ -124,7 +132,7 @@ def _run(root: Path) -> None:
     print("PASS allow implement write")
 
     out = hook(
-        ".cursor/hooks/gate-check.sh",
+        "gate_check",
         {
             "hook_event_name": "beforeShellExecution",
             "tool_input": {"command": "git commit -m t"},
@@ -133,16 +141,20 @@ def _run(root: Path) -> None:
     assert out["permission"] == "deny", out
     print("PASS deny commit")
 
-    cmd = "./scripts/" + "gate" + ".sh " + "approve" + "-plan"
-    out = hook(
-        ".cursor/hooks/gate-check.sh",
-        {"hook_event_name": "beforeShellExecution", "tool_input": {"command": cmd}},
-    )
-    assert out["permission"] == "allow", out
-    print("PASS allow gate.sh approve-plan")
+    for cmd in (
+        "./scripts/gate.sh approve-plan",
+        "python scripts/_gate_cli.py approve-plan",
+        r".\scripts\gate.cmd approve-plan",
+    ):
+        out = hook(
+            "gate_check",
+            {"hook_event_name": "beforeShellExecution", "tool_input": {"command": cmd}},
+        )
+        assert out["permission"] == "allow", (cmd, out)
+    print("PASS allow gate CLI approve-plan")
 
     out = hook(
-        ".cursor/hooks/gate-check.sh",
+        "gate_check",
         {
             "hook_event_name": "beforeShellExecution",
             "tool_input": {"command": "echo x > .cursor/gate.json"},
@@ -151,15 +163,15 @@ def _run(root: Path) -> None:
     assert out["permission"] == "deny", out
     print("PASS deny direct gate.json redirect")
 
+    assert shell_uses_gate_cli("python scripts/_gate_cli.py status")
+    assert shell_uses_gate_cli(r".\scripts\gate.cmd status")
+    print("PASS shell_uses_gate_cli")
+
     sys.path.insert(0, str(ROOT / ".cursor" / "hooks"))
     import protect_gate as protect_gate_mod  # noqa: E402
 
     old_stdin = sys.stdin
     try:
-        import io
-        from contextlib import redirect_stdout
-        from io import StringIO
-
         sys.stdin = io.StringIO(
             json.dumps(
                 {
@@ -223,6 +235,7 @@ def _run(root: Path) -> None:
 
     g_open2 = load_gate(root)
     g_open2["allow_commit"] = True
+    g_open2["explore_approved"] = True
     save_gate(g_open2, root)
     p = gate_cmd("advance", "document")
     assert p.returncode == 0, p.stderr
@@ -239,23 +252,32 @@ def _run(root: Path) -> None:
         "allow_commit": False,
         "note": "legacy",
     }
-    (tmp / ".cursor" / "gate.json").write_text(
-        json.dumps(legacy), encoding="utf-8"
-    )
+    (tmp / ".cursor" / "gate.json").write_text(json.dumps(legacy), encoding="utf-8")
     lg = load_gate(tmp)
     assert lg["design_approved"] is True
     assert lg["kickoff_step"] == "done"
     print("PASS legacy gate.json infer fields")
 
+    py = resolve_python_argv()
     save_gate(dict(DEFAULT_GATE), root)
-    assert subprocess.call([str(ROOT / "scripts/phase-gate-check.sh")]) == 0
+    assert (
+        subprocess.call([*py, str(ROOT / "scripts" / "_phase_gate_check.py")], cwd=str(ROOT))
+        == 0
+    )
     g = dict(DEFAULT_GATE)
     g.update({"enabled": True, "allow_commit": False})
     save_gate(g, root)
-    assert subprocess.call([str(ROOT / "scripts/phase-gate-check.sh")]) == 1
+    assert (
+        subprocess.call([*py, str(ROOT / "scripts" / "_phase_gate_check.py")], cwd=str(ROOT))
+        == 1
+    )
     g["allow_commit"] = True
+    g["verify_approved"] = True
     save_gate(g, root)
-    assert subprocess.call([str(ROOT / "scripts/phase-gate-check.sh")]) == 0
+    assert (
+        subprocess.call([*py, str(ROOT / "scripts" / "_phase_gate_check.py")], cwd=str(ROOT))
+        == 0
+    )
     print("ALL PASSED")
     print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
 

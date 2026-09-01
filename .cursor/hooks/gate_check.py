@@ -19,6 +19,7 @@ from lib.phase_gate import (  # noqa: E402
     emit,
     extract_tool_path,
     find_repo_root,
+    gate_cli_hint,
     is_code_path,
     is_gate_file,
     load_gate,
@@ -53,7 +54,7 @@ def main() -> None:
             emit(
                 deny(
                     "phase-gate: do not edit .cursor/gate.json via shell. "
-                    "After an explicit human chat choice, run ./scripts/gate.sh … "
+                    f"After an explicit human chat choice, run {gate_cli_hint()} … "
                     "(or ask the human to run the same command)."
                 )
             )
@@ -70,7 +71,7 @@ def main() -> None:
                 deny(
                     "phase-gate: git commit blocked."
                     + hint
-                    + " Or ./scripts/gate.sh off for Small work."
+                    + f" Or {gate_cli_hint()} off for Small work."
                 )
             )
             return
@@ -83,7 +84,7 @@ def main() -> None:
         emit(
             deny(
                 "phase-gate: Agent cannot modify .cursor/gate.json directly. "
-                "After an explicit human chat choice, run ./scripts/gate.sh … "
+                f"After an explicit human chat choice, run {gate_cli_hint()} … "
                 "(or human runs the same command)."
             )
         )

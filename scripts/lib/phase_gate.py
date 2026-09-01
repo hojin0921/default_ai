@@ -60,7 +60,7 @@ DEFAULT_GATE: dict[str, Any] = {
     "step": "explore",
     "kickoff_step": "done",
     "allow_commit": False,
-    "note": "사람 결정으로만 전진. 채널: 채팅 선택→Agent가 ./scripts/gate.sh 대행, 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다.",
+    "note": "사람 결정으로만 전진. 채팅 선택→Agent가 gate CLI 대행 (macOS/Linux: ./scripts/gate.sh, Windows: .\\scripts\\gate.cmd 또는 python scripts/_gate_cli.py), 또는 사람이 동일 명령 실행. Agent는 이 파일을 직접 수정하지 않는다.",
 }
 
 _PHASE_DELIVERY_FLAG_KEYS = (
@@ -301,10 +301,33 @@ def extract_tool_path(tool_input: dict[str, Any] | None) -> str | None:
     return None
 
 
-def shell_mutates_gate(command: str) -> bool:
-    """True when shell rewrites gate.json directly (not via ./scripts/gate.sh)."""
+def gate_cli_hint() -> str:
+    """Human-facing gate CLI examples for error messages."""
+    if sys.platform == "win32":
+        return r".\scripts\gate.cmd or python scripts/_gate_cli.py"
+    return "./scripts/gate.sh or python scripts/_gate_cli.py"
+
+
+def shell_uses_gate_cli(command: str) -> bool:
+    """True when shell invokes the supported gate CLI (not a direct gate.json edit)."""
     c = command.strip()
     if not c:
+        return False
+    patterns = (
+        r"scripts[/\\]gate(?:\.sh|\.cmd|\.ps1)?\b",
+        r"scripts[/\\]_gate_cli\.py\b",
+        r"scripts[/\\]gate\.py\b",
+        r"\bpython(?:3)?\s+[^\s;|&]*[/\\]_gate_cli\.py\b",
+    )
+    return any(re.search(p, c, re.I) for p in patterns)
+
+
+def shell_mutates_gate(command: str) -> bool:
+    """True when shell rewrites gate.json directly (not via gate CLI)."""
+    c = command.strip()
+    if not c:
+        return False
+    if shell_uses_gate_cli(c):
         return False
     if re.search(r"gate\.json", c):
         if re.search(

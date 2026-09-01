@@ -11,6 +11,86 @@ Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 
 ## 1. 준비 (복사/클론 후 한 번)
 
+이 템플릿의 **게이트·훅·스크립트**는 Python으로 동작한다. OS마다 **설치 항목**과 **PATH(터미널에서 명령을 찾을 수 있는지)** 가 맞아야 한다.
+
+### OS별 필수 설치
+
+| 항목 | macOS | Windows | Linux |
+|------|-------|---------|-------|
+| **Python 3.8+** | 필수 | 필수 | 필수 |
+| **Git** | 필수 | 필수 | 필수 |
+| **AI 도구** | Cursor 등 (택 1) | 동일 | 동일 |
+| **bash** | 기본 (Terminal) | Git Bash 또는 WSL (`.sh` 쓸 때) | 기본 |
+| **rsync** | 선택 (수동 복사 시) | 불필요 (`new-project` 사용) | 선택 (수동 복사 시) |
+
+**Python이 필요한 이유:** gate CLI · Cursor 쓰기/커밋 차단 훅 · git pre-commit · `new-project` / `install-hooks` 스크립트.
+
+**Git이 필요한 이유:** `git init` · pre-commit 훅 · `install-hooks`가 `core.hooksPath` 설정.
+
+#### macOS
+
+1. **Python 3.8+** — [python.org](https://www.python.org/downloads/) 또는 `brew install python`  
+   - 터미널에서 **`python3`** 가 PATH에 있어야 한다. (`python`만 있거나 없으면 `install-hooks` 전에 확인)  
+2. **Git** — Xcode Command Line Tools (`xcode-select --install`) 또는 Homebrew `git`  
+3. **Cursor** (또는 Claude Code / Codex / Antigravity) — Phase Gate **쓰기 차단**은 Cursor만 (`hooks.json`)
+
+**PATH 확인 (새 터미널에서):**
+
+```bash
+python3 --version    # Python 3.8.x 이상
+git --version
+```
+
+#### Windows
+
+1. **Python 3.8+** — [python.org](https://www.python.org/downloads/) 설치 시  
+   - **“Add python.exe to PATH”**(또는 *Add Python to environment variables*) **반드시 체크**  
+   - 설치 후 **CMD·PowerShell·Cursor 터미널을 새로 연다** (PATH 반영)  
+   - 터미널에서 **`python`** 이 PATH에 있어야 한다. (`py -3`만 되는 경우도 있음 — `install-hooks`가 맞춤)  
+2. **Git for Windows** — [git-scm.com](https://git-scm.com/download/win) (설치 시 “Git from the command line” 권장)  
+3. **Cursor** — 훅·Agent Shell이 Python을 찾으려면 **Cursor를 Python 설치·PATH 설정 후** 실행하는 것이 안전하다  
+
+**PATH 확인 (CMD 또는 PowerShell):**
+
+```bat
+python --version
+git --version
+```
+
+`python`이 없고 `py`만 있을 때:
+
+```bat
+py -3 --version
+```
+
+→ `scripts\install-hooks.cmd` 실행 시 `hooks.json`에 쓸 명령을 OS에 맞게 잡는다. 그래도 Agent gate는 **`python scripts/_gate_cli.py`** 형식을 쓴다 (`py` 래퍼는 Agent Shell에서 불안정할 수 있음).
+
+#### Linux
+
+1. **Python 3.8+** — 배포판 패키지 (`python3`, `python3-pip` 등) 또는 pyenv  
+   - **`python3`** 가 PATH에 있어야 한다  
+2. **Git** — `git` 패키지  
+3. **Cursor** 등 — 동일  
+
+**PATH 확인:**
+
+```bash
+python3 --version
+git --version
+```
+
+### PATH가 안 맞을 때 (공통)
+
+| 증상 | macOS / Linux | Windows |
+|------|---------------|---------|
+| `python3` / `python` not found | Python 재설치 또는 PATH에 설치 경로 추가 | 설치 시 **Add to PATH** 다시 체크 후 터미널·Cursor 재시작 |
+| Cursor 훅 실패 (exit 127) | `python3 scripts/cursor_hook.py gate_check` 수동 실행 | `python scripts/cursor_hook.py gate_check` — 실패하면 PATH |
+| gate / install-hooks 실패 | `./scripts/install-hooks.sh` 대신 `python3 scripts/install_hooks.py` | `python scripts/install_hooks.py` |
+
+**한 번 더:** 클론·복사 후 **`install-hooks`** 를 OS에 맞게 실행하면 Git pre-commit과 Cursor 훅용 Python 명령이 정리된다 (아래 표 참고).
+
+---
+
 폴더를 통째로 복사하면 **`.git`까지 같이 가서** 원래 원격(origin)에 연결된 채로 복제된다.  
 새 프로젝트로 쓰려면 **git 이력을 끊고** 새로 시작하는 것이 맞다.
 
@@ -18,51 +98,97 @@ Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 
 템플릿 폴더(`default_ai`)에서:
 
+**macOS / Linux / Git Bash**
+
 ```bash
 ./scripts/new-project.sh
-```
-
-- **부모 폴더** (예: `~/Desktop`)와 **새 프로젝트 이름** (예: `my-new-project`)을 물어본다  
-- **폴더가 없으면 생성**, **있으면 그 안에** 템플릿 복사 (이전 실패로 일부만 있어도 재실행 가능)  
-- `.git` · `guide.md` · `.cursor/gate.json`(템플릿 개발 상태) 제외하고 복사  
-- `git init` → `install-hooks.sh` → `gate.sh status` 까지 자동 실행  
-
-경로를 한 번에 주려면:
-
-```bash
+# 또는
 ./scripts/new-project.sh ~/Desktop/my-new-project
 ```
 
-### 수동: rsync
+**Windows (CMD)**
 
-Finder·탐색기·zip으로 폴더를 통째로 복사하면 `guide.md`도 **따라간다.** 빼려면 아래처럼 한다.
+```bat
+scripts\new-project.cmd
+scripts\new-project.cmd C:\Users\you\Desktop\my-new-project
+```
+
+**Windows (PowerShell)**
+
+```powershell
+.\scripts\new-project.ps1
+.\scripts\new-project.ps1 $env:USERPROFILE\Desktop\my-new-project
+```
+
+- **부모 폴더** (예: `~/Desktop` · `%USERPROFILE%\Desktop`)와 **새 프로젝트 이름**을 물어본다  
+- **폴더가 없으면 생성**, **있으면 그 안에** 템플릿 복사 (이전 실패로 일부만 있어도 재실행 가능)  
+- `.git` · `guide.md` · `.cursor/gate.json`(템플릿 개발 상태) 제외하고 복사  
+- `git init` → 훅 설치 → gate status 까지 자동 실행  
+
+### 클론만 한 경우 (한 번)
+
+| OS | 명령 |
+|----|------|
+| macOS / Linux / Git Bash | `./scripts/install-hooks.sh` |
+| Windows CMD | `scripts\install-hooks.cmd` |
+| Windows PowerShell | `.\scripts\install-hooks.ps1` |
+
+게이트 상태 확인:
+
+| OS | 명령 |
+|----|------|
+| macOS / Linux / Git Bash | `./scripts/gate.sh status` |
+| Windows CMD | `scripts\gate.cmd status` |
+| Windows PowerShell | `.\scripts\gate.cmd status` |
+| 공통 (Python) | `python scripts/_gate_cli.py status` |
+
+`install-hooks`는 Git `core.hooksPath=.githooks` 설정과 Cursor 훅용 Python 명령(`python3` 또는 `python`)을 맞춘다.
+
+### 수동 복사
+
+Finder·탐색기·zip으로 폴더를 통째로 복사하면 `guide.md`도 **따라간다.**  
+새 프로젝트에는 `guide.md`를 넣지 않는다. 사용법은 **원본 템플릿**의 `guide.md`를 연다.
+
+**macOS / Linux (rsync 있을 때)**
 
 ```bash
-# 예: 템플릿 → 새 프로젝트 폴더 (macOS)
-rsync -a --exclude='.git' --exclude='guide.md' /path/to/default_ai/ /path/to/my-new-project/
+rsync -a --exclude='.git' --exclude='guide.md' --exclude='.cursor/gate.json' \
+  /path/to/default_ai/ /path/to/my-new-project/
 cd /path/to/my-new-project
 git init
 ./scripts/install-hooks.sh
 ./scripts/gate.sh status
 ```
 
-이미 통째로 복사했다면 새 폴더에서 `rm -f guide.md` 하면 된다.  
-사용법은 **원본 템플릿**의 `guide.md`를 연다. 새 프로젝트 Skills는 그대로 동작한다.
+**Windows (탐색기 또는 PowerShell)**
+
+1. 템플릿 폴더 내용을 새 폴더에 복사한다.  
+2. **제외:** `.git` 폴더 · `guide.md` · `.cursor/gate.json`  
+3. 새 폴더에서:
+
+```powershell
+git init
+.\scripts\install-hooks.ps1
+.\scripts\gate.cmd status
+```
+
+이미 통째로 복사했다면 새 폴더에서 `guide.md`를 삭제하면 된다.
 
 이미 `.git`이 포함된 채로 복사했다면:
 
 ```bash
-cd /path/to/my-new-project
-rm -rf .git
+cd /path/to/my-new-project   # Windows: cd C:\path\to\my-new-project
+rm -rf .git                  # Windows PowerShell: Remove-Item -Recurse -Force .git
 git init
 # 필요하면: git remote add origin <새-원격-URL>
-./scripts/install-hooks.sh
-./scripts/gate.sh status
+./scripts/install-hooks.sh   # Windows: scripts\install-hooks.cmd
+./scripts/gate.sh status     # Windows: scripts\gate.cmd status
 ```
 
 - `enabled: false` → 작은 작업은 게이트 없이 진행 가능  
 - **쓰는 도구로** 이 폴더를 연다 (Cursor Agent / Claude Code / Codex / Antigravity)  
 - Large에서는 **채팅 선택**(버튼 또는 번호)으로 승인·단계 전진하는 것이 기본이다  
+- **Windows에서 Cursor Agent**가 gate를 돌릴 때는 `./scripts/gate.sh` 대신 `python scripts/_gate_cli.py <명령>` 을 쓴다 (PowerShell/CMD).
 
 스킬은 클론만 하면 붙는다 (설치 스크립트 없음).
 
@@ -72,7 +198,7 @@ git init
 | Claude Code | `.claude/skills/` |
 | Codex, Antigravity | `.agents/skills/` |
 
-쓰기 차단 훅(`.cursor/hooks.json`)은 **Cursor만**. 다른 도구는 규칙 + `gate.sh` + git pre-commit.
+쓰기 차단 훅(`.cursor/hooks.json`)은 **Cursor만**. 다른 도구는 규칙 + gate CLI + git pre-commit.
 
 ### 선택 UI가 버튼으로 안 보일 때
 

@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from lib.phase_gate import can_commit, find_repo_root, load_gate  # noqa: E402
+from lib.phase_gate import can_commit, find_repo_root, gate_cli_hint, load_gate  # noqa: E402
 
 
 def main() -> int:
@@ -20,9 +20,9 @@ def main() -> int:
         "phase-gate: commit blocked.\n"
         f"  enabled={gate.get('enabled')} plan_approved={gate.get('plan_approved')} "
         f"phase={gate.get('phase')} step={gate.get('step')} allow_commit={gate.get('allow_commit')}\n"
-        "  After Verify/User Test: chat pick 통과 (Agent runs ./scripts/gate.sh allow-commit),\n"
-        "  or run that CLI, then git commit yourself.\n"
-        "  Or Small work: ./scripts/gate.sh off",
+        f"  After Verify/User Test: chat pick 통과 (Agent runs {gate_cli_hint()} allow-commit),\n"
+        f"  or run that CLI, then git commit yourself.\n"
+        f"  Or Small work: {gate_cli_hint()} off",
         file=sys.stderr,
     )
     return 1

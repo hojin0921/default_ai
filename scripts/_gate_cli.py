@@ -188,9 +188,11 @@ def main(argv: list[str]) -> int:
         return 0
 
     if cmd == "next-phase":
+        keep_commit = bool(gate.get("allow_commit"))
         gate["phase"] = int(gate.get("phase") or 1) + 1
         gate["step"] = "explore"
         reset_phase_delivery_flags(gate)
+        gate["allow_commit"] = keep_commit
         save_gate(gate, root)
         print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
         return 0
