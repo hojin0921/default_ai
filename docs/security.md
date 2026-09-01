@@ -23,6 +23,13 @@
 - 전문 에이전트도 `.cursor/gate.json`을 직접 수정하지 않는다. mutating `gate.sh`는 사람 선택 후 오케스트레이터만.
 - Cursor 밖에서는 `.cursor/hooks.json` 쓰기 차단이 없다. 구현 전 코드 쓰기는 규칙 + 사람 승인 + git pre-commit에 의존한다.
 
+## Agent workflow
+
+- **설계 (`senior-architect`):** K2/K3·Explore에서 threat model·auth/PII **설계** 수준
+- **보안 (`senior-security`):** Verify·마지막 Review — **1차 → (2차 | 재점검) → 최종 재점검** (A/B 경로). **`approve-verify` / Human Verify는 최종 재점검 `통과` 후만**
+- 점검·수정·재점검마다 **`## 보안 점검 시작`** / **`## 보안 수정 시작`** / **`## 보안 점검 완료`** (차수 표기). 침묵 금지
+- Cursor에서는 `senior-security`가 필요 시 내장 `security-review` 서브에이전트를 보조로 쓸 수 있음. 사람에게 보이는 역할은 **시니어 보안**
+
 ## Reporting
 
 해당 없음.

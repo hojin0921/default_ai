@@ -29,6 +29,7 @@
 | `senior-design` | 시니어 디자인 | Plan(UI) 시각 스펙 |
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review·User Test Guide |
+| `senior-security` | 시니어 보안 | Verify(코드 Phase)·마지막 Review branch 스캔 |
 
 에이전트 정의: `.cursor/agents/` · `.claude/agents/` · `.agents/agents/` · `.codex/agents/`  
 Quality bar: `.cursor/skills/<skill-name>/SKILL.md` (복제: `.claude/skills/`, `.agents/skills/`)

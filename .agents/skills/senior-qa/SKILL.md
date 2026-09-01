@@ -21,6 +21,7 @@ description: >-
 - Write **직접 확인 가이드** a human can follow without guessing (pasteable commands, screens, what “good” looks like)
 - On the **last** Phase, also write **실행 가이드** and **역할 기여** before the test-scenario guide
 - Work like a senior QA on a release: traceability, regression, and bugs someone else can reproduce
+- **Code security scanning** is **`senior-security`** at Verify (Phase diff) and last Review (branch-wide)—not QA’s deep ownership
 
 ## Quality bar
 

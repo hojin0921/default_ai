@@ -60,7 +60,7 @@ picks an option in **this** turn.
    Never AskQuestion about a picture that is not in this message.  
    K2/K3/K4 and detail Plan also include **지금 볼 곳**. Files: open the path in the editor (Cursor: `Cmd+P` / `Ctrl+P`).  
    Prompt wording: 바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름). Name the path when there is a file.
-6. After Verify, the chat body must include **직접 확인 가이드** before the choice UI. Last Phase: **실행 가이드** then **역할 기여** before that.
+- 보안 점검·재점검·수정·최종 재점검 완료 후 **직접 확인 가이드** before the choice UI. **최종 재점검 `통과` 전** Verify choice UI 금지.
 
 Humans may run the same CLI themselves (equivalent).
 

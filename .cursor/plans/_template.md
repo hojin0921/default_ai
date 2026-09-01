@@ -50,12 +50,18 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - [ ] 2 Document
   - [ ] 3 Plan (상세) → Human approve
   - [ ] 4 Implement
-  - [ ] 5 Verify (AI + User Test Guide)
+  - [ ] 5 Verify (AI + **`senior-security` Phase diff** + User Test Guide)
   - [ ] 6 Review → Human Verify
+  - [ ] (마지막 Phase만) Review: **`senior-security` branch 전체**
 - Docs to update:
 - Changes (files):
 - 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
+- 보안 점검 (`senior-security` · 차수별 · verdict):
+  - 1차:
+  - 2차 / 재점검:
+  - 최종 재점검:
+  - Verdict (최종):
 - User Test Guide / 직접 확인 가이드:
   - 실행:
   - 확인:
@@ -71,6 +77,7 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - 디자인:
   - 개발:
   - QA:
+  - 보안:
 - Human Verify: [ ] 통과 (다음 Phase 전 필수)
 
 ### Phase 2 — <!-- 제목 -->
@@ -82,12 +89,18 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - [ ] 2 Document (변경분만)
   - [ ] 3 Plan (상세) → Human approve
   - [ ] 4 Implement
-  - [ ] 5 Verify (AI + User Test Guide)
+  - [ ] 5 Verify (AI + **`senior-security` Phase diff** + User Test Guide)
   - [ ] 6 Review → Human Verify
+  - [ ] (마지막 Phase만) Review: **`senior-security` branch 전체**
 - Docs to update:
 - Changes (files):
 - 한눈 그림 (3단계 Plan에서 이 Phase 작업 순서 Mermaid를 채팅에도 넣음):
 - AI Verify:
+- 보안 점검 (`senior-security` · 차수별 · verdict):
+  - 1차:
+  - 2차 / 재점검:
+  - 최종 재점검:
+  - Verdict (최종):
 - User Test Guide / 직접 확인 가이드:
   - 실행:
   - 확인:
@@ -103,6 +116,7 @@ Phase 0(bootstrap)과 별개. 제품 개발은 Phase 1부터.
   - 디자인:
   - 개발:
   - QA:
+  - 보안:
 - Human Verify: [ ] 통과 (다음 Phase 전 필수)
 
 <!-- 필요 시 Phase N 추가 -->

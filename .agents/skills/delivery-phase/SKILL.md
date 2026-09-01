@@ -26,8 +26,8 @@ You are the **orchestrator**. Do **not** write specialist artifacts yourself.
 | 2 Document | `senior-architect` or `senior-pm` (doc type) | matching skill |
 | 3 Plan | `senior-pm` then, if UI, `senior-design` | `senior-pm`, `senior-design` |
 | 4 Implement | `senior-dev` | `senior-dev` (사람 고른 Stack + design spec if UI) |
-| 5 Verify | `senior-qa` | `senior-qa` |
-| 6 Review | `senior-qa` then `senior-architect` | both |
+| 5 Verify | `senior-qa` then (code Phase) `senior-security` | `senior-qa`, `senior-security` |
+| 6 Review | `senior-qa` then `senior-architect` then (last Phase) `senior-security` | all |
 
 ### Specialist launch (required)
 
@@ -37,7 +37,8 @@ You are the **orchestrator**. Do **not** write specialist artifacts yourself.
    - **Claude Code:** `.claude/agents/<name>.md`
    - **Codex:** spawn `.codex/agents/<name>`
    - **Antigravity:** `invoke_subagent` (`.agents/agents/<name>.md`)
-3. **입력 패키지** (자식은 대화 이력이 없음): current step, In/Out, paths to related docs/plans, previous specialist artifacts, **Stack (Frontend / Backend / Database)** when implementing. No `.env` secrets.
+3. **입력 패키지** (자식은 대화 이력이 없음): current step, In/Out, paths to related docs/plans, previous specialist artifacts, **Stack (Frontend / Backend / Database)** when implementing. No `.env` secrets.  
+   For **`senior-security`**: add **scope** + **round** (`1차` | `2차` | `재점검` | `최종 재점검`) + prior findings when re-scanning. Phase diff at Verify; branch at last Review.
 4. If spawn API is missing: **Isolation Pass** — `▶ 전문 에이전트 시작: 시니어 ○○` then follow **only** that skill, then `▶ 전문 에이전트 종료`. Do not mix other roles in that block.
 5. After specialists return: 한눈 그림 (when required), 지금 볼 곳, AskQuestion. Mutating `gate.sh` only after an explicit human choice this turn.
 
@@ -54,6 +55,8 @@ Fail: writing plan body, visual spec, app code, or UTG as the orchestrator witho
 | **UI 시각 스펙** (레이아웃·타이포·색·컴포넌트·상태) | **`senior-design`** (UI Phase **필수**) | **금지** |
 | 앱 코드·CSS·컴포넌트 구현 | `senior-dev` | 금지 |
 | 테스트·직접 확인 가이드 | `senior-qa` | 금지 |
+| **보안 점검·재점검** (1차→2차 또는 재점검→최종 재점검) | **`senior-security`** (코드 Phase **필수**) | **금지** |
+| **보안 수정** (Verify 보류 findings) | `senior-dev` | 금지 |
 | Verify/Review 아키텍처 점검 | `senior-architect` | 금지 |
 
 **UI Phase 판별:** 이 Phase In/Out에 화면·레이아웃·CSS·컴포넌트·사용자 입력 UI가 있으면 UI Phase. API-only·CLI·배치만이면 UI 아님.
@@ -72,7 +75,78 @@ Fail: writing plan body, visual spec, app code, or UTG as the orchestrator witho
 
 **Small/Medium:** gate `off`일 때도 **새 UI/코드**면 해당 역할 Isolation Pass 필수. gate `on`이면 동일 approve-* 적용.
 
-**Anti-pattern (실패):** CreatePlan 후 바로 `src/` 작성. Explore/Document/Plan·전문 에이전트·approve-* 생략.
+**Anti-pattern (실패):** CreatePlan 후 바로 `src/` 작성. Explore/Document/Plan·전문 에이전트·approve-* 생략. **코드 Phase Verify에서 `senior-security` 생략.**
+
+### Security review (required · `senior-security`)
+
+코드·설정이 바뀐 Delivery Phase마다 **시니어 보안**이 점검한다. 오케스트레이터가 대신 쓰면 **실패**.  
+**`approve-verify` / Human Verify 전** 아래 **이중·최종 재점검**을 **끝까지** 거쳐 **최종 재점검 통과**해야 한다. 1차만 통과하고 끝내면 **실패**.
+
+| 시점 | Diff scope | Skip |
+|------|------------|------|
+| **5 Verify** (매 코드 Phase) | Phase diff | docs-only · 코드·설정 변경 없음 |
+| **6 Review** (마지막 Phase) | branch 전체 | 앱 코드 없을 때만 |
+
+#### 이중·최종 재점검 (필수 · 두 경로)
+
+```mermaid
+flowchart TB
+  Q[senior-qa 완료] --> R1[1차 점검]
+  R1 --> V1{1차 verdict}
+  V1 -->|보류| FIX[senior-dev 보안 수정]
+  FIX --> RR[재점검]
+  RR --> VR{재점검 verdict}
+  VR -->|보류| FIX
+  VR -->|통과| FINAL[최종 재점검]
+  V1 -->|통과| R2[2차 점검]
+  R2 --> V2{2차 verdict}
+  V2 -->|보류| FIX
+  V2 -->|통과| FINAL
+  FINAL --> VF{최종 재점검 verdict}
+  VF -->|보류| FIX
+  VF -->|통과| OK[직접 확인 가이드 · approve-verify]
+```
+
+| 경로 | 흐름 |
+|------|------|
+| **A · 1차 보류** | 점검 → (보류) 수정 → 재점검 → 통과 → **최종 재점검** → 통과 |
+| **B · 1차 통과** | 점검 → **2차 점검** → 통과 → **최종 재점검** → 통과 |
+
+- **1차 점검:** always first `senior-security` scan.
+- **2차 점검:** **1차 `통과`일 때만**. same scope. 1차 `보류`면 2차 **건너뛰고** 수정 → 재점검.
+- **재점검:** `senior-dev`가 보류 findings 수정 **후**. same scope. **`통과`까지** 반복. 수정 루프 **최대 2회** 후에도 보류면 사람 선택.
+- **최종 재점검:** **항상 마지막**. 2차 통과 또는 재점검 통과 **이후**. **`통과` 전** `approve-verify` / Human Verify **금지**.
+
+**Verify:** QA → 보안 라운드(A 또는 B) → **최종 재점검 통과** → (마지막 Phase면 실행 가이드·역할 기여) → 직접 확인 가이드 → 선택 UI.  
+**Review (마지막 Phase):** QA → 설계 → **동일 이중·최종 재점검** (branch scope) → Human Verify.
+
+**보안 수정:** `senior-dev` — findings Location + Recommendation만. Verify 안에서 수정·재점검.
+
+#### 사용자 알림 (필수 · 침묵 점검 금지)
+
+매 라운드 **직전** 같은 채팅에 넣는다.
+
+```
+## 보안 점검 시작
+- 담당: 시니어 보안 (`senior-security`)
+- Phase: N · Verify | Review (마지막)
+- 차수: 1차 | 2차 | 재점검 | 최종 재점검
+- 범위: Phase diff | branch 전체
+- 상태: 점검 중입니다.
+```
+
+```
+## 보안 수정 시작
+- 담당: 시니어 개발 (`senior-dev`)
+- 근거: 시니어 보안 findings (Critical/High)
+- 상태: 보안 취약점 수정 중입니다.
+```
+
+- Isolation Pass: `▶ 전문 에이전트 시작: 시니어 보안 · <차수> · <범위>` / `▶ … 시니어 개발 · 보안 수정`
+- **생략:** `## 보안 점검 생략` + 이유
+- 라운드 끝: **`## 보안 점검 완료`** + **차수** + findings + verdict
+
+Small/Medium도 코드 Phase면 **동일** 이중·최종 재점검.
 
 ### Specialist gate map (enabled · Delivery Phase)
 
@@ -82,8 +156,8 @@ Fail: writing plan body, visual spec, app code, or UTG as the orchestrator witho
 | 2 Document | `senior-architect` or `senior-pm` | `approve-document` | `plan` |
 | 3 Plan | `senior-pm` → (UI) `senior-design` | `approve-plan-body` → (UI) `approve-design-spec` | `implement` |
 | 4 Implement | `senior-dev` | (Stack pick if needed) | `verify` |
-| 5 Verify | `senior-qa` | `approve-verify` | `review` |
-| 6 Review | `senior-qa` → `senior-architect` | Human Verify 메뉴 | `next-phase` / done |
+| 5 Verify | `senior-qa` → (code Phase) `senior-security` | `approve-verify` | `review` |
+| 6 Review | `senior-qa` → `senior-architect` → (last Phase) `senior-security` | Human Verify 메뉴 | `next-phase` / done |
 
 **통과(Verify):** `approve-verify` → `allow-commit` (순서). `verify_approved` 없으면 커밋 훅 차단.
 
@@ -162,8 +236,8 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
 4. **Implement** — Launch **`senior-dev`** only. If UI Phase, dev must follow **`senior-design`** spec path from Plan.  
    If Stack is 미정/empty, **Stack pick first** (no app code). Then minimal changes in the **chosen** Frontend / Backend / Database only. Do not switch stack.  
    If the product is now runnable, put **실행 가이드** in the chat (준비 / 실행 / 접속) and fill `README.md` Setup + `docs/development.md` from evidence (no guessed commands). If there is nothing to run, say so in one line.
-5. **Verify** — Run related tests → typecheck/lint → build if needed. Never delete/weaken tests to pass.  
-   Then put **직접 확인 가이드** in the chat **before** the decision UI. Do not ask for play-test results without this block. A human who is not the author must be able to follow it.
+5. **Verify** — Launch **`senior-qa`**. Then **이중·최종 재점검** (§ Security review): 1차 → (통과→2차 | 보류→`senior-dev`→재점검) → **최종 재점검 통과** 필수.  
+   Only after **최종 재점검 `통과`**: 직접 확인 가이드 → decision UI. Never `approve-verify` before 최종 재점검 통과.
 
    If this is the **last** Delivery Phase (no later Phase in the Plan), put **실행 가이드** then **역할 기여** *before* 직접 확인 가이드.  
    실행 가이드 = how to start the finished product.  
@@ -186,6 +260,7 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
    | 시니어 디자인 | 해당 없음 (UI 없음) | |
    | 시니어 개발 | | |
    | 시니어 QA | | |
+   | 시니어 보안 | | |
    ```
    Same table goes into the Phase Plan `## 역할 기여 (전체)`. Kickoff K1–K4도 한 줄씩 넣는다.
 
@@ -201,8 +276,9 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
    AskQuestion prompt: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`  
    Docs-only: `Phase N을 직접 확인해 보신 결과는 어떤가요?`  
    Option labels must not mention 커밋. Humans `git commit` themselves after picking 통과 (`allow-commit` behind the scenes).
-6. **Review** — Short self-review (gaps, bugs, security, scope creep). Stop for Human Verify.  
-   Fill this Phase’s **역할 기여** bullets in the Plan (what this role actually produced). On the last Phase, compile the whole-project table in chat and in the Plan.
+6. **Review** — Launch **`senior-qa`** then **`senior-architect`**.  
+   **Last Phase:** **이중·최종 재점검** (branch scope, same A/B paths) → **최종 재점검 통과** → Human Verify.  
+   Stop for Human Verify. Fill this Phase’s **역할 기여** bullets in the Plan (what this role actually produced). On the last Phase, compile the whole-project table in chat and in the Plan.
 
 ### After each step
 

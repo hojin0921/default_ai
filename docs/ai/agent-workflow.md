@@ -29,7 +29,7 @@
 ## 역할 Skill (시니어 관점)
 
 한 **채팅**을 쓰되, 단계가 되면 오케스트레이터(`project-kickoff` / `delivery-phase` / `phase-gate`)가 해당 **전문 에이전트**를 띄운다.  
-역할 Skill(`senior-*`)은 Quality bar다. 기획·디자인·개발·QA **본문은 그 에이전트가 쓴다**. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패. Marketplace 다중 봇은 아니다. 합의: `.cursor/plans/specialist-agents-design.md`.
+역할 Skill(`senior-*`)은 Quality bar다. 기획·디자인·개발·QA·보안 **본문은 그 에이전트가 쓴다**. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패. Marketplace 다중 봇은 아니다. 합의: `.cursor/plans/specialist-agents-design.md`.
 
 | Skill | 한글 | 주 관점 | 주 산출물 |
 |-------|------|---------|-----------|
@@ -38,6 +38,7 @@
 | `senior-design` | 시니어 디자인 | 시각·레이아웃·UX·카피·접근성 | 시각 스펙(Figma 또는 레이아웃·타이포·색), 화면 흐름, 카피 |
 | `senior-dev` | 시니어 개발 | 구현·패턴·최소 변경·테스트 가능성 | 코드, 구현 상세 Plan |
 | `senior-qa` | 시니어 QA | 검증·회귀·User Test Guide·리스크 | 테스트 계획, UTG, 버그 리포트 |
+| `senior-security` | 시니어 보안 | 코드 취약점·secrets·auth·민감 데이터 | 보안 점검 결과 (findings + verdict) |
 
 ### Delivery 6단계 ↔ 띄울 에이전트
 
@@ -47,8 +48,8 @@
 | 2 Document | 설계 또는 기획 (문서 성격) |
 | 3 Plan | 기획 → (UI면) 디자인 |
 | 4 Implement | 개발 (디자인 스펙 준수) |
-| 5 Verify | QA |
-| 6 Review | QA → 설계 |
+| 5 Verify | QA → (코드 Phase) 보안 |
+| 6 Review | QA → 설계 → (마지막 Phase) 보안 |
 
 킥오프: K1 **기획**, K2 **기획 → 설계 → (UI면) 디자인**, K3 **기획 → 설계**, K4 **기획 → 설계**.  
 오케스트레이터 응답에 지금 단계·띄운 에이전트를 밝힌다. 전문 에이전트는 `역할: 시니어 ○○`과 해당 Skill **Quality bar**를 충족한다.
@@ -79,8 +80,8 @@
   → K4 Phase Plan Draft → Human Review
   → Phase N:
       1 Explore → 2 Document → 3 Plan → (승인)
-      → 4 Implement → 5 Verify(+User Test Guide) → 6 Review
-      → Human Verify
+      → 4 Implement → 5 Verify(+User Test Guide + senior-security Phase diff) → 6 Review
+      → (마지막 Phase Review: senior-security branch 전체) → Human Verify
   → 다음 Phase …
 ```
 
@@ -298,14 +299,16 @@ Phase N / 단계에서 문제: …
 **5. Verify**
 
 ```text
-테스트하고 검증해. AI 결과와 내가 따라 할 직접 확인 가이드(실행·확인·기대)를 줘.
-마지막 Phase면 실행 가이드(어떻게 켜는지)와 역할 기여(누가 무엇을·어디에 쓰이는지)도 앞에 줘.
+테스트하고 검증해. 시니어 QA 후 시니어 보안으로 이 Phase diff를 점검해.
+AI 결과·보안 점검 결과·직접 확인 가이드(실행·확인·기대)를 줘.
+마지막 Phase면 실행 가이드와 역할 기여도 앞에 줘.
 ```
 
 **6. Review**
 
 ```text
-다시 리뷰해. 요구 누락, 버그, 보안, 불필요 변경을 찾아줘.
+다시 리뷰해. 요구 누락, 버그, 불필요 변경을 찾아줘.
+마지막 Phase면 시니어 보안으로 branch 전체 보안 게이트도 해줘.
 ```
 
 ## Context

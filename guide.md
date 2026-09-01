@@ -9,6 +9,138 @@ Rules · Skills · Hooks · Plans · Gate가 레포에 들어 있다.
 
 ---
 
+## 0. 전체 흐름 한눈에
+
+템플릿으로 프로젝트를 만들 때 **사람이 거치는 길**과 **AI(전문 에이전트)가 도는 길**을 한 번에 본다.
+
+### 0-1. 큰 그림 (준비 → 킥오프 → Phase 반복 → 완료)
+
+```mermaid
+flowchart TB
+  subgraph prep["① 준비"]
+    COPY[템플릿 복사·new-project]
+    HOOK[install-hooks]
+    COPY --> HOOK
+  end
+  subgraph kick["② 킥오프 K1–K4"]
+    K1[K1 질문]
+    K2[K2 전체 설계]
+    K3[K3 docs]
+    K4[K4 Phase Plan]
+    OK[사람 승인]
+    K1 --> K2 --> K3 --> K4 --> OK
+  end
+  subgraph loop["③ Delivery Phase 1…N"]
+    SIX[6단계 Explore→…→Review]
+    HV[Human Verify]
+    SIX --> HV
+  end
+  subgraph endflow["④ 마지막 Phase"]
+    BR[Review · branch 보안]
+    DONE[개발 완료]
+    BR --> DONE
+  end
+  HOOK --> K1
+  OK --> SIX
+  HV -->|다음 Phase| SIX
+  HV -->|마지막 Phase| BR
+```
+
+글 흐름: **준비** → **킥오프(질문→설계→docs→Plan 승인)** → **Phase마다 6단계+Human Verify** → (마지막) **branch 보안** → **완료**
+
+| 크기 | 흐름 |
+|------|------|
+| **Large / 킥오프** | 위 그림 전체 |
+| **Medium** | Explore → 짧은 Plan → Implement → Verify(보안 포함) |
+| **Small** | Implement → Verify(보안 포함) |
+
+---
+
+### 0-2. Phase 6단계 + 전문 에이전트
+
+한 Phase 안에서 **건너뛰지 않는** 순서. 사람은 각 결정 지점에서 **채팅 선택**(또는 번호).
+
+```mermaid
+flowchart LR
+  E["1 Explore\n시니어 설계"]
+  D["2 Document\n설계/기획"]
+  P["3 Plan\n기획→UI면 디자인"]
+  I["4 Implement\nStack pick→개발"]
+  V["5 Verify\nQA→보안"]
+  R["6 Review\nQA→설계"]
+  H[Human Verify]
+  E --> D --> P --> I --> V --> R --> H
+```
+
+글 흐름: **이해·문서화** → **상세 Plan 승인** → **Stack·구현** → **검증·보안·리뷰** → **사람 검수**
+
+| # | 단계 | 전문 에이전트 | 사람 |
+|---|------|---------------|------|
+| 1 | Explore | 시니어 설계 | 한눈 그림 확인 |
+| 2 | Document | 설계/기획 | docs 확인 |
+| 3 | Plan | 기획 → (UI) 디자인 | Plan 승인 |
+| 4 | Implement | 개발 (Stack pick 후) | 실행 가이드로 켜 보기 |
+| 5 | Verify | QA → 보안 (§0-3) | 보안 결과·직접 확인 후 선택 |
+| 6 | Review | QA → 설계 → (마지막) 보안 | 검수 후 선택 |
+
+---
+
+### 0-3. Verify 보안 — 이중·최종 재점검
+
+**코드·설정이 바뀐 Phase**마다 `시니어 보안`이 아래 **A 또는 B**를 거친 뒤, 반드시 **최종 재점검 통과**해야 Verify 메뉴(`approve-verify`)로 갈 수 있다.  
+매 차수마다 채팅에 **`## 보안 점검 시작`** → **`## 보안 점검 완료`**. 보류 시 **`## 보안 수정 시작`** (`시니어 개발`).
+
+```mermaid
+flowchart TB
+  QA[senior-qa 완료] --> R1[1차 점검]
+  R1 --> V1{1차 verdict}
+  V1 -->|보류 A| FIX[senior-dev 수정]
+  FIX --> RR[재점검]
+  RR --> VR{재점검}
+  VR -->|보류| FIX
+  VR -->|통과| FINAL[최종 재점검]
+  V1 -->|통과 B| R2[2차 점검]
+  R2 --> V2{2차 verdict}
+  V2 -->|보류| FIX
+  V2 -->|통과| FINAL
+  FINAL --> VF{최종 재점검}
+  VF -->|보류| FIX
+  VF -->|통과| UTG[직접 확인 가이드 · approve-verify]
+```
+
+| 경로 | 흐름 |
+|------|------|
+| **A · 1차 보류** | 점검 → 수정 → 재점검 → 통과 → **최종 재점검** → 통과 |
+| **B · 1차 통과** | 점검 → **2차 점검** → 통과 → **최종 재점검** → 통과 |
+
+글 흐름: **QA** → **1차 보안** → (보류면 **수정·재점검** \| 통과면 **2차**) → **최종 재점검 통과** → **사람 직접 확인**
+
+**마지막 Phase Review**에서도 **branch 전체** scope로 **동일 A/B + 최종 재점검** 후 Human Verify.
+
+docs-only·코드 변경 없음 → **`## 보안 점검 생략`** (이유 표시).
+
+---
+
+### 0-4. 한 채팅 · 오케스트레이터
+
+```mermaid
+flowchart LR
+  U[사람 · 채팅 하나] --> O[오케스트레이터]
+  O --> Spawn[전문 에이전트 띄움]
+  Spawn --> PM[기획]
+  Spawn --> Arch[설계]
+  Spawn --> Des[디자인]
+  Spawn --> Dev[개발]
+  Spawn --> Q[QA]
+  Spawn --> Sec[보안]
+  O --> Gate[선택 UI → gate.sh]
+  Gate --> U
+```
+
+글 흐름: **사람 승인** → **오케스트레이터가 해당 시니어 에이전트 spawn** → **산출물** → **사람 선택** → (gate) **다음 단계**
+
+---
+
 ## 1. 준비 (복사/클론 후 한 번)
 
 이 템플릿의 **게이트·훅·스크립트**는 Python으로 동작한다. OS마다 **설치 항목**과 **PATH(터미널에서 명령을 찾을 수 있는지)** 가 맞아야 한다.
@@ -224,7 +356,7 @@ git init
 ### 2-2. 시니어 역할 (한 채팅 · 전문 에이전트)
 
 사람은 **채팅 하나**. 단계가 되면 **오케스트레이터**가 해당 전문 에이전트를 띄운다.  
-역할 Skill(`senior-*`)은 Quality bar다. 기획·설계·디자인·개발·QA **본문은 그 에이전트**가 쓴다. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패다.  
+역할 Skill(`senior-*`)은 Quality bar다. 기획·설계·디자인·개발·QA·보안 **본문은 그 에이전트**가 쓴다. 오케스트레이터가 Skill만 바꿔 본문을 쓰는 것은 실패다.  
 **건너뛰기 금지:** gate enabled 시 **단계마다** 해당 전문 에이전트 산출물 + `approve-*` 없이는 다음 step·코드·커밋 **훅 차단**. UI Phase는 `approve-design-spec` 포함. Verify 통과는 `approve-verify` → `allow-commit`.  
 Marketplace에 봇을 여러 개 설치하는 구조는 아니다. spawn이 안 되면 Isolation Pass(`▶ 전문 에이전트 시작`)로 같은 흐름을 유지한다.  
 AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역할 Skill의 **Quality bar**를 충족해야 한다.
@@ -236,6 +368,7 @@ AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역�
 | `senior-design` | 시니어 디자인 | **Plan(UI면 필수)** 시각 스펙 — 생략 불가 |
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review |
+| `senior-security` | 시니어 보안 | Verify(코드 Phase)·마지막 Review |
 
 에이전트 파일: `.cursor/agents/` · `.claude/agents/` · `.agents/agents/` · `.codex/agents/`
 
@@ -245,8 +378,8 @@ AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역�
 | Document | 설계 또는 기획 |
 | Plan | 기획 → (UI면) 디자인 |
 | Implement | 개발 (디자인 스펙 준수) |
-| Verify | QA |
-| Review | QA → 설계 |
+| Verify | QA → (코드 Phase) 보안 |
+| Review | QA → 설계 → (마지막 Phase) 보안 |
 
 상세 표·산출물: [`docs/ai/agent-workflow.md`](docs/ai/agent-workflow.md) 「역할 Skill」.  
 Skill 목록: [`.cursor/skills/README.md`](.cursor/skills/README.md).
@@ -268,6 +401,10 @@ Skill 목록: [`.cursor/skills/README.md`](.cursor/skills/README.md).
 
 ```text
 시니어 설계로 이 변경의 영향 범위만 짧게 정리해. 코드 작성 금지.
+```
+
+```text
+시니어 보안으로 이번 Phase diff만 점검해. 수정은 하지 마.
 ```
 
 FAQ:
@@ -375,6 +512,8 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 
 ### 3-5. Phase마다 6단계
 
+**전체 그림:** §0 (Phase 6단계 · 보안 A/B · 에이전트).
+
 **Phase 개수**는 프로젝트마다 다르다 (Phase 1…N).  
 **각 Phase 안**에서 아래 6단계를 건너뛰지 않는다.
 
@@ -384,10 +523,21 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 | 2 | Document | 설계/기획 | `이해한 내용을 문서화해` | 그림+docs 확인 |
 | 3 | Plan | 기획 → (UI면) 디자인 | `이 기능을 어떻게 구현할지 계획해` | **한눈 그림**+파일 확인 후 **메뉴에서 선택** |
 | 4 | Implement | 개발 | (승인 후) 스택 미정이면 프론트→백→DB 번호 선택, 그다음 구현 | 실행 가능하면 **실행 가이드**로 켜 보기 |
-| 5 | Verify | QA | `테스트하고 검증해. 직접 확인 가이드도 줘` | **직접 확인 가이드**대로 실행·확인 후 **메뉴에서 선택** |
-| 6 | Review | QA+설계 | `다시 리뷰해` | 검수 결과를 **메뉴에서** 선택 |
+| 5 | Verify | QA → (코드) 보안 | `테스트·검증하고 보안도 점검해` | **보안 점검 시작/완료**·결과·**직접 확인 가이드** 후 **메뉴에서 선택** |
+| 6 | Review | QA+설계 → (마지막) 보안 | `다시 리뷰해` | 검수·(마지막 Phase) **전체 보안** 확인 후 **메뉴에서** 선택 |
 
-마지막 Phase면 Verify 채팅 순서는 **실행 가이드** → **역할 기여** → **직접 확인 가이드**.
+마지막 Phase면 Verify 채팅 순서는 **실행 가이드** → **역할 기여** → **보안 점검 시작** → **보안 점검 완료·결과** → **직접 확인 가이드**.
+
+**보안 점검 알림:** 매 **차수**(1차 / 2차 / 재점검 / 최종 재점검)마다 **`## 보안 점검 시작`** → **`## 보안 점검 완료`**. 보류 시 **`## 보안 수정 시작`** 후 재점검.
+
+**이중·최종 재점검 (코드 Phase):**
+
+| 경로 | 흐름 |
+|------|------|
+| A · 1차 보류 | 점검 → 수정 → 재점검 → 통과 → **최종 재점검** → 통과 |
+| B · 1차 통과 | 점검 → **2차 점검** → 통과 → **최종 재점검** → 통과 |
+
+**최종 재점검 통과** 전에는 Verify 메뉴(`approve-verify`)를 고를 수 없다.
 
 결정 지점마다 AI는 선택 UI(가능하면 버튼)를 낸다. 사용자가 고르기 전에 게이트를 전진하거나 구현하지 않는다.  
 응답에 **지금 역할**(`역할: 시니어 ○○`)이 보여야 한다.
@@ -400,8 +550,8 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 | Document | 설계/기획 | `approve-document` → `advance plan` |
 | Plan | 기획 → (UI) 디자인 | `approve-plan-body` → (UI) `approve-design-spec` → `advance implement` |
 | Implement | 개발 | (Stack pick) → `advance verify` |
-| Verify | QA | `approve-verify` → (통과 시) `allow-commit` |
-| Review | QA→설계 | Human Verify → `next-phase` |
+| Verify | QA → (코드) 보안 | `approve-verify` → (통과 시) `allow-commit` |
+| Review | QA→설계 → (마지막) 보안 | Human Verify → `next-phase` |
 
 AI Skill: `delivery-phase` (+ 단계별 `senior-*`).
 
@@ -475,6 +625,7 @@ K1(질문 라운드)에서는 프론트·백·DB를 묻지 않는다.
 | 시니어 디자인 | | |
 | 시니어 개발 | | |
 | 시니어 QA | | |
+| 시니어 보안 | | |
 ```
 
 킥오프(질문·설계·docs·Phase Plan)도 한 줄씩 포함한다.
@@ -553,7 +704,8 @@ AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid)과, 에디�
 
 **⑦ 검증(Verify) / 리뷰(Review) 후, 내가 테스트까지 해본 뒤**
 
-채팅의 **직접 확인 가이드**(실행·확인·기대)대로 직접 해본다.  
+채팅에 **보안 점검 시작 → 완료·결과**(`시니어 보안` · Phase diff, 마지막 Phase Review는 branch 전체)가 있어야 한다.  
+**직접 확인 가이드**(실행·확인·기대)대로 직접 해본다.  
 마지막 Phase면 그 위에 **실행 가이드**(준비·실행·접속)와 **역할 기여**(누가 무엇을·어디에 쓰이는지)가 있어야 한다.  
 AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`  
 (화면이 없는 Phase는 `직접 확인해 보신 결과는 어떤가요?`)

@@ -11,7 +11,8 @@ description: >-
 ## When
 
 - Delivery step **Implement** (primary)
-- Fixing issues found in **Verify** under the same Phase
+- Fixing issues found in **Verify** under the same Phase (QA or **security 보류**)
+- **Security fix:** when `senior-security` returned **보류**, fix only listed Critical/High findings (Location + Recommendation). Minimal diff. Then orchestrator re-runs **재점검** / **최종 재점검**
 - User asks for implementation with senior engineering judgment
 - If the user explicitly names this role (e.g. "시니어 개발로만"), follow **only** this skill for that turn and skip other senior role stances unless they ask for a sequence
 

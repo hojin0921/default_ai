@@ -9,7 +9,7 @@
 
 ### 현재 (Phase 1 Implement 후)
 
-- 에이전트 다섯이 네 경로에 있음: `.cursor/agents/*.md`, `.claude/agents/*.md`, `.agents/agents/*.md` (`subagent: true`), `.codex/agents/*.toml`
+- 에이전트 여섯이 네 경로에 있음: `.cursor/agents/*.md`, `.claude/agents/*.md`, `.agents/agents/*.md` (`subagent: true`), `.codex/agents/*.toml`
 - `delivery-phase` / `project-kickoff`에 **Specialist launch** (호스트 spawn, 없으면 Isolation Pass, 오케스트레이터 본문 금지)
 - `phase-gate`: 전문 에이전트는 mutating `gate.sh` 금지
 - `senior-*` Skill: spawn된 전문가 문단. 세 스킬 경로 동일
@@ -19,7 +19,7 @@
 
 | 경로 | 누가 읽나 | 역할 |
 |------|-----------|------|
-| `.cursor/skills/<name>/SKILL.md` | Cursor | 스킬 **원본** (8개, Quality bar) |
+| `.cursor/skills/<name>/SKILL.md` | Cursor | 스킬 **원본** (9개, Quality bar) |
 | `.claude/skills/<name>/` | Claude Code | 원본과 **동일 내용 실파일** |
 | `.agents/skills/<name>/` | Codex, Antigravity | 원본과 **동일 내용 실파일** |
 | `.cursor/agents/<name>.md` | Cursor | 전문 에이전트 정의 (Markdown + YAML) |
@@ -32,8 +32,8 @@
 | `.githooks/pre-commit` | git (도구 무관) | 커밋 잠금 |
 | `.cursor/hooks.json` | Cursor만 | 구현 전 쓰기 차단 |
 
-스킬 세트(워크플로 3 + 역할 5): `project-kickoff`, `delivery-phase`, `phase-gate`, `senior-architect`, `senior-pm`, `senior-design`, `senior-dev`, `senior-qa`.  
-에이전트 다섯 이름: `senior-pm`, `senior-architect`, `senior-design`, `senior-dev`, `senior-qa`.  
+스킬 세트(워크플로 3 + 역할 6): `project-kickoff`, `delivery-phase`, `phase-gate`, `senior-architect`, `senior-pm`, `senior-design`, `senior-dev`, `senior-qa`, `senior-security`.  
+에이전트 여섯 이름: `senior-pm`, `senior-architect`, `senior-design`, `senior-dev`, `senior-qa`, `senior-security`.  
 에이전트 파일은 **얇은 래퍼**다. Quality bar는 Skill을 읽고, 본문을 네 번째 복사하지 않는다.
 
 ### 오케스트레이터 vs 전문 에이전트
@@ -53,8 +53,8 @@
 | Document | 문서 성격에 따라 설계 또는 기획 |
 | Plan | 기획 → (UI면) 디자인 |
 | Implement | 개발 (디자인 스펙 준수) |
-| Verify | QA |
-| Review | QA → 설계 |
+| Verify | QA → (코드 Phase) 보안 |
+| Review | QA → 설계 → (마지막 Phase) 보안 |
 
 사용자 명시 호출이 있으면 그 에이전트만 띄운다.
 
@@ -75,8 +75,10 @@ flowchart LR
   Spawn --> Des[디자인]
   Spawn --> Dev[개발]
   Spawn --> QA[QA]
+  Spawn --> Sec[보안]
   Des --> Spec[시각 스펙]
   Spec --> Dev
+  QA --> Sec
 ```
 
 글 흐름: 사람 → 오케스트레이터(단계·게이트) → 해당 전문 에이전트 → 산출물 → 사람 승인

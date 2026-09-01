@@ -22,8 +22,8 @@ Human(목표·채팅 승인·사용자 테스트)
 | Tests | AI Verify + User Test Guide + 실행 가이드 | 검증·실행 |
 | Human Review | 사람 + `docs/ai/agent-workflow.md` | 승인·검수 |
 
-Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa`)로 나뉜다.  
-한 채팅의 오케스트레이터가 단계마다 전문 에이전트(`senior-*`)를 띄움. **담당 산출물 건너뛰기 금지** — gate enabled 시 `approve-explore` / `approve-document` / `approve-plan-body` / `approve-design-spec`(UI) / `approve-verify` 후에만 advance·코드·커밋. 사람용: [`guide.md`](guide.md) §2-2 · §3-5.
+Skills는 워크플로(`project-kickoff` / `delivery-phase` / `phase-gate`)와 역할(`senior-architect` / `pm` / `design` / `dev` / `qa` / `security`)로 나뉜다.  
+한 채팅의 오케스트레이터가 단계마다 전문 에이전트(`senior-*`)를 띄움. **담당 산출물 건너뛰기 금지** — Verify(코드 Phase)는 **`senior-security` Phase diff**, 마지막 Review는 **`senior-security` branch 전체**. gate enabled 시 `approve-explore` / … / `approve-verify` 후에만 advance·코드·커밋. 사람용: [`guide.md`](guide.md) §2-2 · §3-5.
 
 Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하면 Skills+Hooks+Rules가 함께 간다.
 (나중에 Cursor Marketplace Plugin으로 재패키징 가능.)
@@ -34,8 +34,8 @@ Plugins에 해당하는 것: **이 레포 전체를 템플릿으로 복사**하�
 K1 질문 → K2 전체 설계 합의 → K3 docs → K4 Phase Plan
   → Human Review (채팅 선택 → gate approve-plan)
   → Phase N: Explore → Document → Plan (+ UI면 senior-design) → (채팅 승인 + approve-design-spec if UI)
-             → Implement (senior-dev) → Verify → Review
-             → Human Verify
+             → Implement (senior-dev) → Verify (senior-qa → senior-security) → Review
+             → (마지막 Phase Review: senior-security branch 전체) → Human Verify
   → 다음 Phase …
 ```
 

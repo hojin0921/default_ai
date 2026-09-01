@@ -6,7 +6,7 @@
 ## Workflow
 
 - Small → Implement→Verify / Medium → Explore 후 구현 / Large·킥오프 → K1 질문 → K2 설계 합의 → K3 docs → K4 Phase Plan, **승인 전 구현 금지**.
-- Delivery Phase는 6단계: Explore→Document→Plan→Implement→Verify(+User Test Guide)→Review. **단계·Phase 검수 전 다음 금지**.
+- Delivery Phase는 6단계: Explore→Document→Plan→Implement→Verify(+User Test Guide + **`senior-security` Phase diff**)→Review(+ 마지막 Phase **`senior-security` branch 전체**). **단계·Phase 검수 전 다음 금지**.
 - **Stack(프론트·백·DB)은 K1이 아니라 구현 직전**에 사람이 번호로 고른다 (`delivery-phase` Stack pick). 선택지는 프로젝트·설계에 맞게 매번 다름. 미정이면 코드 금지. AI가 언어·DB를 침묵 선택하면 실패.
 - Skills: `.claude/skills/` … gate enabled 시 **`approve-explore` → `approve-document` → `approve-plan-body` → (`approve-design-spec` if UI) → `approve-verify`** 후 advance·코드·커밋. 담당 산출물을 오케스트레이터가 대신 쓰면 실패.
 - Phase 0은 bootstrap 또는 제품 없이 Docs만 초기화할 때만. 제품 설명이면 킥오프 K1부터.
