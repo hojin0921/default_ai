@@ -10,6 +10,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from lib.chat_handoff import (  # noqa: E402
+    build_deeplink,
+    build_start_prompt,
+    find_phase_plan,
+    write_handoff,
+)
 from lib.phase_gate import (  # noqa: E402
     VALID_KICKOFF_STEPS,
     VALID_STEPS,
@@ -19,6 +25,18 @@ from lib.phase_gate import (  # noqa: E402
     reset_phase_delivery_flags,
     save_gate,
 )
+
+
+def _emit_handoff_note(root, gate, *, reason: str, prev_phase: int | None = None) -> None:
+    path = write_handoff(root, gate, reason=reason, prev_phase=prev_phase)
+    plan_rel = find_phase_plan(root)
+    prompt = build_start_prompt(gate, plan_rel)
+    link = build_deeplink(prompt)
+    rel = path.relative_to(root)
+    print(
+        f"handoff: wrote {rel}\ndeeplink: {link}",
+        file=sys.stderr,
+    )
 
 _ADVANCE_CHECK_STEPS = frozenset(
     {"document", "plan", "implement", "verify", "review", "human_verify"}
@@ -99,7 +117,9 @@ def main(argv: list[str]) -> int:
         gate["step"] = "explore"
         reset_phase_delivery_flags(gate)
         save_gate(gate, root)
-        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        gate = load_gate(root)
+        _emit_handoff_note(root, gate, reason="approve_plan")
+        print(json.dumps(gate, ensure_ascii=False, indent=2))
         return 0
 
     if cmd == "approve-explore":
@@ -189,12 +209,25 @@ def main(argv: list[str]) -> int:
 
     if cmd == "next-phase":
         keep_commit = bool(gate.get("allow_commit"))
-        gate["phase"] = int(gate.get("phase") or 1) + 1
+        prev_phase = int(gate.get("phase") or 1)
+        gate["phase"] = prev_phase + 1
         gate["step"] = "explore"
         reset_phase_delivery_flags(gate)
         gate["allow_commit"] = keep_commit
         save_gate(gate, root)
-        print(json.dumps(load_gate(root), ensure_ascii=False, indent=2))
+        gate = load_gate(root)
+        _emit_handoff_note(root, gate, reason="next_phase", prev_phase=prev_phase)
+        print(json.dumps(gate, ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "handoff":
+        _emit_handoff_note(root, gate, reason="manual")
+        print(json.dumps(gate, ensure_ascii=False, indent=2))
+        return 0
+
+    if cmd == "handoff-url":
+        plan_rel = find_phase_plan(root)
+        print(build_deeplink(build_start_prompt(gate, plan_rel)))
         return 0
 
     print(f"unknown command: {cmd}", file=sys.stderr)

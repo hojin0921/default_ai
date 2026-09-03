@@ -233,6 +233,33 @@ def _run(root: Path) -> None:
     assert after_closed["allow_commit"] is False
     print("PASS next-phase does not force-open commit")
 
+    handoff_file = root / ".cursor" / "handoff.md"
+    assert handoff_file.is_file(), "next-phase should write .cursor/handoff.md"
+    text = handoff_file.read_text(encoding="utf-8")
+    assert "Phase 3" in text and "Explore" in text
+    assert "cursor://anysphere.cursor-deeplink/prompt" in text
+    p_url = gate_cmd("handoff-url")
+    assert p_url.returncode == 0, p_url.stderr
+    assert p_url.stdout.strip().startswith("cursor://")
+    print("PASS handoff.md and handoff-url")
+
+    ss = hook("session_start", {"session_id": "test", "is_background_agent": False})
+    assert "additional_context" in ss
+    assert "handoff" in ss["additional_context"].lower() or "Phase" in ss["additional_context"]
+    print("PASS session_start hook injects context")
+
+    p_claude = subprocess.run(
+        [*resolve_python_argv(), str(ROOT / "scripts" / "handoff_session_context.py"), "--format", "claude-json"],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        env={**os.environ, "PYTHONPATH": str(ROOT / "scripts")},
+    )
+    assert p_claude.returncode == 0, p_claude.stderr
+    cj = json.loads(p_claude.stdout)
+    assert cj["hookSpecificOutput"]["hookEventName"] == "SessionStart"
+    print("PASS claude-json handoff context")
+
     g_open2 = load_gate(root)
     g_open2["allow_commit"] = True
     g_open2["explore_approved"] = True

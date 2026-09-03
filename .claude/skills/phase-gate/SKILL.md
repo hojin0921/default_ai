@@ -148,8 +148,18 @@ Do **not** put 커밋 / `git commit` / `allow-commit` in option labels. Humans c
 3. (다음 Phase가 있으면) 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
    → `./scripts/gate.sh next-phase`, then Explore only  
    (`next-phase` does not change `allow_commit`. If already unlocked, it stays open.)  
+   **Chat handoff (토큰 절약 · 권장):** `next-phase` / `approve-plan` writes `.cursor/handoff.md`. After gate runs, read that file and show **## 새 Chat handoff**:
+   - Gate snapshot (phase/step)
+   - **Start prompt** (copy-paste fenced block) — **모든 도구**
+   - Host-specific line (pick one):
+     - **Cursor:** Deeplink from handoff (click → new Chat, confirm send). `sessionStart` hook injects summary.
+     - **Claude Code:** New session or `/clear` → `SessionStart` hook (`.claude/settings.json`) injects summary; or paste Start prompt.
+     - **Codex / Antigravity:** New Agent chat → paste Start prompt; agent reads handoff per `AGENTS.md` on first turn if no hook.
+   - Then **stop** — do not start Explore in this chat unless the human asks to continue here.  
 3. (마지막 Phase이면) 이 Phase는 통과. 전체 개발을 마무리해 주세요  
    → do **not** run `next-phase`. Keep **실행 가이드** and **역할 기여** in the reply (or repeat them).  
+
+**approve-plan (K4 → Phase 1):** also writes `.cursor/handoff.md`. When Delivery may start in a **new Chat**, show the same **## 새 Chat handoff** block after `approve-plan`.
 
 When the human picks the **edit** option with extra instructions in the same
 or next message, apply those edits and then re-offer the choice UI. Do not
@@ -175,6 +185,8 @@ treat “edit” alone as approval.
 ./scripts/gate.sh approve-verify
 ./scripts/gate.sh allow-commit
 ./scripts/gate.sh next-phase
+./scripts/gate.sh handoff              # regenerate .cursor/handoff.md only
+./scripts/gate.sh handoff-url            # print deeplink (stdout)
 ./scripts/gate.sh off
 ```
 

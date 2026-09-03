@@ -14,7 +14,8 @@
 - Delivery Phase(특히 Phase 1)는 6단계 고정: Explore→Document→Plan→Implement→Verify(+User Test Guide + **보안 이중·최종 재점검**)→Review(+ 마지막 Phase branch **동일 흐름**). **단계·Phase 검수 전 다음으로 가지 않는다**.
 - **Stack(프론트·백·DB)은 K1이 아니라 구현 직전**에 사람이 번호로 고른다 (`delivery-phase` Stack pick). **선택지는 설계·Constraints에 맞게 매번 다르게** 만든다. 미정이면 코드 금지. AI가 언어·DB를 침묵 선택하면 실패.
 - Agent는 `gate.json` **직접** 수정 금지. mutating `gate.sh`는 **사람 채팅 선택 후에만** 대행 (선택 없이 전진 금지). 선택은 구조화 질문 도구(`AskQuestion` 등, 가능 시) 또는 한글 번호 텍스트. 터미널 직접 실행도 동등.
-- Skills: `.cursor/skills/` (Cursor), `.claude/skills/` (Claude Code), `.agents/skills/` (Codex·Antigravity). 워크플로 3 + 시니어 역할 6. **세 경로 내용을 같게 유지**한다. Hooks: `.cursor/hooks.json` (Cursor). Large 강제 검사는 `.cursor/gate.json`.
+- Skills: `.cursor/skills/` (Cursor), `.claude/skills/` (Claude Code), `.agents/skills/` (Codex·Antigravity). 워크플로 3 + 시니어 역할 6. **세 경로 내용을 같게 유지**한다. Hooks: `.cursor/hooks.json` (Cursor `sessionStart`), `.claude/settings.json` (Claude Code `SessionStart`). Large 강제 검사는 `.cursor/gate.json`.
+- **Chat handoff:** `next-phase` / `approve-plan` → `.cursor/handoff.md`. 새 세션 시작 시 handoff가 있으면 **먼저** `.cursor/handoff.md`와 `.cursor/gate.json`을 읽고 delivery-phase Skill대로 이어간다 (Codex·Antigravity 등 훅 없는 도구의 기본).
 - Delivery 단계마다 오케스트레이터가 해당 **전문 에이전트**를 띄운다 (`delivery-phase` Role map). **담당 산출물 대체 금지.** Verify(코드 Phase): **`senior-qa` → 보안 이중·최종 재점검** (1차→2차 또는 재점검→**최종 재점검**). **최종 재점검 `통과` 전** `approve-verify` 금지. 마지막 Phase Review: branch scope 동일. gate enabled 시 `approve-explore` … `approve-verify` 없이 advance·코드·커밋 **훅 차단**. 사용자 명시 호출 시 그 에이전트만. Quality bar는 `senior-*` Skill.
 - Phase 0은 bootstrap 요청, 또는 제품 없이 Docs만 초기화할 때만. 제품 설명이면 킥오프 K1부터. 일반 작업은 Docs TODO로 막지 않는다.
 - 관련 Docs·코드만 본다. docs 전체·프로젝트 전체를 읽지 않는다.

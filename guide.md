@@ -24,16 +24,18 @@ flowchart TB
   end
   subgraph kick["② 킥오프 K1–K4"]
     K1[K1 질문]
-    K2[K2 전체 설계]
+    K2A[K2 설계 초안\n시니어 설계]
+    K2PM[K2 설계 검수\n시니어 기획]
     K3[K3 docs]
     K4[K4 Phase Plan]
     OK[사람 승인]
-    K1 --> K2 --> K3 --> K4 --> OK
+    K1 --> K2A --> K2PM --> K3 --> K4 --> OK
   end
   subgraph loop["③ Delivery Phase 1…N"]
-    SIX[6단계 Explore→…→Review]
+    EXP[Explore\n설계→PM 검수]
+    REST[Document→Plan→Implement\n→Verify→Review]
     HV[Human Verify]
-    SIX --> HV
+    EXP --> REST --> HV
   end
   subgraph endflow["④ 마지막 Phase"]
     BR[Review · branch 보안]
@@ -41,12 +43,14 @@ flowchart TB
     BR --> DONE
   end
   HOOK --> K1
-  OK --> SIX
-  HV -->|다음 Phase| SIX
+  OK --> EXP
+  HV -->|다음 Phase| EXP
   HV -->|마지막 Phase| BR
 ```
 
-글 흐름: **준비** → **킥오프(질문→설계→docs→Plan 승인)** → **Phase마다 6단계+Human Verify** → (마지막) **branch 보안** → **완료**
+글 흐름: **준비** → **킥오프(K1 질문 → K2 설계 → PM 설계 검수 → docs → Plan 승인)** → **Phase마다(Explore 설계·PM 검수 → 6단계 → Human Verify)** → (마지막) **branch 보안** → **완료**
+
+**K2·Explore 공통:** 시니어 설계 **초안** → 시니어 기획 **설계 검수** → (보완 필요 시 질문·설계 수정·재검수) → 다음 단계.
 
 | 크기 | 흐름 |
 |------|------|
@@ -62,7 +66,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  E["1 Explore\n시니어 설계"]
+  E["1 Explore\n설계→기획 검수"]
   D["2 Document\n설계/기획"]
   P["3 Plan\n기획→UI면 디자인"]
   I["4 Implement\nStack pick→개발"]
@@ -72,11 +76,21 @@ flowchart LR
   E --> D --> P --> I --> V --> R --> H
 ```
 
-글 흐름: **이해·문서화** → **상세 Plan 승인** → **Stack·구현** → **검증·보안·리뷰** → **사람 검수**
+```mermaid
+flowchart TB
+  Arch[시니어 설계 · Explore 초안] --> PM[시니어 기획 · 설계 검수]
+  PM --> V{충분?}
+  V -->|보완 필요| Q[보완 질문 → 사람]
+  Q --> Rev[설계 · delta]
+  Rev --> PM
+  V -->|설계 충분| Next[Document로]
+```
+
+글 흐름: **설계 초안** → **기획 검수** → (보완 필요면 **질문→설계 수정→재검수**) → **Document**
 
 | # | 단계 | 전문 에이전트 | 사람 |
 |---|------|---------------|------|
-| 1 | Explore | 시니어 설계 | 한눈 그림 확인 |
+| 1 | Explore | 시니어 설계 → **시니어 기획(설계 검수)** | 한눈 그림·검수 결과·(보완 시) 질문 답 |
 | 2 | Document | 설계/기획 | docs 확인 |
 | 3 | Plan | 기획 → (UI) 디자인 | Plan 승인 |
 | 4 | Implement | 개발 (Stack pick 후) | 실행 가이드로 켜 보기 |
@@ -138,6 +152,50 @@ flowchart LR
 ```
 
 글 흐름: **사람 승인** → **오케스트레이터가 해당 시니어 에이전트 spawn** → **산출물** → **사람 선택** → (gate) **다음 단계**
+
+---
+
+### 0-5. Chat handoff (Phase 경계 · 새 Chat 권장)
+
+긴 프로젝트는 **한 채팅에 Phase를 계속 쌓으면 토큰이 늘어납니다.** Phase 경계에서 **새 Agent/Chat**으로 넘기는 **반자동 handoff**가 있습니다.
+
+```mermaid
+flowchart LR
+  HV[Human Verify · 다음 Phase] --> NP[next-phase]
+  NP --> H[.cursor/handoff.md]
+  H --> D{도구}
+  D -->|Cursor| DL[Deeplink 클릭]
+  D -->|Claude Code| CC["/clear 또는 새 세션"]
+  D -->|Codex·Antigravity| PS[Start prompt 붙여넣기]
+  DL --> SS[sessionStart / SessionStart 훅]
+  CC --> SS
+  PS --> AG[AGENTS.md 규칙]
+  SS --> EXP[Phase N+1 Explore]
+  AG --> EXP
+```
+
+| 시점 | gate 명령 | 생성물 |
+|------|-----------|--------|
+| K4 Plan 승인 → Phase 1 | `approve-plan` | `.cursor/handoff.md` |
+| Phase N 통과 → N+1 | `next-phase` | `.cursor/handoff.md` (갱신) |
+| 수동 재생성 | `handoff` | `.cursor/handoff.md` |
+
+**도구별 새 세션 (공통: `.cursor/handoff.md` + `.cursor/gate.json`)**
+
+| 도구 | 원클릭 | 자동 주입 | 사람이 할 일 |
+|------|--------|-----------|--------------|
+| **Cursor** | Deeplink (`handoff-url`) | `sessionStart` (`.cursor/hooks.json`) | 링크 클릭 → 전송 확인 |
+| **Claude Code** | — | `SessionStart` (`.claude/settings.json`) | 새 세션 또는 `/clear` (또는 Start prompt 붙여넣기) |
+| **Codex / Antigravity** | — | `AGENTS.md` (첫 턴 handoff 읽기) | 새 Agent chat + Start prompt 붙여넣기 |
+
+**공통 흐름**
+
+1. Verify **3번(다음 Phase)** → `next-phase`
+2. 채팅 **## 새 Chat handoff** 확인 (Start prompt + 도구별 안내)
+3. 위 표대로 **새 세션** → Explore 시작
+4. 같은 채팅 이어가기: Start prompt만 붙여넣기 (토큰 계속 쌓임)
+
+`install-hooks` 실행 시 Cursor·Claude Code handoff 훅 Python 경로가 맞춰집니다. `.cursor/handoff.md`는 gitignore. 상태는 `.cursor/gate.json`.
 
 ---
 
@@ -330,7 +388,7 @@ git init
 | Claude Code | `.claude/skills/` |
 | Codex, Antigravity | `.agents/skills/` |
 
-쓰기 차단 훅(`.cursor/hooks.json`)은 **Cursor만**. 다른 도구는 규칙 + gate CLI + git pre-commit.
+쓰기 차단 훅(`.cursor/hooks.json`)은 **Cursor만**. Claude Code는 `.claude/settings.json` **SessionStart**(handoff 주입)만. Codex·Antigravity는 `AGENTS.md` + gate CLI + git pre-commit.
 
 ### 선택 UI가 버튼으로 안 보일 때
 
@@ -364,7 +422,7 @@ AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역�
 | Skill / 에이전트 | 한글 | 언제 주로 |
 |------------------|------|-----------|
 | `senior-architect` | 시니어 설계 | Explore, 구조·보안 |
-| `senior-pm` | 시니어 기획 | 킥오프·Plan, 범위 |
+| `senior-pm` | 시니어 기획 | 킥오프·Plan·**Explore/K2 설계 검수** |
 | `senior-design` | 시니어 디자인 | **Plan(UI면 필수)** 시각 스펙 — 생략 불가 |
 | `senior-dev` | 시니어 개발 | Implement |
 | `senior-qa` | 시니어 QA | Verify·Review |
@@ -374,7 +432,7 @@ AI 응답에 `역할: 시니어 ○○`이 붙는 것이 정상이다. 각 역�
 
 | 6단계 | 띄울 에이전트 |
 |--------|----------------|
-| Explore | 설계 |
+| Explore | 설계 → **기획(설계 검수)** |
 | Document | 설계 또는 기획 |
 | Plan | 기획 → (UI면) 디자인 |
 | Implement | 개발 (디자인 스펙 준수) |
@@ -519,7 +577,7 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 
 | # | 단계 | 주 역할 | 채팅 예시 | 사람 할 일 |
 |---|------|---------|-----------|------------|
-| 1 | Explore | 설계 | `코드 작성하지 말고 이해해` | **한눈 그림** 확인 |
+| 1 | Explore | 설계 → **기획(설계 검수)** | `코드 작성하지 말고 이해해` | **설계 검수**·한눈 그림·(보완 질문) 확인 |
 | 2 | Document | 설계/기획 | `이해한 내용을 문서화해` | 그림+docs 확인 |
 | 3 | Plan | 기획 → (UI면) 디자인 | `이 기능을 어떻게 구현할지 계획해` | **한눈 그림**+파일 확인 후 **메뉴에서 선택** |
 | 4 | Implement | 개발 | (승인 후) 스택 미정이면 프론트→백→DB 번호 선택, 그다음 구현 | 실행 가능하면 **실행 가이드**로 켜 보기 |
@@ -546,7 +604,7 @@ AI는 먼저 §3-0 시작 가이드를 보여 준 뒤, **질문 하나씩** 한�
 
 | 단계 | 에이전트 | 사람 승인 → gate |
 |------|----------|------------------|
-| Explore | 설계 | `approve-explore` → `advance document` |
+| Explore | 설계 → **기획(설계 검수)** | `approve-explore` → `advance document` |
 | Document | 설계/기획 | `approve-document` → `advance plan` |
 | Plan | 기획 → (UI) 디자인 | `approve-plan-body` → (UI) `approve-design-spec` → `advance implement` |
 | Implement | 개발 | (Stack pick) → `advance verify` |
@@ -718,7 +776,7 @@ AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`
 3. 이 Phase는 통과. 다음 Phase로 가고, 지금은 조사(Explore)만 해 주세요  
    (마지막 Phase이면: 이 Phase는 통과. 전체 개발을 마무리해 주세요)
 
-3번(다음 Phase)은 `next-phase` 후 Explore만.  
+3번(다음 Phase)은 `next-phase` → **`.cursor/handoff.md`** → **## 새 Chat handoff** (§0-5: Cursor Deeplink / Claude SessionStart / Codex·Antigravity 붙여넣기).  
 
 ### 4-3. 메뉴에서 수정할 때 (수정 선택 + 프롬프트)
 
@@ -767,7 +825,9 @@ Phase 2 Verify에서 로그인이 실패해.
 | 단계 설정 | `./scripts/gate.sh advance explore\|document\|plan\|implement\|verify\|review\|human_verify` |
 | 커밋 잠금 해제 (채팅 메뉴에는 없음. 1번 통과 시 대행되거나 여기서 직접) | `./scripts/gate.sh allow-commit` |
 | 커밋 다시 잠금 | `./scripts/gate.sh deny-commit` |
-| 다음 Phase | `./scripts/gate.sh next-phase` |
+| 다음 Phase | `./scripts/gate.sh next-phase` (+ `.cursor/handoff.md`) |
+| handoff 재생성 | `./scripts/gate.sh handoff` |
+| Deeplink 출력 | `./scripts/gate.sh handoff-url` |
 | Small용 해제 | `./scripts/gate.sh off` |
 
 게이트가 켜져 있으면 (`enabled: true`):
@@ -810,7 +870,9 @@ Explore → 짧은 Plan → Implement → Verify.
 | Rules | `.cursor/rules/`, `AGENTS.md` |
 | Skills | `.cursor/skills/` (`project-kickoff`, `delivery-phase`, `phase-gate` + `senior-*`) |
 | Agents | `.cursor/agents/` (복제: `.claude/agents/`, `.agents/agents/`, `.codex/agents/`) |
-| Hooks | `.cursor/hooks.json` |
+| Hooks (Cursor) | `.cursor/hooks.json` |
+| Hooks (Claude Code) | `.claude/settings.json` |
+| Handoff (로컬) | `.cursor/handoff.md` (gitignore) |
 | Plans | `.cursor/plans/_template.md` |
 | Gate | `.cursor/gate.json`, `scripts/gate.sh` |
 | Git hook | `.githooks/pre-commit` ← `install-hooks.sh`로 연결 |

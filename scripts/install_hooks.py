@@ -38,6 +38,12 @@ def _update_hooks_json(python_cmd: str) -> None:
     data = {
         "version": 1,
         "hooks": {
+            "sessionStart": [
+                {
+                    "command": hook_cmd("session_start"),
+                    "timeout": 10,
+                }
+            ],
             "preToolUse": [
                 {
                     "command": hook_cmd("protect_gate"),
@@ -70,6 +76,29 @@ def _update_hooks_json(python_cmd: str) -> None:
     HOOKS_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _update_claude_settings(python_cmd: str) -> None:
+    path = ROOT / ".claude" / "settings.json"
+    if not path.parent.is_dir():
+        return
+    handoff_cmd = f"{python_cmd} scripts/handoff_session_context.py --format claude-json"
+    data = {
+        "hooks": {
+            "SessionStart": [
+                {
+                    "matcher": "startup|clear|fork",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": handoff_cmd,
+                        }
+                    ],
+                }
+            ]
+        }
+    }
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     os.chdir(ROOT)
     py_argv = resolve_python_argv()
@@ -91,15 +120,19 @@ def main() -> int:
         ROOT / ".cursor" / "hooks" / "protect-gate.sh",
         ROOT / ".cursor" / "hooks" / "gate_check.py",
         ROOT / ".cursor" / "hooks" / "protect_gate.py",
+        ROOT / ".cursor" / "hooks" / "session_start.py",
+        ROOT / "scripts" / "handoff_session_context.py",
     ]
     for path in executables:
         if path.is_file():
             _chmod_exec(path)
 
     _update_hooks_json(python_cmd)
+    _update_claude_settings(python_cmd)
 
     print("Installed: core.hooksPath=.githooks")
     print(f"Python for hooks: {python_cmd}")
+    print("Chat handoff: Cursor sessionStart + Claude Code SessionStart (.claude/settings.json)")
     print("Phase gate CLI:")
     if os.name == "nt":
         print(r"  .\scripts\gate.cmd status")

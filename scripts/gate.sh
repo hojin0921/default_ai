@@ -26,7 +26,9 @@ Usage: ./scripts/gate.sh <command> [args]
   advance <step>         Set step (explore|document|plan|implement|verify|review|human_verify)
   allow-commit           Allow git commit (requires verify_approved when enabled)
   deny-commit            Disallow git commit
-  next-phase             phase+=1, step=explore (resets Phase delivery flags)
+  next-phase             phase+=1, step=explore (resets Phase delivery flags; writes .cursor/handoff.md)
+  handoff                Regenerate .cursor/handoff.md from current gate (no advance)
+  handoff-url            Print cursor deeplink for new Chat (stdout)
 
 Enforcement source of truth: .cursor/gate.json
 EOF

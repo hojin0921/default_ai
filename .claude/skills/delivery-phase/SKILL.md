@@ -22,7 +22,7 @@ You are the **orchestrator**. Do **not** write specialist artifacts yourself.
 
 | Step | Launch (sequential if several) | Skill Quality bar |
 |------|--------------------------------|-------------------|
-| 1 Explore | `senior-architect` | `senior-architect` |
+| 1 Explore | `senior-architect` then `senior-pm` | both |
 | 2 Document | `senior-architect` or `senior-pm` (doc type) | matching skill |
 | 3 Plan | `senior-pm` then, if UI, `senior-design` | `senior-pm`, `senior-design` |
 | 4 Implement | `senior-dev` | `senior-dev` (사람 고른 Stack + design spec if UI) |
@@ -50,7 +50,9 @@ Fail: writing plan body, visual spec, app code, or UTG as the orchestrator witho
 
 | 산출물 | 담당 (필수) | 오케스트레이터 직접 작성 |
 |--------|-------------|-------------------------|
-| Explore·구조·영향 범위 | `senior-architect` | 금지 |
+| Explore·구조·영향 범위 (초안) | `senior-architect` | 금지 |
+| **Explore 설계 검수** (요구·범위 대조 · 보완 질문) | **`senior-pm`** (**필수**) | **금지** |
+| Explore **설계 보완** (PM·사람 답 반영 delta) | `senior-architect` | 금지 |
 | Plan 본문·In/Out·Phase Goal | `senior-pm` | 금지 |
 | **UI 시각 스펙** (레이아웃·타이포·색·컴포넌트·상태) | **`senior-design`** (UI Phase **필수**) | **금지** |
 | 앱 코드·CSS·컴포넌트 구현 | `senior-dev` | 금지 |
@@ -75,7 +77,33 @@ Fail: writing plan body, visual spec, app code, or UTG as the orchestrator witho
 
 **Small/Medium:** gate `off`일 때도 **새 UI/코드**면 해당 역할 Isolation Pass 필수. gate `on`이면 동일 approve-* 적용.
 
-**Anti-pattern (실패):** CreatePlan 후 바로 `src/` 작성. Explore/Document/Plan·전문 에이전트·approve-* 생략. **코드 Phase Verify에서 `senior-security` 생략.**
+**Anti-pattern (실패):** CreatePlan 후 바로 `src/` 작성. Explore/Document/Plan·전문 에이전트·approve-* 생략. **Explore에서 architect만 하고 PM 설계 검수 생략.** **코드 Phase Verify에서 `senior-security` 생략.**
+
+### Explore design review (required · PM after architect)
+
+Explore는 **설계 초안 → PM 검수** 순서. 오케스트레이터가 설계 검수를 대신 쓰면 **실패**.
+
+```mermaid
+flowchart TB
+  A[senior-architect · Explore 초안] --> PM[senior-pm · 설계 검수]
+  PM --> V{verdict}
+  V -->|설계 충분| OK[한눈 그림 · approve-explore 메뉴]
+  V -->|보완 필요| Q[설계 보완 질문 · 사람]
+  Q --> ANS[사람 답]
+  ANS --> AD[senior-architect · 설계 보완 delta]
+  AD --> PM2[senior-pm · 재검수]
+  PM2 --> V
+```
+
+| verdict | 다음 |
+|---------|------|
+| **설계 충분** | Explore **한눈 그림** + `approve-explore` 선택 UI |
+| **보완 필요** | **설계 보완 질문** 1개(한 메시지) → 사람 답 → **`senior-architect` delta** → **PM 재검수** |
+
+- PM 검수 기준: 이 Phase Goal/In/Out, Phase Plan·`docs/product.md`·`docs/architecture.md`, must-have·수락 기준, 빈/에러·auth/data·Out.
+- **보완 필요**면 gaps를 표로 남기고 **질문 하나**만 (K1과 동일 — 목록 덤프 금지).
+- 보완 루프 **최대 2회**. 이후에도 보완 필요면 사람이 Explore 메뉴에서 수정/승인/보류 선택.
+- **알림:** PM 검수 전 `## 설계 검수 시작` · 후 `## 설계 검수 완료` (verdict). 보완 질문 전 `## 설계 보완 질문`.
 
 ### Security review (required · `senior-security`)
 
@@ -152,7 +180,7 @@ Small/Medium도 코드 Phase면 **동일** 이중·최종 재점검.
 
 | Step | Launch | Human 승인 → gate (순서) | advance |
 |------|--------|---------------------------|---------|
-| 1 Explore | `senior-architect` | `approve-explore` | `document` |
+| 1 Explore | `senior-architect` → `senior-pm` | `approve-explore` | `document` |
 | 2 Document | `senior-architect` or `senior-pm` | `approve-document` | `plan` |
 | 3 Plan | `senior-pm` → (UI) `senior-design` | `approve-plan-body` → (UI) `approve-design-spec` | `implement` |
 | 4 Implement | `senior-dev` | (Stack pick if needed) | `verify` |
@@ -161,7 +189,7 @@ Small/Medium도 코드 Phase면 **동일** 이중·최종 재점검.
 
 **통과(Verify):** `approve-verify` → `allow-commit` (순서). `verify_approved` 없으면 커밋 훅 차단.
 
-**next-phase / approve-plan:** Phase delivery flags 전부 리셋 (`explore_approved` … `verify_approved`).
+**next-phase / approve-plan:** Phase delivery flags 전부 리셋. Both write **`.cursor/handoff.md`**. After `next-phase`, show **## 새 Chat handoff** (Start prompt + host line: Cursor Deeplink / Claude SessionStart / Codex·Antigravity paste) and **stop** unless human continues in this chat.
 
 ### Explicit role override
 
@@ -204,10 +232,11 @@ The primary `senior-*` skill’s **Quality bar** is mandatory. Generic adjective
 
 ### Step order (required)
 
-1. **Explore** — No code changes. Summarize requirements, related code, patterns, blast radius.  
-   In **this same reply**, before AskQuestion: heading `## 한눈 그림`, a mermaid `flowchart LR` fence (fill with this Phase), and `글 흐름: 입력 → 이 Phase 핵심 → 결과`.  
-   **지금 볼 곳**: 그림은 선택 버튼 바로 위(이 답변). 파일이 없으면 파일을 찾으라고 하지 말 것.  
-   AskQuestion: `바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름)을 보신 뒤, 다음으로 어떻게 할까요?`
+1. **Explore** — Launch **`senior-architect`**: no code. Requirements, related code, patterns, blast radius, **한눈 그림** (Mermaid + `글 흐름`).  
+   Then launch **`senior-pm`**: **설계 검수** (§ Explore design review). Compare architect output to Phase Goal/In/Out and product/architecture docs.  
+   - **`설계 충분`:** show updated **한눈 그림** (if architect revised earlier), **지금 볼 곳**, then AskQuestion for `approve-explore`.  
+   - **`보완 필요`:** show **`## 설계 검수 완료`** + gaps + **one 보완 질문**; after human answer → **`senior-architect` delta** → **PM 재검수** (max 2 loops).  
+   AskQuestion (when sufficient): `바로 위 한눈 그림(이 답변에 그린 Mermaid와 글 흐름)을 보신 뒤, 다음으로 어떻게 할까요?`
 2. **Document** — Update relevant `docs/` / README from evidence only. Foundation product/architecture docs are kickoff **K3**. Phase 1+ Document is **deltas only**.  
    Show the Explore mermaid again (or the updated one if the flow changed) in chat; put it in the docs you touch if the journey/system changed.
 3. **Plan** — Launch **`senior-pm`** first.  

@@ -12,7 +12,7 @@
 |----|------|
 | Rules | AI가 지킬 원칙 (`.cursor/rules/`) |
 | Skills | 킥오프·Phase·gate 절차 (`.cursor/skills/` · `.claude/skills/` · `.agents/skills/`) |
-| Hooks | 구현/커밋 차단 (`.cursor/hooks.json` + gate) |
+| Hooks | Cursor: `.cursor/hooks.json` (gate + sessionStart handoff). Claude Code: `.claude/settings.json` (SessionStart handoff). Codex·Antigravity: `AGENTS.md` |
 | Docs | 프로젝트 지식 |
 | Plans | 전체 Plan + Phase 상세 계획 |
 | Tests | AI 검증 + 사용자 테스트 |
@@ -34,7 +34,7 @@
 | Skill | 한글 | 주 관점 | 주 산출물 |
 |-------|------|---------|-----------|
 | `senior-architect` | 시니어 설계 | 아키텍처·경계·데이터·보안·확장 | 구조 메모, ADR 초안, 영향 범위 |
-| `senior-pm` | 시니어 기획 | 요구·우선순위·범위·수락 기준 | Phase 목표, In/Out, 수락 기준 |
+| `senior-pm` | 시니어 기획 | 요구·우선순위·범위·수락 기준·**설계 검수** | Phase 목표, In/Out, 설계 검수 결과, 수락 기준 |
 | `senior-design` | 시니어 디자인 | 시각·레이아웃·UX·카피·접근성 | 시각 스펙(Figma 또는 레이아웃·타이포·색), 화면 흐름, 카피 |
 | `senior-dev` | 시니어 개발 | 구현·패턴·최소 변경·테스트 가능성 | 코드, 구현 상세 Plan |
 | `senior-qa` | 시니어 QA | 검증·회귀·User Test Guide·리스크 | 테스트 계획, UTG, 버그 리포트 |
@@ -44,7 +44,7 @@
 
 | 단계 | 전문 에이전트 |
 |------|----------------|
-| 1 Explore | 설계 |
+| 1 Explore | 설계 → **기획(설계 검수)** |
 | 2 Document | 설계 또는 기획 (문서 성격) |
 | 3 Plan | 기획 → (UI면) 디자인 |
 | 4 Implement | 개발 (디자인 스펙 준수) |
@@ -195,7 +195,9 @@ AskQuestion: `Phase N을 직접 플레이해 보신 결과는 어떤가요?`
 | 전체 Plan 승인 (`design_approved` 필요) | `./scripts/gate.sh approve-plan` |
 | 단계 전진 | `./scripts/gate.sh advance implement` (등) |
 | 커밋 잠금 해제 (채팅 메뉴 라벨 없음) | `./scripts/gate.sh allow-commit` |
-| 다음 Phase | `./scripts/gate.sh next-phase` |
+| 다음 Phase | `./scripts/gate.sh next-phase` (+ `.cursor/handoff.md`, Deeplink) |
+| handoff 재생성 | `./scripts/gate.sh handoff` |
+| Deeplink | `./scripts/gate.sh handoff-url` |
 | Small로 해제 | `./scripts/gate.sh off` |
 
 강제 검사 원천은 Plan Status가 아니라 `.cursor/gate.json`.
@@ -315,7 +317,8 @@ AI 결과·보안 점검 결과·직접 확인 가이드(실행·확인·기대)
 
 - ❌ 프로젝트 전체 / docs 전부 읽기
 - ✅ 현재 Phase·현재 단계 관련만
-- Phase 단위가 끝나면 새 Chat을 고려
+- **Phase 경계:** `next-phase` / `approve-plan` → `.cursor/handoff.md`. **Cursor:** Deeplink + `sessionStart`. **Claude Code:** `SessionStart` (`.claude/settings.json`). **Codex·Antigravity:** Start prompt + `AGENTS.md` handoff 규칙. 같은 채팅 이어가기는 Start prompt 붙여넣기.
+- 수동: `./scripts/gate.sh handoff` · `./scripts/gate.sh handoff-url`
 
 ## Phase 0 (조건부)
 

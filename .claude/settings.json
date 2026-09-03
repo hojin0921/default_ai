@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/handoff_session_context.py --format claude-json"
+          }
+        ]
+      }
+    ]
+  }
+}

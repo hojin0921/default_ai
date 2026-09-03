@@ -30,7 +30,9 @@
 | `CLAUDE.md` | Claude Code | `AGENTS.md`를 가리키는 진입 |
 | `.cursor/gate.json` + `scripts/gate.sh` | 공통 CLI | 단계·승인 상태 |
 | `.githooks/pre-commit` | git (도구 무관) | 커밋 잠금 |
-| `.cursor/hooks.json` | Cursor만 | 구현 전 쓰기 차단 |
+| `.cursor/hooks.json` | Cursor | 구현 전 쓰기 차단 + **sessionStart** handoff |
+| `.claude/settings.json` | Claude Code | **SessionStart** handoff (쓰기 차단 없음) |
+| `.cursor/handoff.md` | 공통 (로컬 생성) | Phase 경계 continuation · gitignore |
 
 스킬 세트(워크플로 3 + 역할 6): `project-kickoff`, `delivery-phase`, `phase-gate`, `senior-architect`, `senior-pm`, `senior-design`, `senior-dev`, `senior-qa`, `senior-security`.  
 에이전트 여섯 이름: `senior-pm`, `senior-architect`, `senior-design`, `senior-dev`, `senior-qa`, `senior-security`.  

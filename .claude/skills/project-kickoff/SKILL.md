@@ -13,7 +13,7 @@ description: >-
 | Step | Launch (sequential if several) | Skill Quality bar |
 |------|--------------------------------|-------------------|
 | K1 Discover | `senior-pm` | `senior-pm` |
-| K2 Design | `senior-pm` then `senior-architect` then (`senior-design` if UI) | matching |
+| K2 Design | `senior-architect` then `senior-pm` then (`senior-design` if UI) | matching |
 | K3 Docs | `senior-pm` (`docs/product.md`) then `senior-architect` | matching |
 | K4 Phase Plan | `senior-pm` then `senior-architect` | matching |
 
@@ -109,7 +109,7 @@ K4 option 1 → `./scripts/gate.sh approve-plan` then Phase 1 Explore only. Do *
 
 ### K2 Design
 
-1. Launch **`senior-architect`** (+ **`senior-pm`** for product sections). If the product has **UI**, launch **`senior-design`** for UX outline (flows, screen list — not final Implement spec). Orchestrator does not write K2 body.
+1. Launch **`senior-architect`** (structure, data, boundaries). Then **`senior-pm`** — **설계 검수** (`delivery-phase` § Explore design review와 동일: verdict · 보완 질문 · architect delta · PM 재검수). If the product has **UI**, launch **`senior-design`** for UX outline (flows, screen list — not final Implement spec). Orchestrator does not write K2 body.
 2. Create `.cursor/plans/<short-name>-design.md` from `.cursor/plans/_design-template.md` from specialist output.  
    **Stack:** if K1 already named languages, copy them. Otherwise **미정** (구현 직전 사람 선택). Do not invent Next.js/Postgres here.
 3. Do **not** write Phase Plan (`_template.md`) or fill `docs/` yet.

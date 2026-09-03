@@ -6,7 +6,7 @@
 
 - **Python 3.8+** (gate CLI, Cursor hooks, git pre-commit)
 - **Git**
-- **Cursor** (선택: Phase Gate 쓰기 차단 훅). Claude Code / Codex / Antigravity는 규칙 + gate CLI + pre-commit.
+- **Cursor** (선택: Phase Gate 쓰기 차단 + sessionStart handoff). **Claude Code:** SessionStart handoff (`.claude/settings.json`). Codex / Antigravity: `AGENTS.md` handoff 규칙 + gate CLI + pre-commit.
 
 ## AI template setup (once per clone)
 
@@ -18,7 +18,7 @@
 | Any (Python) | `python scripts/install_hooks.py` | `python scripts/_gate_cli.py status` |
 
 - Skills: `.cursor/skills/` (동일 내용: `.claude/skills/`, `.agents/skills/`)
-- Hooks: `.cursor/hooks.json` (Phase Gate; `python3` 또는 `python` — `install-hooks`가 OS에 맞게 설정)
+- Hooks: `.cursor/hooks.json` (Cursor gate + sessionStart), `.claude/settings.json` (Claude SessionStart handoff) — `install-hooks`가 Python 경로 설정
 - Large 시: 채팅에서 승인 선택. 킥오프는 `approve-design` → `kickoff phase_plan` → `approve-plan` (`on`과 `approve-plan`을 한 번에 묶지 않음). 이후 `advance`. 검증 통과 후 커밋 잠금 해제는 채팅 1번(통과) 또는 gate CLI `allow-commit`. `git commit`은 사람이 직접.
 - **Windows Agent:** PowerShell/CMD에서는 `./scripts/gate.sh` 대신 `python scripts/_gate_cli.py <명령>` 사용.
 

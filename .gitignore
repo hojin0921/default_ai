@@ -1,5 +1,8 @@
 # Ignore secrets and local env
 .env
+
+# Generated per-project chat handoff (gate next-phase / handoff)
+.cursor/handoff.md
 .env.local
 .env.*.local
 

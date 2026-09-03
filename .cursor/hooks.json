@@ -1,6 +1,12 @@
 {
   "version": 1,
   "hooks": {
+    "sessionStart": [
+      {
+        "command": "python3 scripts/cursor_hook.py session_start",
+        "timeout": 10
+      }
+    ],
     "preToolUse": [
       {
         "command": "python3 scripts/cursor_hook.py protect_gate",

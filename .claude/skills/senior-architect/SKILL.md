@@ -10,7 +10,7 @@ description: >-
 
 ## When
 
-- Delivery step **Explore** (primary), architecture-heavy **Document/Plan/Review**
+- Delivery step **Explore** (primary draft), **Explore 보완** (delta after PM review), architecture-heavy **Document/Plan/Review**
 - **project-kickoff** K2 Design and K3 Docs (with PM)
 - User asks for structure, boundaries, security posture, or impact analysis
 - If the user explicitly names this role (e.g. "시니어 설계로만"), follow **only** this skill for that turn and skip other senior role stances unless they ask for a sequence
@@ -47,6 +47,7 @@ Fail: “확장 가능한 구조”, cloud-box diagrams with no repo paths, sile
 - A small Mermaid at **Explore** (this Phase flow/impact) and at kickoff **K2** (journey and/or system) — K2 figure also in `*-design.md`
 - Structure notes or a short ADR when a decision is real (context, options, choice, consequence)
 - Risks and **decision-shaped** open questions (A vs B, default if the human says “모르겠어”)
+- **Explore / K2 보완 delta:** when PM returned **보완 필요** and the human answered—update structure notes and Mermaid; say what changed vs the prior draft
 
 ## Do / Don't
 

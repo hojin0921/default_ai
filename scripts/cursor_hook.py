@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-VALID_HOOKS = frozenset({"gate_check", "protect_gate"})
+VALID_HOOKS = frozenset({"gate_check", "protect_gate", "session_start"})
 
 
 def main(argv: list[str]) -> int:
